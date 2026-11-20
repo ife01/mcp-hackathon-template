@@ -17,8 +17,8 @@
 # If your server needs secrets, add a connection (see README) and list it here.
 spec_version: v1
 kind: mcp
-name: example_mcp_local
-description: "Example MCP server (local stdio). Replace name/description with your own server."
+name: respiratory_mcp_local
+description: "Respiratory Season Situational Awareness MCP Server — flu, COVID-19, and RSV situational awareness from public CDC data."
 command: python server.py
 env: []
 tools:

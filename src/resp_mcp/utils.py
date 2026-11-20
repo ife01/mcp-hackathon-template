@@ -1,7 +1,9 @@
-"""Shared helpers: HTTP client, response formatting, and pagination.
+"""Shared HTTP helpers carried over from the template.
 
-Import these from your tool modules instead of re-implementing them. Keeping
-I/O and formatting here keeps each tool file focused on its own logic.
+NOTE: These will be superseded by clients/socrata.py in Build 1.1.
+The _validate_relative_path and fetch_json helpers are retained here
+so the security regression tests in tests/test_http_security.py continue
+to pass during the skeleton phase.
 """
 
 from __future__ import annotations
@@ -12,13 +14,8 @@ from urllib.parse import unquote, urlsplit
 
 import httpx
 
-# Federal APIs can be slow or intermittently unresponsive — always use an
-# explicit timeout. Bump this for large exports.
 DEFAULT_TIMEOUT = 30.0
 MAX_RESPONSE_BYTES = 5_000_000
-
-# Keep outbound origins operator-controlled. Do not replace this with a tool
-# argument; add another narrowly scoped client when integrating another API.
 API_BASE_URL = "https://api.example.gov/v1/"
 
 
@@ -55,12 +52,7 @@ async def fetch_json(
     headers: dict[str, str] | None = None,
     timeout: float = DEFAULT_TIMEOUT,
 ) -> Any:
-    """GET a path from the fixed API origin and return parsed JSON.
-
-    Raises:
-        ValueError: if path could select or escape the configured API origin.
-        UpstreamServiceError: with a sanitized message for external failures.
-    """
+    """GET a path from the fixed API origin and return parsed JSON."""
     safe_path = _validate_relative_path(path)
     try:
         async with httpx.AsyncClient(
@@ -91,22 +83,3 @@ async def fetch_json(
         raise UpstreamServiceError("Upstream service returned invalid JSON.") from None
     except httpx.RequestError:
         raise UpstreamServiceError("Upstream service request failed.") from None
-
-
-def paginate(items: list[Any], limit: int, offset: int) -> dict[str, Any]:
-    """Slice a list and return a standard pagination envelope.
-
-    Returns a dict with `total`, `count`, `offset`, `items`, `has_more`, and
-    `next_offset` — the shape recommended in the MCP best-practices guide.
-    """
-    total = len(items)
-    window = items[offset : offset + limit]
-    next_offset = offset + len(window)
-    return {
-        "total": total,
-        "count": len(window),
-        "offset": offset,
-        "items": window,
-        "has_more": next_offset < total,
-        "next_offset": next_offset if next_offset < total else None,
-    }
