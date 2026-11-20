@@ -1,0 +1,1717 @@
+{
+  "id": "vdzy-6i9v",
+  "name": "Weekly Hospital Respiratory Admission Levels and Rates by Jurisdiction, National Healthcare Safety Network (NHSN)",
+  "assetType": "dataset",
+  "attribution": "CDC Division of Healthcare Quality Promotion (DHQP) Surveillance Branch, National Healthcare Safety Network (NHSN)",
+  "attributionLink": "https://www.cdc.gov/nhsn/psc/hospital-respiratory-reporting.html",
+  "averageRating": 0,
+  "category": "Public Health Surveillance",
+  "createdAt": 1777487542,
+  "description": "This dataset provides weekly hospital admission rates and corresponding admission levels for COVID-19, influenza (flu), and respiratory syncytial virus (RSV), aggregated to national and state/territory levels. Each row represents a single jurisdiction (national, state/territory) and reporting week (Sunday through Saturday). \n\nData are derived from CDC\u2019s National Healthcare Safety Network (NHSN) Hospital Respiratory Data (HRD), which collect information reported by U.S. acute care and critical access hospitals on laboratory-confirmed COVID-19, influenza, and RSV hospital admissions, and monitors national and local trends in healthcare system stress and capacity. \n\nAdmission rates are calculated per 100,000 population, and admission levels are assigned based on CDC-defined thresholds for each virus. \n\nNew data are appended weekly on Fridays and represent the most recent complete reporting week at the time of publication. Previously published data are not revised or backfilled; all values reflect the data available at the time they were first reported. \n\n<b>Inclusion Criteria and Metric Calculations</b>\n\n<b>Facility types and status:</b> Acute care and critical access hospitals reporting to NHSN are included in the underlying data used to calculate these metrics. Psychiatric, rehabilitation, and religious non-medical hospital types are excluded. Hospitals are included based on active reporting status in NHSN during the applicable reporting week. \n\n<b>Admission counts and rates:</b> Weekly admission counts represent the number of new hospital admissions with laboratory-confirmed COVID-19, influenza, or RSV reported by participating hospitals for the reporting week (Sunday\u2013Saturday). Admission rates are calculated by dividing aggregated admissions by the corresponding jurisdictional population and expressed per 100,000 persons. \n\n<b>Admission levels:</b> Admission levels are categorical indicators (e.g., low, moderate, high, very high) assigned based on CDC-defined thresholds applied to the weekly admission rates for each virus. The thresholds for each pathogen and state can be found online here: <a href=\"https://www.cdc.gov/nhsn/psc/hospital-respiratory-reporting/data-methods.html\">https://www.cdc.gov/nhsn/psc/hospital-respiratory-reporting/data-methods.html</a>\n\n<b>Reporting considerations:</b> Metrics are based on data submitted by reporting hospitals for a given week and may not represent all hospitals within a jurisdiction. Because previously published data are not revised or backfilled, values reflect the data available at the time of initial reporting.\n\n<b>Source:</b> CDC National Healthcare Safety Network (NHSN).\n\n<b>Notes</b>\n<b>November 20th, 2026</b>: Data for American Samoa (AS) for the November 8th, 2026 through November 14th, 2026 reporting period are not available for the Weekly NHSN Hospital Respiratory Data report released on November 20th, 2026.\n\n<b>November 13th, 2026</b>: Data for American Samoa (AS) and the Commonwealth of the Northern Mariana Islands (CNMI) for the November 1st, 2026 through November 7th, 2026 reporting period are not available for the Weekly NHSN Hospital Respiratory Data report released on November 13th, 2026.\n\n<b>November 6th, 2026</b>: Data for American Samoa (AS) and the Commonwealth of the Northern Mariana Islands (CNMI) for the October 25th, 2026 through October 31st, 2026 reporting period are not available for the Weekly NHSN Hospital Respiratory Data report released on November 6th, 2026.\n\n<b>October 30th, 2026</b>: Data for American Samoa (AS) and Guam (GU) for the October 18th, 2026 through October 24th, 2026 reporting period are not available for the Weekly NHSN Hospital Respiratory Data report released on October 30th, 2026.\n\n<b>October 23rd, 2026</b>: Data for American Samoa (AS) and the Commonwealth of the Mariana Islands (CNMI) for the October 11th, 2026 through October 17th, 2026 reporting period are not available for the Weekly NHSN Hospital Respiratory Data report released on October 23rd, 2026.\n\n<b>October 16th, 2026:</b> Data for American Samoa (AS), Guam (GU), and the Commonwealth of the Mariana Islands (CNMI) for the October 4th, 2026 through October 10th, 2026 reporting period are not available for the Weekly NHSN Hospital Respiratory Data report released on October 16th, 2026.\n\n<b>October 9th, 2026:</b> Data for American Samoa (AS), Guam (GU), and the Commonwealth of the Mariana Islands (CNMI) for the September 27th, 2026 through October 3rd, 2026 reporting period are not available for the Weekly NHSN Hospital Respiratory Data report released on October 9th, 2026.\n\n<b>October 2nd, 2026:</b> Data for American Samoa (AS) and the Commonwealth of the Mariana Islands (CNMI) for the September 20th, 2026 through September 26th, 2026 reporting period are not available for the Weekly NHSN Hospital Respiratory Data report released on October 2nd, 2026.\n\n<b>September 25th, 2026:</b> Data for American Samoa (AS) for the September 13th, 2026 through September 19th, 2026 reporting period are not available for the Weekly NHSN Hospital Respiratory Data report released on September 25th, 2026.\n\n<b>September 18th, 2026:</b> Data for American Samoa (AS) for the September 6th, 2026 through September 12th, 2026 reporting period are not available for the Weekly NHSN Hospital Respiratory Data report released on September 18th, 2026.\n\n<b>September 11th, 2026:</b> Data for American Samoa (AS) for the August 30th, 2026 through September 5th, 2026 reporting period are not available for the Weekly NHSN Hospital Respiratory Data report released on September 11th, 2026.\n\n<b>September 4th, 2026:</b> Data for the American Samoa (AS) and the Commonwealth of the Northern Mariana Islands (CNMI) for the August 23rd, 2026 through August 29th, 2026 reporting period are not available for the Weekly NHSN Hospital Respiratory Data report released on September 4th, 2026. \n\n<b>August 28th, 2026:</b> Data for the American Samoa (AS) and the Commonwealth of the Northern Mariana Islands (CNMI) for the August 16th, 2026 through August 22nd, 2026 reporting period are not available for the Weekly NHSN Hospital Respiratory Data report released on August 28th, 2026.\n\n<b>August 21st, 2026:</b> Data for the American Samoa (AS) and the Commonwealth of the Northern Mariana Islands (CNMI) for the August 9th, 2026 through August 15th, 2026 reporting period are not available for the Weekly NHSN Hospital Respiratory Data report released on August 21st, 2026.\n\n<b>August 14th, 2026:</b> Data for the American Samoa (AS), the Commonwealth of the Northern Mariana Islands (CNMI), and the Virgin Islands (VI) for the August 2nd, 2026 through August 8th, 2026 reporting period are not available for the Weekly NHSN Hospital Respiratory Data report released on August 14th, 2026.\n\n<b>August 7th, 2026</b>: Data for the American Samoa (AS) and the Virgin Islands (VI) for the July 26th, 2026 through August 1st, 2026 reporting period are not available for the Weekly NHSN Hospital Respiratory Data report released on August 7th, 2026.\n\n<b>July 31st, 2026:</b> Data for the American Samoa (AS) and Commonwealth of the Northern Mariana Islands (CNMI) for the July 19th, 2026 through July 25th, 2026 reporting period are not available for the Weekly NHSN Hospital Respiratory Data report released on July 31st, 2026.\n\n<b>July 24th, 2026:</b> Data for the American Samoa (AS) and Commonwealth of the Northern Mariana Islands (CNMI) for the July 12th, 2026 through July 18th, 2026 reporting period are not available for the Weekly NHSN Hospital Respiratory Data report released on July 24th, 2026.\n\n<b>July 17th, 2026:</b> Data for the American Samoa (AS) and Commonwealth of the Northern Mariana Islands (CNMI) for the July 5th, 2026 through July 11th, 2026 reporting period are not available for the Weekly NHSN Hospital Respiratory Data report released on July 17th, 2026.\n\n<b>July 10th, 2026:</b> Data for the American Samoa (AS) and Commonwealth of the Northern Mariana Islands (CNMI) for the June 28th, 2026 through July 4th, 2026 reporting period are not available for the Weekly NHSN Hospital Respiratory Data report released on July 10th, 2026.\n\n<b>July 6th, 2026:</b> Data for the American Samoa (AS) for the June 21st, 2026 through June 27th, 2026 reporting period are not available for the Weekly NHSN Hospital Respiratory Data report released on July 6th, 2026. \n\n<b>June 26th, 2026:</b> Data for the American Samoa (AS) and Commonwealth of the Northern Mariana Islands (CNMI) for the June 14th, 2026 through June 20th, 2026 reporting period are not available for the Weekly NHSN Hospital Respiratory Data report released on June 26th, 2026.\n\n<b>June 22nd, 2026:</b> Data for the American Samoa (AS) and Guam (GU) for the June 7th, 2026 through June 13th, 2026 reporting period are not available for the Weekly NHSN Hospital Respiratory Data report released on June 22nd, 2026.\n\n<b>June 12th, 2026:</b> Data for the American Samoa (AS) and Guam (GU) for the May 31st, 2026 through June 6th, 2026 reporting period are not available for the Weekly NHSN Hospital Respiratory Data report released on June 12th, 2026.\n\n<b>June 5th, 2026:</b> Data for the American Samoa (AS} for the May 24th, 2026 through May 30th, 2026 reporting period are not available for the Weekly NHSN Hospital Respiratory Data report released on June 5th, 2026.\n\nThe following columns were added to this dataset as of June 5th, 2026:\ntotalConfC19NewAdmHospRep\ntotalConfFluNewAdmHospRep\ntotalConfRSVNewAdmHospRep\ntotalConfC19NewAdmPercHospRep\ntotalConfFluNewAdmPercHospRep\ntotalConfRSVNewAdmPercHospRep\n\n<b>May 29th, 2026:</b> Data for the American Samoa (AS), Guam (GU), and Commonwealth of the Northern Mariana Islands (CNMI) for the May 17th, 2026 through May 23rd, 2026 reporting period are not available for the Weekly NHSN Hospital Respiratory Data report released on May 29th, 2026.\n\n<b>May 22nd, 2026:</b> Data for the American Samoa (AS) and Commonwealth of the Northern Mariana Islands (CNMI) for the May 10th, 2026 through May 16th, 2026 reporting period are not available for the Weekly NHSN Hospital Respiratory Data report released on May 22nd, 2026.\n\n<b>May 15th, 2026:</b> Data for the American Samoa (AS), Commonwealth of the Northern Mariana Islands (CNMI), and Guam (GU) for the May 3rd, 2026 through May 9th, 2026 reporting period are not available for the Weekly NHSN Hospital Respiratory Data report released on May 15th, 2026.\n\n<b>May 8th, 2026:</b> Data for the American Samoa (AS) and Commonwealth of the Northern Mariana Islands (CNMI) for the April 26th, 2026 through May 2nd, 2026 reporting period are not available for the Weekly NHSN Hospital Respiratory Data report released on May 8th, 2026. \n\n<b>May 1st, 2026:</b> Data for the American Samoa (AS), Commonwealth of the Northern Mariana Islands (CNMI), and Guam (GU) for the April 19th, 2026 through April 25th, 2026 reporting period are not available for the Weekly NHSN Hospital Respiratory Data report released on May 1st, 2026.",
+  "diciBackend": false,
+  "displayType": "table",
+  "downloadCount": 1915,
+  "hideFromCatalog": false,
+  "hideFromDataJson": false,
+  "licenseId": "USGOV_WORKS",
+  "locked": false,
+  "newBackend": true,
+  "numberOfComments": 0,
+  "oid": 42133593,
+  "provenance": "official",
+  "publicationAppendEnabled": false,
+  "publicationDate": 1778855074,
+  "publicationGroup": 20361649,
+  "publicationStage": "published",
+  "rowsUpdatedAt": 1795193415,
+  "rowsUpdatedBy": "6fi8-e492",
+  "tableId": 20377514,
+  "totalTimesRated": 0,
+  "viewCount": 4007,
+  "viewLastModified": 1795193414,
+  "viewType": "tabular",
+  "approvals": [
+    {
+      "reviewedAt": 1777654078,
+      "reviewedAutomatically": true,
+      "state": "approved",
+      "submissionId": 7471289,
+      "submissionObject": "public_audience_request",
+      "submissionOutcome": "change_audience",
+      "submittedAt": 1777654078,
+      "targetAudience": "public",
+      "workflowId": 2100,
+      "submissionDetails": {
+        "permissionType": "READ"
+      },
+      "submissionOutcomeApplication": {
+        "endedAt": 1777654078,
+        "failureCount": 0,
+        "startedAt": 1777654078,
+        "status": "success"
+      },
+      "submitter": {
+        "id": "6fi8-e492",
+        "displayName": "Matthew Cook"
+      }
+    }
+  ],
+  "clientContext": {
+    "clientContextVariables": [],
+    "inheritedVariables": {}
+  },
+  "columns": [
+    {
+      "id": 632661789,
+      "name": "jurisdiction",
+      "dataTypeName": "text",
+      "description": "Name of country or state",
+      "fieldName": "jurisdiction",
+      "position": 1,
+      "renderTypeName": "text",
+      "tableColumnId": 167352995,
+      "cachedContents": {
+        "non_null": "1710",
+        "largest": "WY",
+        "null": "0",
+        "top": [
+          {
+            "item": "NV",
+            "count": "30"
+          },
+          {
+            "item": "OH",
+            "count": "30"
+          },
+          {
+            "item": "GU",
+            "count": "30"
+          },
+          {
+            "item": "USA",
+            "count": "30"
+          },
+          {
+            "item": "NY",
+            "count": "30"
+          },
+          {
+            "item": "HI",
+            "count": "30"
+          },
+          {
+            "item": "IN",
+            "count": "30"
+          },
+          {
+            "item": "WV",
+            "count": "30"
+          },
+          {
+            "item": "NE",
+            "count": "30"
+          },
+          {
+            "item": "FL",
+            "count": "30"
+          },
+          {
+            "item": "AR",
+            "count": "30"
+          },
+          {
+            "item": "ME",
+            "count": "30"
+          },
+          {
+            "item": "CT",
+            "count": "30"
+          },
+          {
+            "item": "SD",
+            "count": "30"
+          },
+          {
+            "item": "LA",
+            "count": "30"
+          },
+          {
+            "item": "WY",
+            "count": "30"
+          },
+          {
+            "item": "MT",
+            "count": "30"
+          },
+          {
+            "item": "NJ",
+            "count": "30"
+          },
+          {
+            "item": "MI",
+            "count": "30"
+          },
+          {
+            "item": "ND",
+            "count": "30"
+          }
+        ],
+        "smallest": "AK",
+        "count": "1710",
+        "cardinality": "1710"
+      },
+      "format": {}
+    },
+    {
+      "id": 632661790,
+      "name": "weekEndingDate",
+      "dataTypeName": "text",
+      "description": "MMWR week end date",
+      "fieldName": "weekendingdate",
+      "position": 2,
+      "renderTypeName": "text",
+      "tableColumnId": 167352994,
+      "cachedContents": {
+        "non_null": "1710",
+        "largest": "2026-11-07",
+        "null": "0",
+        "top": [
+          {
+            "item": "2026-05-09",
+            "count": "57"
+          },
+          {
+            "item": "2026-08-01",
+            "count": "57"
+          },
+          {
+            "item": "2026-04-25",
+            "count": "57"
+          },
+          {
+            "item": "2026-09-12",
+            "count": "57"
+          },
+          {
+            "item": "2026-09-05",
+            "count": "57"
+          },
+          {
+            "item": "2026-10-31",
+            "count": "57"
+          },
+          {
+            "item": "2026-10-24",
+            "count": "57"
+          },
+          {
+            "item": "2026-06-27",
+            "count": "57"
+          },
+          {
+            "item": "2026-11-07",
+            "count": "57"
+          },
+          {
+            "item": "2026-08-08",
+            "count": "57"
+          },
+          {
+            "item": "2026-08-15",
+            "count": "57"
+          },
+          {
+            "item": "2026-06-06",
+            "count": "57"
+          },
+          {
+            "item": "2026-10-17",
+            "count": "57"
+          },
+          {
+            "item": "2026-07-04",
+            "count": "57"
+          },
+          {
+            "item": "2026-07-18",
+            "count": "57"
+          },
+          {
+            "item": "2026-05-30",
+            "count": "57"
+          },
+          {
+            "item": "2026-06-20",
+            "count": "57"
+          },
+          {
+            "item": "2026-09-19",
+            "count": "57"
+          },
+          {
+            "item": "2026-06-13",
+            "count": "57"
+          },
+          {
+            "item": "2026-05-02",
+            "count": "57"
+          }
+        ],
+        "smallest": "2026-04-18",
+        "count": "1710",
+        "cardinality": "1710"
+      },
+      "format": {}
+    },
+    {
+      "id": 632661791,
+      "name": "totalConfC19NewAdm",
+      "dataTypeName": "number",
+      "description": "Total number of new hospital admissions of patients with confirmed COVID-19 captured during the reporting week (Sunday - Saturday)",
+      "fieldName": "totalconfc19newadm",
+      "position": 3,
+      "renderTypeName": "number",
+      "tableColumnId": 167352993,
+      "cachedContents": {
+        "non_null": "1649",
+        "largest": "4626.0",
+        "null": "61",
+        "top": [
+          {
+            "item": "0.0",
+            "count": "106"
+          },
+          {
+            "item": "1.0",
+            "count": "91"
+          },
+          {
+            "item": "2.0",
+            "count": "72"
+          },
+          {
+            "item": "3.0",
+            "count": "70"
+          },
+          {
+            "item": "4.0",
+            "count": "68"
+          },
+          {
+            "item": "6.0",
+            "count": "63"
+          },
+          {
+            "item": "5.0",
+            "count": "60"
+          },
+          {
+            "item": "8.0",
+            "count": "43"
+          },
+          {
+            "item": "9.0",
+            "count": "41"
+          },
+          {
+            "item": "7.0",
+            "count": "38"
+          },
+          {
+            "item": "10.0",
+            "count": "35"
+          },
+          {
+            "item": "11.0",
+            "count": "33"
+          },
+          {
+            "item": "13.0",
+            "count": "33"
+          },
+          {
+            "item": "16.0",
+            "count": "32"
+          },
+          {
+            "item": "12.0",
+            "count": "32"
+          },
+          {
+            "item": "17.0",
+            "count": "24"
+          },
+          {
+            "item": "14.0",
+            "count": "23"
+          },
+          {
+            "item": "22.0",
+            "count": "22"
+          },
+          {
+            "item": "21.0",
+            "count": "21"
+          },
+          {
+            "item": "18.0",
+            "count": "21"
+          }
+        ],
+        "smallest": "0.0",
+        "count": "1710",
+        "cardinality": "1710"
+      },
+      "format": {
+        "decimalSeparator": ".",
+        "groupSeparator": ","
+      }
+    },
+    {
+      "id": 632661792,
+      "name": "totalConfFluNewAdm",
+      "dataTypeName": "number",
+      "description": "Total number of new hospital admissions of patients with confirmed influenza captured during the reporting week (Sunday - Saturday)",
+      "fieldName": "totalconfflunewadm",
+      "position": 4,
+      "renderTypeName": "number",
+      "tableColumnId": 167352992,
+      "cachedContents": {
+        "non_null": "1649",
+        "largest": "9619.0",
+        "null": "61",
+        "top": [
+          {
+            "item": "0.0",
+            "count": "160"
+          },
+          {
+            "item": "3.0",
+            "count": "108"
+          },
+          {
+            "item": "1.0",
+            "count": "100"
+          },
+          {
+            "item": "2.0",
+            "count": "93"
+          },
+          {
+            "item": "4.0",
+            "count": "76"
+          },
+          {
+            "item": "7.0",
+            "count": "61"
+          },
+          {
+            "item": "5.0",
+            "count": "57"
+          },
+          {
+            "item": "10.0",
+            "count": "52"
+          },
+          {
+            "item": "6.0",
+            "count": "51"
+          },
+          {
+            "item": "8.0",
+            "count": "49"
+          },
+          {
+            "item": "11.0",
+            "count": "42"
+          },
+          {
+            "item": "18.0",
+            "count": "35"
+          },
+          {
+            "item": "9.0",
+            "count": "30"
+          },
+          {
+            "item": "12.0",
+            "count": "28"
+          },
+          {
+            "item": "13.0",
+            "count": "26"
+          },
+          {
+            "item": "14.0",
+            "count": "24"
+          },
+          {
+            "item": "20.0",
+            "count": "24"
+          },
+          {
+            "item": "15.0",
+            "count": "24"
+          },
+          {
+            "item": "16.0",
+            "count": "21"
+          },
+          {
+            "item": "19.0",
+            "count": "21"
+          }
+        ],
+        "smallest": "0.0",
+        "count": "1710",
+        "cardinality": "1710"
+      },
+      "format": {
+        "decimalSeparator": ".",
+        "groupSeparator": ","
+      }
+    },
+    {
+      "id": 632661793,
+      "name": "totalConfRSVNewAdm",
+      "dataTypeName": "number",
+      "description": "Total number of new hospital admissions of patients with confirmed RSV captured during the reporting week (Sunday - Saturday)",
+      "fieldName": "totalconfrsvnewadm",
+      "position": 5,
+      "renderTypeName": "number",
+      "tableColumnId": 167352991,
+      "cachedContents": {
+        "non_null": "1649",
+        "largest": "2318.0",
+        "null": "61",
+        "top": [
+          {
+            "item": "0.0",
+            "count": "315"
+          },
+          {
+            "item": "1.0",
+            "count": "203"
+          },
+          {
+            "item": "2.0",
+            "count": "136"
+          },
+          {
+            "item": "3.0",
+            "count": "97"
+          },
+          {
+            "item": "4.0",
+            "count": "81"
+          },
+          {
+            "item": "5.0",
+            "count": "67"
+          },
+          {
+            "item": "6.0",
+            "count": "57"
+          },
+          {
+            "item": "7.0",
+            "count": "51"
+          },
+          {
+            "item": "10.0",
+            "count": "43"
+          },
+          {
+            "item": "8.0",
+            "count": "41"
+          },
+          {
+            "item": "9.0",
+            "count": "36"
+          },
+          {
+            "item": "11.0",
+            "count": "27"
+          },
+          {
+            "item": "14.0",
+            "count": "24"
+          },
+          {
+            "item": "15.0",
+            "count": "24"
+          },
+          {
+            "item": "13.0",
+            "count": "23"
+          },
+          {
+            "item": "17.0",
+            "count": "23"
+          },
+          {
+            "item": "12.0",
+            "count": "22"
+          },
+          {
+            "item": "16.0",
+            "count": "19"
+          },
+          {
+            "item": "18.0",
+            "count": "16"
+          },
+          {
+            "item": "25.0",
+            "count": "14"
+          }
+        ],
+        "smallest": "0.0",
+        "count": "1710",
+        "cardinality": "1710"
+      },
+      "format": {
+        "decimalSeparator": ".",
+        "groupSeparator": ","
+      }
+    },
+    {
+      "id": 632661794,
+      "name": "totalConfC19NewAdmPer100k",
+      "dataTypeName": "number",
+      "description": "Number of new hospital admissions of patients with confirmed COVID-19 captured during the reporting week (Sunday - Saturday) per 100,000 population\"",
+      "fieldName": "totalconfc19newadmper100k",
+      "position": 6,
+      "renderTypeName": "number",
+      "tableColumnId": 167352990,
+      "cachedContents": {
+        "non_null": "1649",
+        "largest": "14.79",
+        "null": "61",
+        "top": [
+          {
+            "item": "0.0",
+            "count": "106"
+          },
+          {
+            "item": "0.15",
+            "count": "35"
+          },
+          {
+            "item": "0.14",
+            "count": "34"
+          },
+          {
+            "item": "0.19",
+            "count": "31"
+          },
+          {
+            "item": "0.1",
+            "count": "30"
+          },
+          {
+            "item": "0.17",
+            "count": "29"
+          },
+          {
+            "item": "0.07",
+            "count": "27"
+          },
+          {
+            "item": "0.29",
+            "count": "26"
+          },
+          {
+            "item": "0.27",
+            "count": "26"
+          },
+          {
+            "item": "0.31",
+            "count": "25"
+          },
+          {
+            "item": "0.22",
+            "count": "25"
+          },
+          {
+            "item": "0.2",
+            "count": "24"
+          },
+          {
+            "item": "0.34",
+            "count": "23"
+          },
+          {
+            "item": "0.28",
+            "count": "23"
+          },
+          {
+            "item": "0.12",
+            "count": "22"
+          },
+          {
+            "item": "0.44",
+            "count": "21"
+          },
+          {
+            "item": "0.42",
+            "count": "21"
+          },
+          {
+            "item": "0.46",
+            "count": "20"
+          },
+          {
+            "item": "0.3",
+            "count": "20"
+          },
+          {
+            "item": "0.11",
+            "count": "19"
+          }
+        ],
+        "smallest": "0.0",
+        "count": "1710",
+        "cardinality": "1710"
+      },
+      "format": {
+        "decimalSeparator": ".",
+        "precision": "2",
+        "groupSeparator": ","
+      }
+    },
+    {
+      "id": 632661795,
+      "name": "totalConfFluNewAdmPer100k",
+      "dataTypeName": "number",
+      "description": "Number of new hospital admissions of patients with confirmed Influenza captured during the reporting week (Sunday - Saturday) per 100,000 population",
+      "fieldName": "totalconfflunewadmper100k",
+      "position": 7,
+      "renderTypeName": "number",
+      "tableColumnId": 167352989,
+      "cachedContents": {
+        "non_null": "1649",
+        "largest": "8.95",
+        "null": "61",
+        "top": [
+          {
+            "item": "0.0",
+            "count": "160"
+          },
+          {
+            "item": "0.07",
+            "count": "46"
+          },
+          {
+            "item": "0.1",
+            "count": "46"
+          },
+          {
+            "item": "0.05",
+            "count": "42"
+          },
+          {
+            "item": "0.14",
+            "count": "40"
+          },
+          {
+            "item": "0.06",
+            "count": "37"
+          },
+          {
+            "item": "0.09",
+            "count": "36"
+          },
+          {
+            "item": "0.2",
+            "count": "36"
+          },
+          {
+            "item": "0.11",
+            "count": "30"
+          },
+          {
+            "item": "0.15",
+            "count": "30"
+          },
+          {
+            "item": "0.17",
+            "count": "29"
+          },
+          {
+            "item": "0.03",
+            "count": "29"
+          },
+          {
+            "item": "0.39",
+            "count": "29"
+          },
+          {
+            "item": "0.26",
+            "count": "28"
+          },
+          {
+            "item": "0.44",
+            "count": "26"
+          },
+          {
+            "item": "0.22",
+            "count": "26"
+          },
+          {
+            "item": "0.13",
+            "count": "26"
+          },
+          {
+            "item": "0.19",
+            "count": "23"
+          },
+          {
+            "item": "0.21",
+            "count": "23"
+          },
+          {
+            "item": "0.12",
+            "count": "21"
+          }
+        ],
+        "smallest": "0.0",
+        "count": "1710",
+        "cardinality": "1710"
+      },
+      "format": {
+        "decimalSeparator": ".",
+        "precision": "2",
+        "groupSeparator": ","
+      }
+    },
+    {
+      "id": 632661796,
+      "name": "totalConfRSVNewAdmPer100k",
+      "dataTypeName": "number",
+      "description": "Number of new hospital admissions of patients with confirmed RSV captured during the reporting week (Sunday - Saturday) per 100,000 population",
+      "fieldName": "totalconfrsvnewadmper100k",
+      "position": 8,
+      "renderTypeName": "number",
+      "tableColumnId": 167352988,
+      "cachedContents": {
+        "non_null": "1649",
+        "largest": "4.124571086982684",
+        "null": "61",
+        "top": [
+          {
+            "item": "0.0",
+            "count": "315"
+          },
+          {
+            "item": "0.03",
+            "count": "94"
+          },
+          {
+            "item": "0.05",
+            "count": "63"
+          },
+          {
+            "item": "0.07",
+            "count": "63"
+          },
+          {
+            "item": "0.06",
+            "count": "57"
+          },
+          {
+            "item": "0.02",
+            "count": "53"
+          },
+          {
+            "item": "0.1",
+            "count": "53"
+          },
+          {
+            "item": "0.09",
+            "count": "52"
+          },
+          {
+            "item": "0.08",
+            "count": "42"
+          },
+          {
+            "item": "0.11",
+            "count": "40"
+          },
+          {
+            "item": "0.14",
+            "count": "37"
+          },
+          {
+            "item": "0.04",
+            "count": "37"
+          },
+          {
+            "item": "0.15",
+            "count": "37"
+          },
+          {
+            "item": "0.13",
+            "count": "36"
+          },
+          {
+            "item": "0.22",
+            "count": "35"
+          },
+          {
+            "item": "0.12",
+            "count": "25"
+          },
+          {
+            "item": "0.17",
+            "count": "21"
+          },
+          {
+            "item": "0.2",
+            "count": "19"
+          },
+          {
+            "item": "0.24",
+            "count": "19"
+          },
+          {
+            "item": "0.34",
+            "count": "18"
+          }
+        ],
+        "smallest": "0.0",
+        "count": "1710",
+        "cardinality": "1710"
+      },
+      "format": {
+        "decimalSeparator": ".",
+        "precision": "2",
+        "groupSeparator": ","
+      }
+    },
+    {
+      "id": 632661797,
+      "name": "totalConfC19NewAdmPer100kLevel",
+      "dataTypeName": "text",
+      "description": "Categorical level of new COVID-19 hospital admissions rate (Very Low, Low, Moderate, High, Very High, Data Unavailable)",
+      "fieldName": "totalconfc19newadmper100klevel",
+      "position": 9,
+      "renderTypeName": "text",
+      "tableColumnId": 167352987,
+      "cachedContents": {
+        "non_null": "1710",
+        "largest": "Very Low",
+        "null": "0",
+        "top": [
+          {
+            "item": "Very Low",
+            "count": "1618"
+          },
+          {
+            "item": "Data Unavailable",
+            "count": "61"
+          },
+          {
+            "item": "Low",
+            "count": "23"
+          },
+          {
+            "item": "Moderate",
+            "count": "7"
+          },
+          {
+            "item": "Very High",
+            "count": "1"
+          }
+        ],
+        "smallest": "Data Unavailable",
+        "count": "1710",
+        "cardinality": "1710"
+      },
+      "format": {}
+    },
+    {
+      "id": 632661798,
+      "name": "totalConfFluNewAdmPer100kLevel",
+      "dataTypeName": "text",
+      "description": "Categorical level of new influenza hospital admissions rate (Very Low, Low, Moderate, High, Very High, Data Unavailable)",
+      "fieldName": "totalconfflunewadmper100klevel",
+      "position": 10,
+      "renderTypeName": "text",
+      "tableColumnId": 167352986,
+      "cachedContents": {
+        "non_null": "1710",
+        "largest": "Very Low",
+        "null": "0",
+        "top": [
+          {
+            "item": "Very Low",
+            "count": "1490"
+          },
+          {
+            "item": "Low",
+            "count": "122"
+          },
+          {
+            "item": "Data Unavailable",
+            "count": "61"
+          },
+          {
+            "item": "Moderate",
+            "count": "37"
+          }
+        ],
+        "smallest": "Data Unavailable",
+        "count": "1710",
+        "cardinality": "1710"
+      },
+      "format": {}
+    },
+    {
+      "id": 632661799,
+      "name": "totalConfRSVNewAdmPer100kLevel",
+      "dataTypeName": "text",
+      "description": "Categorical level of new RSV hospital admissions rate (Very Low, Low, Moderate, High, Very High, Data Unavailable)",
+      "fieldName": "totalconfrsvnewadmper100klevel",
+      "position": 11,
+      "renderTypeName": "text",
+      "tableColumnId": 167352985,
+      "cachedContents": {
+        "non_null": "1710",
+        "largest": "Very Low",
+        "null": "0",
+        "top": [
+          {
+            "item": "Very Low",
+            "count": "1541"
+          },
+          {
+            "item": "Low",
+            "count": "100"
+          },
+          {
+            "item": "Data Unavailable",
+            "count": "61"
+          },
+          {
+            "item": "Moderate",
+            "count": "4"
+          },
+          {
+            "item": "High",
+            "count": "4"
+          }
+        ],
+        "smallest": "Data Unavailable",
+        "count": "1710",
+        "cardinality": "1710"
+      },
+      "format": {}
+    },
+    {
+      "id": 632661805,
+      "name": "totalConfC19NewAdmHospRep",
+      "dataTypeName": "number",
+      "description": "Number Hospitals Reporting COVID-19 Admissions",
+      "fieldName": "totalconfc19newadmhosprep",
+      "position": 12,
+      "renderTypeName": "number",
+      "tableColumnId": 167662426,
+      "cachedContents": {
+        "non_null": "1539",
+        "largest": "4672",
+        "null": "171",
+        "top": [
+          {
+            "item": "0",
+            "count": "53"
+          },
+          {
+            "item": "1",
+            "count": "49"
+          },
+          {
+            "item": "10",
+            "count": "32"
+          },
+          {
+            "item": "82",
+            "count": "30"
+          },
+          {
+            "item": "37",
+            "count": "29"
+          },
+          {
+            "item": "86",
+            "count": "29"
+          },
+          {
+            "item": "85",
+            "count": "26"
+          },
+          {
+            "item": "81",
+            "count": "25"
+          },
+          {
+            "item": "83",
+            "count": "24"
+          },
+          {
+            "item": "87",
+            "count": "23"
+          },
+          {
+            "item": "88",
+            "count": "19"
+          },
+          {
+            "item": "9",
+            "count": "19"
+          },
+          {
+            "item": "60",
+            "count": "18"
+          },
+          {
+            "item": "90",
+            "count": "18"
+          },
+          {
+            "item": "21",
+            "count": "18"
+          },
+          {
+            "item": "80",
+            "count": "18"
+          },
+          {
+            "item": "93",
+            "count": "18"
+          },
+          {
+            "item": "26",
+            "count": "17"
+          },
+          {
+            "item": "94",
+            "count": "17"
+          },
+          {
+            "item": "11",
+            "count": "17"
+          }
+        ],
+        "smallest": "0",
+        "count": "1710",
+        "cardinality": "1710"
+      },
+      "format": {}
+    },
+    {
+      "id": 632661804,
+      "name": "totalConfFluNewAdmHospRep",
+      "dataTypeName": "number",
+      "description": "Number Hospitals Reporting  Influenza Admissions",
+      "fieldName": "totalconfflunewadmhosprep",
+      "position": 13,
+      "renderTypeName": "number",
+      "tableColumnId": 167662425,
+      "cachedContents": {
+        "non_null": "1539",
+        "largest": "4672",
+        "null": "171",
+        "top": [
+          {
+            "item": "0",
+            "count": "53"
+          },
+          {
+            "item": "1",
+            "count": "49"
+          },
+          {
+            "item": "10",
+            "count": "32"
+          },
+          {
+            "item": "82",
+            "count": "30"
+          },
+          {
+            "item": "37",
+            "count": "29"
+          },
+          {
+            "item": "86",
+            "count": "29"
+          },
+          {
+            "item": "85",
+            "count": "26"
+          },
+          {
+            "item": "81",
+            "count": "25"
+          },
+          {
+            "item": "83",
+            "count": "24"
+          },
+          {
+            "item": "87",
+            "count": "23"
+          },
+          {
+            "item": "88",
+            "count": "19"
+          },
+          {
+            "item": "9",
+            "count": "19"
+          },
+          {
+            "item": "60",
+            "count": "18"
+          },
+          {
+            "item": "90",
+            "count": "18"
+          },
+          {
+            "item": "21",
+            "count": "18"
+          },
+          {
+            "item": "80",
+            "count": "18"
+          },
+          {
+            "item": "93",
+            "count": "18"
+          },
+          {
+            "item": "26",
+            "count": "17"
+          },
+          {
+            "item": "94",
+            "count": "17"
+          },
+          {
+            "item": "11",
+            "count": "17"
+          }
+        ],
+        "smallest": "0",
+        "count": "1710",
+        "cardinality": "1710"
+      },
+      "format": {}
+    },
+    {
+      "id": 632661803,
+      "name": "totalConfRSVNewAdmHospRep",
+      "dataTypeName": "number",
+      "description": "Number Hospitals Reporting RSV Admissions",
+      "fieldName": "totalconfrsvnewadmhosprep",
+      "position": 14,
+      "renderTypeName": "number",
+      "tableColumnId": 167662424,
+      "cachedContents": {
+        "non_null": "1539",
+        "largest": "4672",
+        "null": "171",
+        "top": [
+          {
+            "item": "0",
+            "count": "53"
+          },
+          {
+            "item": "1",
+            "count": "49"
+          },
+          {
+            "item": "10",
+            "count": "32"
+          },
+          {
+            "item": "82",
+            "count": "30"
+          },
+          {
+            "item": "37",
+            "count": "29"
+          },
+          {
+            "item": "86",
+            "count": "29"
+          },
+          {
+            "item": "85",
+            "count": "26"
+          },
+          {
+            "item": "81",
+            "count": "25"
+          },
+          {
+            "item": "83",
+            "count": "24"
+          },
+          {
+            "item": "87",
+            "count": "23"
+          },
+          {
+            "item": "88",
+            "count": "19"
+          },
+          {
+            "item": "9",
+            "count": "19"
+          },
+          {
+            "item": "60",
+            "count": "18"
+          },
+          {
+            "item": "90",
+            "count": "18"
+          },
+          {
+            "item": "21",
+            "count": "18"
+          },
+          {
+            "item": "80",
+            "count": "18"
+          },
+          {
+            "item": "93",
+            "count": "18"
+          },
+          {
+            "item": "26",
+            "count": "17"
+          },
+          {
+            "item": "94",
+            "count": "17"
+          },
+          {
+            "item": "11",
+            "count": "17"
+          }
+        ],
+        "smallest": "0",
+        "count": "1710",
+        "cardinality": "1710"
+      },
+      "format": {}
+    },
+    {
+      "id": 632661802,
+      "name": "totalConfC19NewAdmPercHospRep",
+      "dataTypeName": "number",
+      "description": "Percent Hospitals Reporting COVID-19 Admissions",
+      "fieldName": "totalconfc19newadmperchosprep",
+      "position": 15,
+      "renderTypeName": "number",
+      "tableColumnId": 167662423,
+      "cachedContents": {
+        "non_null": "1539",
+        "largest": "100.68",
+        "null": "171",
+        "top": [
+          {
+            "item": "0.0",
+            "count": "53"
+          },
+          {
+            "item": "100.0",
+            "count": "51"
+          },
+          {
+            "item": "50.0",
+            "count": "40"
+          },
+          {
+            "item": "75.0",
+            "count": "29"
+          },
+          {
+            "item": "83.33",
+            "count": "29"
+          },
+          {
+            "item": "93.33",
+            "count": "22"
+          },
+          {
+            "item": "90.91",
+            "count": "22"
+          },
+          {
+            "item": "66.67",
+            "count": "18"
+          },
+          {
+            "item": "81.82",
+            "count": "14"
+          },
+          {
+            "item": "79.59",
+            "count": "14"
+          },
+          {
+            "item": "78.57",
+            "count": "12"
+          },
+          {
+            "item": "96.91",
+            "count": "11"
+          },
+          {
+            "item": "81.63",
+            "count": "11"
+          },
+          {
+            "item": "80.0",
+            "count": "11"
+          },
+          {
+            "item": "87.5",
+            "count": "11"
+          },
+          {
+            "item": "86.67",
+            "count": "11"
+          },
+          {
+            "item": "96.15",
+            "count": "10"
+          },
+          {
+            "item": "96.47",
+            "count": "10"
+          },
+          {
+            "item": "75.51",
+            "count": "9"
+          },
+          {
+            "item": "77.55",
+            "count": "9"
+          }
+        ],
+        "smallest": "0.0",
+        "count": "1710",
+        "cardinality": "1710"
+      },
+      "format": {}
+    },
+    {
+      "id": 632661801,
+      "name": "totalConfFluNewAdmPercHospRep",
+      "dataTypeName": "number",
+      "description": "Percent Hospitals Reporting Influenza Admissions",
+      "fieldName": "totalconfflunewadmperchosprep",
+      "position": 16,
+      "renderTypeName": "number",
+      "tableColumnId": 167662422,
+      "cachedContents": {
+        "non_null": "1539",
+        "largest": "100.68",
+        "null": "171",
+        "top": [
+          {
+            "item": "0.0",
+            "count": "53"
+          },
+          {
+            "item": "100.0",
+            "count": "51"
+          },
+          {
+            "item": "50.0",
+            "count": "40"
+          },
+          {
+            "item": "75.0",
+            "count": "29"
+          },
+          {
+            "item": "83.33",
+            "count": "29"
+          },
+          {
+            "item": "93.33",
+            "count": "22"
+          },
+          {
+            "item": "90.91",
+            "count": "22"
+          },
+          {
+            "item": "66.67",
+            "count": "18"
+          },
+          {
+            "item": "81.82",
+            "count": "14"
+          },
+          {
+            "item": "79.59",
+            "count": "14"
+          },
+          {
+            "item": "78.57",
+            "count": "12"
+          },
+          {
+            "item": "96.91",
+            "count": "11"
+          },
+          {
+            "item": "81.63",
+            "count": "11"
+          },
+          {
+            "item": "80.0",
+            "count": "11"
+          },
+          {
+            "item": "87.5",
+            "count": "11"
+          },
+          {
+            "item": "86.67",
+            "count": "11"
+          },
+          {
+            "item": "96.15",
+            "count": "10"
+          },
+          {
+            "item": "96.47",
+            "count": "10"
+          },
+          {
+            "item": "75.51",
+            "count": "9"
+          },
+          {
+            "item": "77.55",
+            "count": "9"
+          }
+        ],
+        "smallest": "0.0",
+        "count": "1710",
+        "cardinality": "1710"
+      },
+      "format": {}
+    },
+    {
+      "id": 632661800,
+      "name": "totalConfRSVNewAdmPercHospRep",
+      "dataTypeName": "number",
+      "description": "Percent Hospitals Reporting RSV Admissions",
+      "fieldName": "totalconfrsvnewadmperchosprep",
+      "position": 17,
+      "renderTypeName": "number",
+      "tableColumnId": 167662421,
+      "cachedContents": {
+        "non_null": "1539",
+        "largest": "100.68",
+        "null": "171",
+        "top": [
+          {
+            "item": "0.0",
+            "count": "53"
+          },
+          {
+            "item": "100.0",
+            "count": "51"
+          },
+          {
+            "item": "50.0",
+            "count": "40"
+          },
+          {
+            "item": "75.0",
+            "count": "29"
+          },
+          {
+            "item": "83.33",
+            "count": "29"
+          },
+          {
+            "item": "93.33",
+            "count": "22"
+          },
+          {
+            "item": "90.91",
+            "count": "22"
+          },
+          {
+            "item": "66.67",
+            "count": "18"
+          },
+          {
+            "item": "81.82",
+            "count": "14"
+          },
+          {
+            "item": "79.59",
+            "count": "14"
+          },
+          {
+            "item": "78.57",
+            "count": "12"
+          },
+          {
+            "item": "96.91",
+            "count": "11"
+          },
+          {
+            "item": "81.63",
+            "count": "11"
+          },
+          {
+            "item": "80.0",
+            "count": "11"
+          },
+          {
+            "item": "87.5",
+            "count": "11"
+          },
+          {
+            "item": "86.67",
+            "count": "11"
+          },
+          {
+            "item": "96.15",
+            "count": "10"
+          },
+          {
+            "item": "96.47",
+            "count": "10"
+          },
+          {
+            "item": "75.51",
+            "count": "9"
+          },
+          {
+            "item": "77.55",
+            "count": "9"
+          }
+        ],
+        "smallest": "0.0",
+        "count": "1710",
+        "cardinality": "1710"
+      },
+      "format": {}
+    }
+  ],
+  "grants": [
+    {
+      "inherited": false,
+      "type": "viewer",
+      "flags": [
+        "public"
+      ]
+    }
+  ],
+  "license": {
+    "name": "Public Domain U.S. Government",
+    "termsLink": "https://www.usa.gov/government-works"
+  },
+  "metadata": {
+    "custom_fields": {
+      "Data Quality": {
+        "Geospatial Resolution": "State/territory, national ",
+        "Suggested Citation": "Centers for Disease Control and Prevention, Division of Healthcare Quality Promotion, National Healthcare Safety Network, Weekly United States Hospital Respiratory Admission Levels and Rates by Jurisdiction, National Healthcare Safety Network (NHSN) ",
+        "Geographic Unit of Analysis": "State/territory, national ",
+        "Analytical Methods Reference": "CDC\u2019s Hospital Respiratory Data (HRD) Methodology | NHSN | CDC "
+      },
+      "Common Core": {
+        "Homepage": "NHSN Hospital Respiratory Data (HRD) Reporting:\u202fhttps://www.cdc.gov/nhsn/psc/hospital-respiratory-reporting.html ",
+        "Contact Name": "DHQP",
+        "Update Frequency": "Weekly",
+        "Temporal Applicability": "4/18/2026 - Present",
+        "Program Code": "009:028",
+        "Publisher": "CDC",
+        "Bureau Code": "009:20",
+        "Contact Email": "nhsn@cdc.gov",
+        "Language": "English",
+        "References": "NHSN Hospital Respiratory Data (HRD) Reporting:\u202fhttps://www.cdc.gov/nhsn/psc/hospital-respiratory-reporting.html\u202fNHSN Hospital Respiratory Data (HRD) Dashboard:\u202fhttps://wwwdev.cdc.gov/nhsn/psc/hospital-respiratory-dashboard.html#anchor_83745\u202fCenters for Medicare and Medicaid Services (CMS) requirements: Updates to the Condition of Participation (CoP) Requirements for Hospitals and Critical Access Hospitals (CAHs) To Report Acute Respiratory Illnesses. ",
+        "Issued": "N/A",
+        "Geographic Coverage": "US",
+        "Access Level Comment": "N/A",
+        "Public Access Level": "public"
+      },
+      "Common Core 3": {
+        "Contact Email": "nhsn@cdc.gov\u00a0",
+        "Language": "English",
+        "Geographic Name": "US",
+        "Contact Name": "DHQP",
+        "Update Frequency": "Weekly",
+        "Temporal Applicability": "4/18/2026 - Present",
+        "Program Code": "009:028",
+        "Restriction Status": "Public",
+        "Publisher": "CDC",
+        "Bureau Code": "009:20",
+        "Public Access Level": "public"
+      }
+    },
+    "rowLabel": "MMWR week (i.e., Sunday through Saturday) for each state or territory in the United States and the nation as a whole ",
+    "availableDisplayTypes": [
+      "table",
+      "fatrow",
+      "page"
+    ]
+  },
+  "owner": {
+    "id": "8jxp-krex",
+    "displayName": "NCEZID-DHQP",
+    "screenName": "NCEZID-DHQP",
+    "type": "interactive",
+    "flags": [
+      "acceptedEula",
+      "mayBeStoriesCoOwner"
+    ]
+  },
+  "query": {},
+  "rights": [
+    "read"
+  ],
+  "tableAuthor": {
+    "id": "8jxp-krex",
+    "displayName": "NCEZID-DHQP",
+    "screenName": "NCEZID-DHQP",
+    "type": "interactive",
+    "flags": [
+      "acceptedEula",
+      "mayBeStoriesCoOwner"
+    ]
+  },
+  "tags": [
+    "covid-19",
+    "influenza",
+    "respiratory syncytial virus",
+    "rsv",
+    "admissions",
+    "hospitalizations",
+    "coronavirus",
+    "respiratory"
+  ],
+  "flags": [
+    "default",
+    "ownerMayBeContacted",
+    "restorable",
+    "restorePossibleForType"
+  ]
+}

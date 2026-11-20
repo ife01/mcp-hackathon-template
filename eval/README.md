@@ -1,45 +1,59 @@
-# Evaluations (stub)
+# Evaluations
 
-This template does **not** include an evaluation harness — but building one is
-the single best way to know whether your MCP server actually works well.
+This directory contains the evaluation harness, frozen data snapshot, and results
+for the Respiratory Season Situational Awareness MCP Server.
 
-## Why evaluate?
+## Frozen eval snapshot
 
-The quality of an MCP server is **not** how many tools it has — it's how well an
-LLM with no other context can use those tools (their names, schemas, docstrings,
-and return shapes) to answer realistic, difficult questions. An eval harness
-measures exactly that and shows you *where* to fix things (tool schema, docstring,
-or system prompt).
+**as_of date: `2026-10-31`**
 
-## How to build one
+This is the fixed reference date for all deterministic evaluation cases. It was
+chosen as 2 weeks prior to the minimum latest-available date across all three data
+sources (all sources had data through `2026-11-14` as of Build 0.3 on 2026-11-20).
+Two weeks back ensures data has finalized across all reporting systems.
 
-Use the **`mcp-eval` skill** (available to the coding agent in this repo under
-`.agents/skills/mcp-eval/`). It walks you through a reusable
-[Arize Phoenix](https://docs.arize.com/phoenix) harness that:
+Frozen data slices in `eval/snapshot/`:
 
-1. Launches your MCP server over stdio and connects a LangChain agent to it.
-2. Feeds the agent a dataset of natural-language questions with known answers.
-3. Scores each answer with LLM-as-judge evaluators and logs traces to Phoenix.
+| File | Source | Jurisdiction |
+|---|---|---|
+| `nhsn_ga.json` | NHSN `vdzy-6i9v` | Georgia (GA) — 160 weeks up to 2026-10-31 |
+| `nhsn_ca.json` | NHSN `vdzy-6i9v` | California (CA) — 160 weeks |
+| `nhsn_oh.json` | NHSN `vdzy-6i9v` | Ohio (OH) — 160 weeks |
+| `nhsn_tx.json` | NHSN `vdzy-6i9v` | Texas (TX) — 160 weeks |
+| `nhsn_usa.json` | NHSN `vdzy-6i9v` | USA (national) — 160 weeks |
+| `nhsn_scan_national.json` | NHSN `vdzy-6i9v` | All jurisdictions — 13 weeks up to 2026-10-31 |
+| `nwss_georgia.json` | NWSS `atcp-73re` | Georgia sites — up to 2026-10-31 |
+| `nwss_california.json` | NWSS `atcp-73re` | California sites |
+| `nwss_ohio.json` | NWSS `atcp-73re` | Ohio sites |
+| `nwss_texas.json` | NWSS `atcp-73re` | Texas sites |
+| `nrevss_national.json` | NREVSS `seuz-s2cv` | National positivity — up to 2026-10-31 |
 
-The companion **`mcp-builder` skill** (`.agents/skills/mcp-builder/`) covers
-Phase 4 — writing the 10 gold questions (`evaluation.xml`) that become the
-harness's dataset.
-
-## Expected layout once built
-
-The `mcp-eval` skill produces an `eval/phoenix/` module roughly like:
+## Expected layout once built (Phase 4)
 
 ```
-eval/phoenix/
-├── agent.py            # <Server>Agent — launches your server over stdio
-├── create_dataset.py   # CLI: upload a CSV dataset to Phoenix
-├── run_experiment.py   # CLI: run agent + judges against a dataset
-├── datasets.yaml       # Dataset registry
-├── judges/             # LLM-as-judge evaluators (correctness, scope)
-├── prompts/            # Versioned agent system prompts
-└── datasets/<name>/    # evaluation.xml (source) + examples/<name>.csv
+eval/
+  cases.yaml              ← 25 pinned evaluation cases (5 per category)
+  ground_truth.py         ← independent ground truth from eval/snapshot/
+  run_eval.py             ← runs cases against wxO agent, saves transcripts
+  RESULTS.md              ← scored results (before/after improvement pass)
+  README.md               ← this file
+  snapshot/               ← frozen data slice (above)
+  transcripts/            ← per-case JSON transcripts from run_eval.py
 ```
 
-Add the eval-only dependencies to the `dev` dependency group in
-`pyproject.toml` when you scaffold it (the skill lists the exact versions), then
-`uv sync --group dev`.
+## Evaluation categories (25 cases)
+
+- **A. Direct lookup (5)** — single jurisdiction, single pathogen, current week
+- **B. Trend (5)** — is it increasing/decreasing? over what window?
+- **C. Season comparison (5)** — how does current compare to prior seasons?
+- **D. Multi-step/synthesis (5)** — multi-turn, cross-signal questions
+- **E. Robustness (5)** — bad input, missing data, edge cases
+
+## Scoring metrics
+
+- Tool selection % (correct tool chosen)
+- Argument % (correct parameters passed)
+- Answer correctness % (matches ground truth within tolerance)
+- Grounding % (every number in final answer appears in tool output)
+- Error handling % (structured error returned for bad inputs)
+- Latency (median / p95 seconds)

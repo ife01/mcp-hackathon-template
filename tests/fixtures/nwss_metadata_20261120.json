@@ -1,0 +1,1612 @@
+{
+  "id": "2ew6-ywp6",
+  "name": "NWSS Public SARS-CoV-2 Wastewater Metric Data",
+  "assetType": "dataset",
+  "attribution": "National Wastewater Surveillance System",
+  "averageRating": 0,
+  "category": "Public Health Surveillance",
+  "createdAt": 1638283548,
+  "description": "This dataset provides a complete time history of metrics calculated using SARS-CoV-2 concentrations in wastewater.     \n\nAs of September 12, 2025, this dataset is archived, and no new data will be added. Data will remain available for historical reference.  \nPlease view updated wastewater surveillance data for SARS-CoV-2 at https://data.cdc.gov/Public-Health-Surveillance/CDC-Wastewater-Data-for-SARS-CoV-2/j9g8-acpt/about_data",
+  "diciBackend": false,
+  "displayType": "table",
+  "downloadCount": 81431,
+  "hideFromCatalog": false,
+  "hideFromDataJson": false,
+  "locked": false,
+  "newBackend": true,
+  "numberOfComments": 0,
+  "oid": 38374131,
+  "provenance": "official",
+  "publicationAppendEnabled": false,
+  "publicationDate": 1649370889,
+  "publicationGroup": 18519943,
+  "publicationStage": "published",
+  "rowsUpdatedAt": 1786121078,
+  "rowsUpdatedBy": "nygt-u2xq",
+  "tableId": 18665728,
+  "totalTimesRated": 0,
+  "viewCount": 372902,
+  "viewLastModified": 1790122404,
+  "viewType": "tabular",
+  "approvals": [
+    {
+      "reviewedAt": 1642019908,
+      "reviewedAutomatically": true,
+      "state": "approved",
+      "submissionId": 4600139,
+      "submissionObject": "public_audience_request",
+      "submissionOutcome": "change_audience",
+      "submittedAt": 1642019908,
+      "targetAudience": "public",
+      "workflowId": 2100,
+      "submissionDetails": {
+        "permissionType": "READ"
+      },
+      "submissionOutcomeApplication": {
+        "endedAt": 1642019908,
+        "failureCount": 0,
+        "startedAt": 1642019908,
+        "status": "success"
+      },
+      "submitter": {
+        "id": "nygt-u2xq",
+        "displayName": "qih1@cdc.gov"
+      }
+    }
+  ],
+  "clientContext": {
+    "clientContextVariables": [],
+    "inheritedVariables": {}
+  },
+  "columns": [
+    {
+      "id": 558578729,
+      "name": "wwtp_jurisdiction",
+      "dataTypeName": "text",
+      "description": "State, DC, US territory, or Freely Associated State jurisdiction name (2-letter abbreviation) in which the wastewater treatment plant provided in 'wwtp_id' is located.",
+      "fieldName": "wwtp_jurisdiction",
+      "position": 1,
+      "renderTypeName": "text",
+      "tableColumnId": 140506781,
+      "cachedContents": {
+        "non_null": "837382",
+        "largest": "Wyoming",
+        "null": "0",
+        "top": [
+          {
+            "item": "Illinois",
+            "count": "99941"
+          },
+          {
+            "item": "Missouri",
+            "count": "91977"
+          },
+          {
+            "item": "Oregon",
+            "count": "59950"
+          },
+          {
+            "item": "Wisconsin",
+            "count": "50018"
+          },
+          {
+            "item": "New York",
+            "count": "48810"
+          },
+          {
+            "item": "Texas",
+            "count": "38399"
+          },
+          {
+            "item": "Minnesota",
+            "count": "35025"
+          },
+          {
+            "item": "West Virginia",
+            "count": "33398"
+          },
+          {
+            "item": "Ohio",
+            "count": "31914"
+          },
+          {
+            "item": "North Carolina",
+            "count": "30615"
+          },
+          {
+            "item": "New Jersey",
+            "count": "23016"
+          },
+          {
+            "item": "Georgia",
+            "count": "22369"
+          },
+          {
+            "item": "Washington",
+            "count": "19775"
+          },
+          {
+            "item": "Florida",
+            "count": "15953"
+          },
+          {
+            "item": "Pennsylvania",
+            "count": "15515"
+          },
+          {
+            "item": "Arizona",
+            "count": "15216"
+          },
+          {
+            "item": "Utah",
+            "count": "11988"
+          },
+          {
+            "item": "Kansas",
+            "count": "11972"
+          },
+          {
+            "item": "Michigan",
+            "count": "11830"
+          },
+          {
+            "item": "Colorado",
+            "count": "11187"
+          }
+        ],
+        "smallest": "Alabama",
+        "count": "837382",
+        "cardinality": "837382"
+      },
+      "format": {}
+    },
+    {
+      "id": 558578730,
+      "name": "wwtp_id",
+      "dataTypeName": "text",
+      "description": "A unique identifier for wastewater treatment plants. This is an arbitrary integer used to provide a unique, but anonymous identifier for a wastewater treatment plant. This identifier is consistent over time, such that the same plant retains the same ID regardless of the addition or subtraction of other plants from the data set.",
+      "fieldName": "wwtp_id",
+      "position": 2,
+      "renderTypeName": "text",
+      "tableColumnId": 140506782,
+      "cachedContents": {
+        "non_null": "837382",
+        "largest": "999",
+        "null": "0",
+        "top": [
+          {
+            "item": "675",
+            "count": "4523"
+          },
+          {
+            "item": "635",
+            "count": "3460"
+          },
+          {
+            "item": "2850",
+            "count": "2507"
+          },
+          {
+            "item": "788",
+            "count": "2085"
+          },
+          {
+            "item": "259",
+            "count": "1891"
+          },
+          {
+            "item": "826",
+            "count": "1891"
+          },
+          {
+            "item": "266",
+            "count": "1890"
+          },
+          {
+            "item": "270",
+            "count": "1890"
+          },
+          {
+            "item": "360",
+            "count": "1890"
+          },
+          {
+            "item": "264",
+            "count": "1890"
+          },
+          {
+            "item": "230",
+            "count": "1890"
+          },
+          {
+            "item": "267",
+            "count": "1890"
+          },
+          {
+            "item": "268",
+            "count": "1890"
+          },
+          {
+            "item": "192",
+            "count": "1890"
+          },
+          {
+            "item": "358",
+            "count": "1890"
+          },
+          {
+            "item": "190",
+            "count": "1890"
+          },
+          {
+            "item": "265",
+            "count": "1890"
+          },
+          {
+            "item": "195",
+            "count": "1890"
+          },
+          {
+            "item": "119",
+            "count": "1890"
+          },
+          {
+            "item": "191",
+            "count": "1890"
+          }
+        ],
+        "smallest": "1",
+        "count": "837382",
+        "cardinality": "837382"
+      },
+      "format": {}
+    },
+    {
+      "id": 558578731,
+      "name": "reporting_jurisdiction",
+      "dataTypeName": "text",
+      "description": "The CDC Epidemiology and Laboratory Capacity (ELC) jurisdiction, most frequently a state, reporting these data (2-letter abbreviation)",
+      "fieldName": "reporting_jurisdiction",
+      "position": 3,
+      "renderTypeName": "text",
+      "tableColumnId": 140506783,
+      "cachedContents": {
+        "non_null": "837382",
+        "largest": "Wyoming",
+        "null": "0",
+        "top": [
+          {
+            "item": "Illinois",
+            "count": "92401"
+          },
+          {
+            "item": "Missouri",
+            "count": "91977"
+          },
+          {
+            "item": "Oregon",
+            "count": "59950"
+          },
+          {
+            "item": "Wisconsin",
+            "count": "50018"
+          },
+          {
+            "item": "Texas",
+            "count": "37881"
+          },
+          {
+            "item": "New York",
+            "count": "35986"
+          },
+          {
+            "item": "Minnesota",
+            "count": "35025"
+          },
+          {
+            "item": "West Virginia",
+            "count": "33398"
+          },
+          {
+            "item": "Ohio",
+            "count": "31914"
+          },
+          {
+            "item": "North Carolina",
+            "count": "30015"
+          },
+          {
+            "item": "New Jersey",
+            "count": "23016"
+          },
+          {
+            "item": "Georgia",
+            "count": "22369"
+          },
+          {
+            "item": "Washington",
+            "count": "19775"
+          },
+          {
+            "item": "Florida",
+            "count": "15953"
+          },
+          {
+            "item": "Arizona",
+            "count": "15216"
+          },
+          {
+            "item": "New York City",
+            "count": "12824"
+          },
+          {
+            "item": "Pennsylvania",
+            "count": "12701"
+          },
+          {
+            "item": "Utah",
+            "count": "11988"
+          },
+          {
+            "item": "Kansas",
+            "count": "11972"
+          },
+          {
+            "item": "Michigan",
+            "count": "11830"
+          }
+        ],
+        "smallest": "Alabama",
+        "count": "837382",
+        "cardinality": "837382"
+      },
+      "format": {}
+    },
+    {
+      "id": 558578732,
+      "name": "sample_location",
+      "dataTypeName": "text",
+      "description": "Sample collection location in the wastewater system, whether at a wastewater treatment plant (or other community level treatment infrastructure such as community-scale septic) or upstream in the wastewater system.",
+      "fieldName": "sample_location",
+      "position": 4,
+      "renderTypeName": "text",
+      "tableColumnId": 140506784,
+      "cachedContents": {
+        "non_null": "837382",
+        "largest": "Treatment plant",
+        "null": "0",
+        "top": [
+          {
+            "item": "Treatment plant",
+            "count": "824735"
+          },
+          {
+            "item": "Before treatment plant",
+            "count": "12647"
+          }
+        ],
+        "smallest": "Before treatment plant",
+        "count": "837382",
+        "cardinality": "837382"
+      },
+      "format": {}
+    },
+    {
+      "id": 558578733,
+      "name": "sample_location_specify",
+      "dataTypeName": "text",
+      "description": "A unique identifier for \"upstream\" sample locations. Specifically, when 'sample_location' is \"upstream\", this field has a non-empty value, which provides a unique, but anonymous identifier for the upstream sample collection sites. This identifier is consistent over time, such that the same sample collection site retains the same ID regardless of the addition or subtraction of other sample collection sites from the data set.",
+      "fieldName": "sample_location_specify",
+      "position": 5,
+      "renderTypeName": "text",
+      "tableColumnId": 140506785,
+      "cachedContents": {
+        "non_null": "24888",
+        "largest": "91",
+        "null": "812494",
+        "top": [
+          {
+            "item": "459",
+            "count": "4202"
+          },
+          {
+            "item": "82",
+            "count": "1677"
+          },
+          {
+            "item": "90",
+            "count": "1455"
+          },
+          {
+            "item": "89",
+            "count": "1337"
+          },
+          {
+            "item": "19",
+            "count": "1300"
+          },
+          {
+            "item": "17",
+            "count": "1300"
+          },
+          {
+            "item": "16",
+            "count": "1300"
+          },
+          {
+            "item": "171",
+            "count": "1069"
+          },
+          {
+            "item": "489",
+            "count": "859"
+          },
+          {
+            "item": "490",
+            "count": "858"
+          },
+          {
+            "item": "491",
+            "count": "854"
+          },
+          {
+            "item": "458",
+            "count": "845"
+          },
+          {
+            "item": "553",
+            "count": "763"
+          },
+          {
+            "item": "721",
+            "count": "656"
+          },
+          {
+            "item": "457",
+            "count": "602"
+          },
+          {
+            "item": "454",
+            "count": "602"
+          },
+          {
+            "item": "456",
+            "count": "601"
+          },
+          {
+            "item": "455",
+            "count": "600"
+          },
+          {
+            "item": "709",
+            "count": "356"
+          },
+          {
+            "item": "707",
+            "count": "356"
+          }
+        ],
+        "smallest": "16",
+        "count": "837382",
+        "cardinality": "837382"
+      },
+      "format": {}
+    },
+    {
+      "id": 558578734,
+      "name": "key_plot_id",
+      "dataTypeName": "text",
+      "description": "A unique identifier for the geographic area served by this sampling site, called a sewershed. This is an underscore-separated concatenation of the fields 'wwtp_jurisdiction', 'wwtp_id', and, if 'sample_location' is \"upstream\", then also 'sample_location_specify', and sample_matrix.",
+      "fieldName": "key_plot_id",
+      "position": 6,
+      "renderTypeName": "text",
+      "tableColumnId": 140506786,
+      "cachedContents": {
+        "non_null": "837382",
+        "largest": "WWS_wv_2604_Treatment plant_primary sludge",
+        "null": "0",
+        "top": [
+          {
+            "item": "NWSS_mo_826_Treatment plant_raw wastewater",
+            "count": "1891"
+          },
+          {
+            "item": "NWSS_mo_259_Treatment plant_raw wastewater",
+            "count": "1891"
+          },
+          {
+            "item": "NWSS_mo_365_Treatment plant_raw wastewater",
+            "count": "1890"
+          },
+          {
+            "item": "NWSS_mo_359_Treatment plant_raw wastewater",
+            "count": "1890"
+          },
+          {
+            "item": "NWSS_mo_268_Treatment plant_raw wastewater",
+            "count": "1890"
+          },
+          {
+            "item": "NWSS_mo_358_Treatment plant_raw wastewater",
+            "count": "1890"
+          },
+          {
+            "item": "NWSS_mo_240_Treatment plant_raw wastewater",
+            "count": "1890"
+          },
+          {
+            "item": "NWSS_mo_190_Treatment plant_raw wastewater",
+            "count": "1890"
+          },
+          {
+            "item": "NWSS_mo_266_Treatment plant_raw wastewater",
+            "count": "1890"
+          },
+          {
+            "item": "NWSS_mo_230_Treatment plant_raw wastewater",
+            "count": "1890"
+          },
+          {
+            "item": "NWSS_mo_264_Treatment plant_raw wastewater",
+            "count": "1890"
+          },
+          {
+            "item": "NWSS_mo_265_Treatment plant_raw wastewater",
+            "count": "1890"
+          },
+          {
+            "item": "NWSS_mo_269_Treatment plant_raw wastewater",
+            "count": "1890"
+          },
+          {
+            "item": "NWSS_mo_270_Treatment plant_raw wastewater",
+            "count": "1890"
+          },
+          {
+            "item": "NWSS_mo_267_Treatment plant_raw wastewater",
+            "count": "1890"
+          },
+          {
+            "item": "NWSS_mo_119_Treatment plant_raw wastewater",
+            "count": "1890"
+          },
+          {
+            "item": "NWSS_mo_192_Treatment plant_raw wastewater",
+            "count": "1890"
+          },
+          {
+            "item": "NWSS_mo_191_Treatment plant_raw wastewater",
+            "count": "1890"
+          },
+          {
+            "item": "NWSS_mo_195_Treatment plant_raw wastewater",
+            "count": "1890"
+          },
+          {
+            "item": "NWSS_mo_360_Treatment plant_raw wastewater",
+            "count": "1890"
+          }
+        ],
+        "smallest": "CDC_VERILY_ak_1490_Treatment plant_raw wastewater",
+        "count": "837382",
+        "cardinality": "837382"
+      },
+      "format": {}
+    },
+    {
+      "id": 558578735,
+      "name": "county_names",
+      "dataTypeName": "text",
+      "description": "The county and county-equivalent names corresponding to the FIPS codes in 'county_fips'",
+      "fieldName": "county_names",
+      "position": 7,
+      "renderTypeName": "text",
+      "tableColumnId": 140506787,
+      "cachedContents": {
+        "non_null": "837382",
+        "largest": "Yuma",
+        "null": "0",
+        "top": [
+          {
+            "item": "Cook",
+            "count": "17954"
+          },
+          {
+            "item": "Washington",
+            "count": "15685"
+          },
+          {
+            "item": "Jefferson",
+            "count": "13304"
+          },
+          {
+            "item": "Yuma",
+            "count": "12488"
+          },
+          {
+            "item": "Du Page",
+            "count": "11781"
+          },
+          {
+            "item": "Marion",
+            "count": "10914"
+          },
+          {
+            "item": "Harris",
+            "count": "9771"
+          },
+          {
+            "item": "Jackson",
+            "count": "9737"
+          },
+          {
+            "item": "Fulton",
+            "count": "9651"
+          },
+          {
+            "item": "Johnson",
+            "count": "9629"
+          },
+          {
+            "item": "Suffolk",
+            "count": "8700"
+          },
+          {
+            "item": "Douglas",
+            "count": "7920"
+          },
+          {
+            "item": "Dallas",
+            "count": "7890"
+          },
+          {
+            "item": "Lincoln",
+            "count": "7534"
+          },
+          {
+            "item": "Nassau",
+            "count": "7210"
+          },
+          {
+            "item": "Saint Louis",
+            "count": "6916"
+          },
+          {
+            "item": "Orange",
+            "count": "6804"
+          },
+          {
+            "item": "Clark",
+            "count": "6481"
+          },
+          {
+            "item": "Cumberland",
+            "count": "6230"
+          },
+          {
+            "item": "Montgomery",
+            "count": "6160"
+          }
+        ],
+        "smallest": "Ada",
+        "count": "837382",
+        "cardinality": "837382"
+      },
+      "format": {}
+    },
+    {
+      "id": 558578736,
+      "name": "county_fips",
+      "dataTypeName": "text",
+      "description": "5-digit numeric FIPS codes of all counties and county equivalents served by this sampling site (i.e., served by this wastewater treatment plant or, if 'sample_location' is \"upstream\", then by this upstream location). Note that multiple sampling sites or treatment plants may serve a single county, and that a single sampling site or treatment plant may serve multiple counties. Counties listed may be entirely or only partly served by this sampling site.",
+      "fieldName": "county_fips",
+      "position": 8,
+      "renderTypeName": "text",
+      "tableColumnId": 140506788,
+      "cachedContents": {
+        "non_null": "837382",
+        "largest": "66010",
+        "null": "0",
+        "top": [
+          {
+            "item": "17031",
+            "count": "17954"
+          },
+          {
+            "item": "04027",
+            "count": "12488"
+          },
+          {
+            "item": "17043",
+            "count": "11781"
+          },
+          {
+            "item": "48201",
+            "count": "9771"
+          },
+          {
+            "item": "36103",
+            "count": "8700"
+          },
+          {
+            "item": "13121",
+            "count": "7811"
+          },
+          {
+            "item": "48113",
+            "count": "7611"
+          },
+          {
+            "item": "41067",
+            "count": "7328"
+          },
+          {
+            "item": "36059",
+            "count": "7210"
+          },
+          {
+            "item": "41047",
+            "count": "6945"
+          },
+          {
+            "item": "17111",
+            "count": "6049"
+          },
+          {
+            "item": "12095",
+            "count": "5986"
+          },
+          {
+            "item": "29189",
+            "count": "5670"
+          },
+          {
+            "item": "29159",
+            "count": "5670"
+          },
+          {
+            "item": "01073",
+            "count": "5595"
+          },
+          {
+            "item": "17097",
+            "count": "5080"
+          },
+          {
+            "item": "10005",
+            "count": "5078"
+          },
+          {
+            "item": "17163",
+            "count": "5012"
+          },
+          {
+            "item": "29047,29165",
+            "count": "4844"
+          },
+          {
+            "item": "37183",
+            "count": "4781"
+          }
+        ],
+        "smallest": "01003",
+        "count": "837382",
+        "cardinality": "837382"
+      },
+      "format": {}
+    },
+    {
+      "id": 558578737,
+      "name": "population_served",
+      "dataTypeName": "text",
+      "description": "Estimated number of persons served by this sampling site (i.e., served by this wastewater treatment plant or, if 'sample_location' is \"upstream\", then by this upstream location).",
+      "fieldName": "population_served",
+      "position": 9,
+      "renderTypeName": "text",
+      "tableColumnId": 140506789,
+      "cachedContents": {
+        "non_null": "837382",
+        "largest": "9975",
+        "null": "0",
+        "top": [
+          {
+            "item": "12000",
+            "count": "12241"
+          },
+          {
+            "item": "30000",
+            "count": "11074"
+          },
+          {
+            "item": "25000",
+            "count": "8476"
+          },
+          {
+            "item": "90000",
+            "count": "8419"
+          },
+          {
+            "item": "50000",
+            "count": "8398"
+          },
+          {
+            "item": "60000",
+            "count": "7565"
+          },
+          {
+            "item": "15000",
+            "count": "6542"
+          },
+          {
+            "item": "120000",
+            "count": "6242"
+          },
+          {
+            "item": "40000",
+            "count": "6131"
+          },
+          {
+            "item": "8000",
+            "count": "5820"
+          },
+          {
+            "item": "10000",
+            "count": "5802"
+          },
+          {
+            "item": "20000",
+            "count": "5519"
+          },
+          {
+            "item": "7000",
+            "count": "5291"
+          },
+          {
+            "item": "65000",
+            "count": "4988"
+          },
+          {
+            "item": "16000",
+            "count": "4827"
+          },
+          {
+            "item": "70000",
+            "count": "4614"
+          },
+          {
+            "item": "11000",
+            "count": "4543"
+          },
+          {
+            "item": "13000",
+            "count": "4316"
+          },
+          {
+            "item": "220000",
+            "count": "4294"
+          },
+          {
+            "item": "140000",
+            "count": "4293"
+          }
+        ],
+        "smallest": "1000",
+        "count": "837382",
+        "cardinality": "837382"
+      },
+      "format": {}
+    },
+    {
+      "id": 558578738,
+      "name": "date_start",
+      "dataTypeName": "text",
+      "description": "The start date of the interval over which the metric is calculated. Intervals are inclusive of start and end dates.",
+      "fieldName": "date_start",
+      "position": 10,
+      "renderTypeName": "text",
+      "tableColumnId": 140506790,
+      "cachedContents": {
+        "non_null": "837382",
+        "largest": "2025-08-24",
+        "null": "0",
+        "top": [
+          {
+            "item": "2025-08-18",
+            "count": "1187"
+          },
+          {
+            "item": "2025-08-14",
+            "count": "1187"
+          },
+          {
+            "item": "2025-08-23",
+            "count": "1187"
+          },
+          {
+            "item": "2025-08-20",
+            "count": "1187"
+          },
+          {
+            "item": "2025-08-17",
+            "count": "1187"
+          },
+          {
+            "item": "2025-08-15",
+            "count": "1187"
+          },
+          {
+            "item": "2025-08-19",
+            "count": "1187"
+          },
+          {
+            "item": "2025-08-22",
+            "count": "1187"
+          },
+          {
+            "item": "2025-08-24",
+            "count": "1187"
+          },
+          {
+            "item": "2025-08-21",
+            "count": "1187"
+          },
+          {
+            "item": "2025-08-12",
+            "count": "1187"
+          },
+          {
+            "item": "2025-08-16",
+            "count": "1187"
+          },
+          {
+            "item": "2025-08-13",
+            "count": "1187"
+          },
+          {
+            "item": "2025-08-11",
+            "count": "1186"
+          },
+          {
+            "item": "2025-08-10",
+            "count": "1186"
+          },
+          {
+            "item": "2025-08-07",
+            "count": "1186"
+          },
+          {
+            "item": "2025-08-05",
+            "count": "1186"
+          },
+          {
+            "item": "2025-08-06",
+            "count": "1186"
+          },
+          {
+            "item": "2025-08-08",
+            "count": "1186"
+          },
+          {
+            "item": "2025-08-02",
+            "count": "1186"
+          }
+        ],
+        "smallest": "2020-06-21",
+        "count": "837382",
+        "cardinality": "837382"
+      },
+      "format": {}
+    },
+    {
+      "id": 558578739,
+      "name": "date_end",
+      "dataTypeName": "text",
+      "description": "The end date of the interval over which metric is calculated. Intervals are inclusive of start and end dates.",
+      "fieldName": "date_end",
+      "position": 11,
+      "renderTypeName": "text",
+      "tableColumnId": 140506791,
+      "cachedContents": {
+        "non_null": "837382",
+        "largest": "2025-09-07",
+        "null": "0",
+        "top": [
+          {
+            "item": "2025-09-01",
+            "count": "1187"
+          },
+          {
+            "item": "2025-08-28",
+            "count": "1187"
+          },
+          {
+            "item": "2025-09-06",
+            "count": "1187"
+          },
+          {
+            "item": "2025-09-03",
+            "count": "1187"
+          },
+          {
+            "item": "2025-08-31",
+            "count": "1187"
+          },
+          {
+            "item": "2025-08-29",
+            "count": "1187"
+          },
+          {
+            "item": "2025-09-02",
+            "count": "1187"
+          },
+          {
+            "item": "2025-09-05",
+            "count": "1187"
+          },
+          {
+            "item": "2025-09-07",
+            "count": "1187"
+          },
+          {
+            "item": "2025-09-04",
+            "count": "1187"
+          },
+          {
+            "item": "2025-08-26",
+            "count": "1187"
+          },
+          {
+            "item": "2025-08-30",
+            "count": "1187"
+          },
+          {
+            "item": "2025-08-27",
+            "count": "1187"
+          },
+          {
+            "item": "2025-08-25",
+            "count": "1186"
+          },
+          {
+            "item": "2025-08-24",
+            "count": "1186"
+          },
+          {
+            "item": "2025-08-21",
+            "count": "1186"
+          },
+          {
+            "item": "2025-08-19",
+            "count": "1186"
+          },
+          {
+            "item": "2025-08-20",
+            "count": "1186"
+          },
+          {
+            "item": "2025-08-22",
+            "count": "1186"
+          },
+          {
+            "item": "2025-08-16",
+            "count": "1186"
+          }
+        ],
+        "smallest": "2020-07-05",
+        "count": "837382",
+        "cardinality": "837382"
+      },
+      "format": {}
+    },
+    {
+      "id": 558578740,
+      "name": "ptc_15d",
+      "dataTypeName": "text",
+      "description": "The percent change in SARS-CoV-2 RNA levels over the 15-day interval defined by 'date_start' and 'date_end'. Percent change is calculated as the modeled change over the interval, based on linear regression of log-transformed SARS-CoV-2 levels. SARS-CoV-2 RNA levels are wastewater concentrations that have been normalized for wastewater composition. ",
+      "fieldName": "ptc_15d",
+      "position": 12,
+      "renderTypeName": "text",
+      "tableColumnId": 140506792,
+      "cachedContents": {
+        "non_null": "768864",
+        "largest": "99974",
+        "null": "68518",
+        "top": [
+          {
+            "item": "-100",
+            "count": "11404"
+          },
+          {
+            "item": "-99",
+            "count": "8493"
+          },
+          {
+            "item": "0",
+            "count": "8266"
+          },
+          {
+            "item": "-98",
+            "count": "6340"
+          },
+          {
+            "item": "-4",
+            "count": "5966"
+          },
+          {
+            "item": "-5",
+            "count": "5899"
+          },
+          {
+            "item": "1",
+            "count": "5894"
+          },
+          {
+            "item": "-2",
+            "count": "5876"
+          },
+          {
+            "item": "-1",
+            "count": "5871"
+          },
+          {
+            "item": "-3",
+            "count": "5842"
+          },
+          {
+            "item": "-6",
+            "count": "5821"
+          },
+          {
+            "item": "3",
+            "count": "5688"
+          },
+          {
+            "item": "-97",
+            "count": "5649"
+          },
+          {
+            "item": "-7",
+            "count": "5496"
+          },
+          {
+            "item": "2",
+            "count": "5384"
+          },
+          {
+            "item": "-8",
+            "count": "5326"
+          },
+          {
+            "item": "4",
+            "count": "5280"
+          },
+          {
+            "item": "-9",
+            "count": "5200"
+          },
+          {
+            "item": "5",
+            "count": "5193"
+          },
+          {
+            "item": "6",
+            "count": "5054"
+          }
+        ],
+        "smallest": "0",
+        "count": "837382",
+        "cardinality": "837382"
+      },
+      "format": {}
+    },
+    {
+      "id": 558578741,
+      "name": "detect_prop_15d",
+      "dataTypeName": "text",
+      "description": "The proportion of tests with SARS-CoV-2 detected, meaning a cycle threshold (Ct) value <40 for RT-qPCR or at least 3 positive droplets/partitions for RT-ddPCR, by sewershed over the 15-day window defined by 'date_start' and \"date_end'. The detection proportion is the percent calculated by dividing the 15-day rolling sum of SARS-CoV-2 detections by the 15-day rolling sum of the number of tests for each sewershed and multiplying by 100.",
+      "fieldName": "detect_prop_15d",
+      "position": 13,
+      "renderTypeName": "text",
+      "tableColumnId": 140506793,
+      "cachedContents": {
+        "non_null": "790361",
+        "largest": "93",
+        "null": "47021",
+        "top": [
+          {
+            "item": "100",
+            "count": "616491"
+          },
+          {
+            "item": "0",
+            "count": "42060"
+          },
+          {
+            "item": "50",
+            "count": "37357"
+          },
+          {
+            "item": "75",
+            "count": "28694"
+          },
+          {
+            "item": "67",
+            "count": "12203"
+          },
+          {
+            "item": "25",
+            "count": "11739"
+          },
+          {
+            "item": "80",
+            "count": "10414"
+          },
+          {
+            "item": "33",
+            "count": "6470"
+          },
+          {
+            "item": "60",
+            "count": "5105"
+          },
+          {
+            "item": "40",
+            "count": "3701"
+          },
+          {
+            "item": "83",
+            "count": "3607"
+          },
+          {
+            "item": "20",
+            "count": "3251"
+          },
+          {
+            "item": "86",
+            "count": "2442"
+          },
+          {
+            "item": "71",
+            "count": "787"
+          },
+          {
+            "item": "88",
+            "count": "488"
+          },
+          {
+            "item": "89",
+            "count": "483"
+          },
+          {
+            "item": "57",
+            "count": "391"
+          },
+          {
+            "item": "92",
+            "count": "359"
+          },
+          {
+            "item": "91",
+            "count": "340"
+          },
+          {
+            "item": "90",
+            "count": "339"
+          }
+        ],
+        "smallest": "0",
+        "count": "837382",
+        "cardinality": "837382"
+      },
+      "format": {}
+    },
+    {
+      "id": 558578743,
+      "name": "percentile",
+      "dataTypeName": "text",
+      "description": "This metric shows whether SARS-CoV-2 virus levels at a site are currently higher or lower than past historical levels at the same site. 0% means levels are the lowest they have been at the site; 100% means levels are the highest they have been at the site. Public health officials watch for increasing levels of the virus in wastewater over time and use this data to help make public health decisions. ",
+      "fieldName": "percentile",
+      "position": 14,
+      "renderTypeName": "text",
+      "tableColumnId": 141710329,
+      "cachedContents": {
+        "non_null": "770431",
+        "largest": "999.0",
+        "null": "66951",
+        "top": [
+          {
+            "item": "37.0",
+            "count": "2676"
+          },
+          {
+            "item": "57.0",
+            "count": "2587"
+          },
+          {
+            "item": "43.0",
+            "count": "2585"
+          },
+          {
+            "item": "47.0",
+            "count": "2566"
+          },
+          {
+            "item": "65.0",
+            "count": "2552"
+          },
+          {
+            "item": "38.0",
+            "count": "2536"
+          },
+          {
+            "item": "30.0",
+            "count": "2530"
+          },
+          {
+            "item": "36.0",
+            "count": "2509"
+          },
+          {
+            "item": "24.0",
+            "count": "2508"
+          },
+          {
+            "item": "33.0",
+            "count": "2497"
+          },
+          {
+            "item": "46.0",
+            "count": "2496"
+          },
+          {
+            "item": "50.0",
+            "count": "2496"
+          },
+          {
+            "item": "21.0",
+            "count": "2492"
+          },
+          {
+            "item": "28.0",
+            "count": "2467"
+          },
+          {
+            "item": "35.0",
+            "count": "2462"
+          },
+          {
+            "item": "44.0",
+            "count": "2461"
+          },
+          {
+            "item": "31.0",
+            "count": "2456"
+          },
+          {
+            "item": "60.0",
+            "count": "2452"
+          },
+          {
+            "item": "25.0",
+            "count": "2446"
+          },
+          {
+            "item": "49.0",
+            "count": "2446"
+          }
+        ],
+        "smallest": "0.0",
+        "count": "837382",
+        "cardinality": "837382"
+      },
+      "format": {}
+    },
+    {
+      "id": 558578744,
+      "name": "sampling_prior",
+      "dataTypeName": "text",
+      "description": "Indicates whether the site was collecting wastewater samples before or on December 1, 2021.",
+      "fieldName": "sampling_prior",
+      "position": 15,
+      "renderTypeName": "text",
+      "tableColumnId": 141710330,
+      "cachedContents": {
+        "non_null": "837382",
+        "largest": "yes",
+        "null": "0",
+        "top": [
+          {
+            "item": "no",
+            "count": "667785"
+          },
+          {
+            "item": "yes",
+            "count": "169597"
+          }
+        ],
+        "smallest": "no",
+        "count": "837382",
+        "cardinality": "837382"
+      },
+      "format": {}
+    },
+    {
+      "id": 558578745,
+      "name": "first_sample_date",
+      "dataTypeName": "text",
+      "description": "The first date samples were collected at a site.",
+      "fieldName": "first_sample_date",
+      "position": 16,
+      "renderTypeName": "text",
+      "tableColumnId": 141710331,
+      "cachedContents": {
+        "non_null": "837382",
+        "largest": "2025-08-26",
+        "null": "0",
+        "top": [
+          {
+            "item": "2020-07-06",
+            "count": "51030"
+          },
+          {
+            "item": "2022-02-14",
+            "count": "36456"
+          },
+          {
+            "item": "2024-03-19",
+            "count": "26362"
+          },
+          {
+            "item": "2022-01-31",
+            "count": "21056"
+          },
+          {
+            "item": "2022-04-12",
+            "count": "17430"
+          },
+          {
+            "item": "2022-04-11",
+            "count": "14952"
+          },
+          {
+            "item": "2022-02-15",
+            "count": "14311"
+          },
+          {
+            "item": "2023-03-07",
+            "count": "12824"
+          },
+          {
+            "item": "2021-02-04",
+            "count": "11739"
+          },
+          {
+            "item": "2020-09-02",
+            "count": "9160"
+          },
+          {
+            "item": "2022-02-13",
+            "count": "9121"
+          },
+          {
+            "item": "2023-11-27",
+            "count": "9114"
+          },
+          {
+            "item": "2024-11-13",
+            "count": "8372"
+          },
+          {
+            "item": "2022-01-27",
+            "count": "7920"
+          },
+          {
+            "item": "2022-02-16",
+            "count": "7800"
+          },
+          {
+            "item": "2020-07-07",
+            "count": "7556"
+          },
+          {
+            "item": "2024-03-20",
+            "count": "7518"
+          },
+          {
+            "item": "2023-08-21",
+            "count": "7490"
+          },
+          {
+            "item": "2024-03-18",
+            "count": "7007"
+          },
+          {
+            "item": "2024-06-27",
+            "count": "6570"
+          }
+        ],
+        "smallest": "2020-07-05",
+        "count": "837382",
+        "cardinality": "837382"
+      },
+      "format": {}
+    }
+  ],
+  "grants": [
+    {
+      "inherited": false,
+      "type": "viewer",
+      "flags": [
+        "public"
+      ]
+    }
+  ],
+  "metadata": {
+    "custom_fields": {
+      "Data Quality": {
+        "Geographic Unit of Analysis": "Sampling location"
+      },
+      "Common Core": {
+        "Contact Email": "nwss@cdc.gov",
+        "Homepage": "https://www.cdc.gov/nwss/index.html",
+        "Language": "English",
+        "Contact Name": "National Wastewater Surveillance System",
+        "Update Frequency": "Weekly",
+        "Program Code": "009:028",
+        "Bureau Code": "009:20",
+        "Public Access Level": "public"
+      },
+      "Common Core 3": {
+        "Contact Email": "nwss@cdc.gov",
+        "Language": "English",
+        "Contact Name": "National Wastewater Surveillance System",
+        "Update Frequency": "Weekly",
+        "Program Code": "009:028",
+        "Restriction Status": "public",
+        "Bureau Code": "009:20",
+        "Public Access Level": "public"
+      }
+    },
+    "rowLabel": "Sampling location over a 15-day period",
+    "availableDisplayTypes": [
+      "table",
+      "fatrow",
+      "page"
+    ]
+  },
+  "owner": {
+    "id": "mt3r-qr2b",
+    "displayName": "NWSS",
+    "screenName": "NWSS",
+    "type": "interactive",
+    "flags": [
+      "acceptedEula",
+      "mayBeStoriesCoOwner"
+    ]
+  },
+  "query": {},
+  "rights": [
+    "read"
+  ],
+  "tableAuthor": {
+    "id": "mt3r-qr2b",
+    "displayName": "NWSS",
+    "screenName": "NWSS",
+    "type": "interactive",
+    "flags": [
+      "acceptedEula",
+      "mayBeStoriesCoOwner"
+    ]
+  },
+  "tags": [
+    "wastewater",
+    "sars-cov-2",
+    "covid19"
+  ],
+  "flags": [
+    "default",
+    "ownerMayBeContacted",
+    "restorable",
+    "restorePossibleForType"
+  ]
+}

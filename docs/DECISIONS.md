@@ -51,3 +51,62 @@ public `/mcp` URL and matches the hackathon judging setup. Local MCP toolkit (st
 inside Orchestrate) is the fallback if Code Engine credentials are unavailable during
 the weekend. The local toolkit is lowest overhead and uses the same server code
 unchanged (no transport change needed in `server.py`).
+
+## 2026-11-20 — Build 0.3: NREVSS dataset ID retired; replacement selected
+
+**What changed:** The plan listed `j8mb-3ugh` as the NREVSS dataset ID (marked
+`verify`). It returns HTTP 404 as of 2026-11-20.
+
+**Replacement datasets (both confirmed live):**
+- **`seuz-s2cv`** — "Percent of Tests Positive for Viral Respiratory Pathogens" —
+  national-only, all 3 pathogens (Influenza, COVID-19, RSV), updated 2026-11-20.
+  **Primary NREVSS source** for test positivity.
+- **`rgnm-fkqb`** — "NREVSS NAAT positivity multi-pathogen" — HHS region + national,
+  SARS-COV-2 and RSV only (no influenza). State-level rows exist in schema but returned
+  empty for GA/CA/OH/TX during recon. **Used as HHS-region fallback for RSV/COVID only.**
+
+**Impact:** `seuz-s2cv` is national-only. The NREVSS adapter will return
+`geography_level="national"` for all jurisdictions and include caveat
+`"Test positivity data is only available at the national level from this source"`.
+This matches the plan's documented fallback: `NREVSS has no state-level data → use
+state's HHS region (or national)`.
+
+---
+
+## 2026-11-20 — Build 0.3: NWSS dataset selection
+
+**What changed:** The plan listed `2ew6-ywp6` (NWSS Public SARS-CoV-2 Wastewater
+Metric Data) as the NWSS source. This dataset is COVID-only (site-level, 2-week
+rolling metrics). Three separate pathogen datasets also exist (`ymmh-divb` flu,
+`45cq-cw4i` RSV), but all are raw sample-level, not aggregated.
+
+**Decision:** Use **`atcp-73re`** — "CDC Wastewater Viral Activity Level for
+SARS-CoV-2, Influenza A and RSV" — as the primary NWSS source. It covers all 3
+pathogens in one dataset, provides the official `site_wval_category` (Very Low →
+Very High), is updated 2026-11-20, and covers 53 state/territory jurisdictions.
+It is site-level (one row per site per pathogen per week); the adapter aggregates
+to state level by computing median `site_wval` across sites.
+
+**Puerto Rico**: zero rows in `atcp-73re` — no wastewater surveillance sites.
+Status → `"insufficient_coverage"`.
+
+---
+
+## 2026-11-20 — Build 0.3: NHSN counts vs. rates decision
+
+**Decision:** Use **published rates and official levels** as the primary signal:
+- `totalconfflunewadmper100k` / `totalconfc19newadmper100k` / `totalconfrsvnewadmper100k`
+- `totalconfflunewadmper100klevel` / `totalconfc19newadmper100klevel` / `totalconfrsvnewadmper100klevel`
+
+Raw counts (`totalconfflunewadm` etc.) are retained in the data but used only for
+the small-number guard in trend analytics (< 10 admissions average).
+
+---
+
+## 2026-11-20 — Build 0.3: Eval as_of date set to 2026-10-31
+
+**Decision:** Eval snapshot frozen at **`as_of=2026-10-31`** — 2 weeks prior to
+the minimum latest-available date across all three sources (all had data through
+2026-11-14 as of reconnaissance on 2026-11-20). Two-week buffer ensures data
+finalization across all reporting systems.
+
