@@ -32,15 +32,23 @@ API on 2026-11-20 (Build 0.3). Every field referenced in source adapters appears
 | `totalconfflunewadmper100klevel` | Official CDC level for flu (Very Low/Low/Medium/High/Very High) | level |
 | `totalconfc19newadmper100klevel` | Official CDC level for COVID-19 | level |
 | `totalconfrsvnewadmper100klevel` | Official CDC level for RSV | level |
+| `totalconfc19newadmhosprep` | Hospitals reporting COVID-19 (count) | count |
 | `totalconfflunewadmhosprep` | Hospitals reporting flu (count) | count |
+| `totalconfrsvnewadmhosprep` | Hospitals reporting RSV (count) | count |
+| `totalconfc19newadmperchosprep` | Hospitals reporting COVID-19 (%) | percent |
 | `totalconfflunewadmperchosprep` | Hospitals reporting flu (%) | percent |
+| `totalconfrsvnewadmperchosprep` | Hospitals reporting RSV (%) | percent |
 
 ### Decisions
-- **Use published rates and levels** (`per100k` + `per100klevel`) as the primary signal,
-  not raw counts. Counts are retained for small-number guards in trend analytics.
+- **Use published rates and official levels** (`per100k` + `per100klevel`) as the primary
+  signal for `vdzy-6i9v`, not raw counts. Counts are retained for small-number guards in
+  trend analytics.
 - National jurisdiction code is `"USA"` (not `"US"` or `"National"`).
 - Puerto Rico code is `"PR"`.
-- Coverage column (`totalconfflunewadmhosprep`) reflects hospitals reporting that week.
+- **All 3 pathogens have parallel `hosprep` columns** (c19, flu, rsv — confirmed from
+  live data). All three are identical per row (same hospital count reports all pathogens).
+  The adapter should attach the flu `hosprep` count as the coverage indicator since it
+  is the most historically consistent; note in provenance if needed.
 - **NHSN reporting regime changed in 2024** (voluntary → mandatory reporting).
   Season comparisons must exclude pre-2024 seasons or note the regime change.
 
@@ -67,7 +75,7 @@ API on 2026-11-20 (Build 0.3). Every field referenced in source adapters appears
 | `site` | Site identifier (`"ID:NNN"`) | — |
 | `population_served` | Population served by this site | count |
 | `source` | Data source (e.g. `"State_Territory"`, `"WastewaterSCAN"`, `"CDC_Verily"`) | — |
-| `site_wval` | Viral activity level value (1–5 scale equivalent) | wval |
+| `site_wval` | Viral activity level numeric value (CDC-assigned; not a simple 1–5 scale) | wval |
 | `site_wval_category` | Official CDC category (Very Low / Low / Medium / High / Very High) | level |
 | `pathogen_target` | One of `"Influenza A virus"`, `"SARS-CoV-2"`, `"RSV"` | — |
 | `date_included_in_wval` | Date site was included in WVAL calculation | ISO date |
@@ -77,6 +85,15 @@ API on 2026-11-20 (Build 0.3). Every field referenced in source adapters appears
 - **This dataset is site-level** (one row per site per pathogen per week). Adapters
   aggregate to state level by computing median `site_wval` across all sites with
   data for that week, with `coverage={"n_sites": k}`.
+- **`site_wval_category` thresholds are CDC-assigned per site, not derivable from
+  `site_wval` alone.** Observed ranges from fixture data confirm the categories overlap
+  numerically (e.g., Very Low max=2.59, Low min=1.71 — same numeric range). The adapter
+  must use the `site_wval_category` column directly from the source data; it must NOT
+  attempt to recompute or infer categories from the numeric `site_wval`. When aggregating
+  to state level, use the **modal category** across reporting sites as `official_level`.
+  Observed ranges (from GA + CA fixtures, 2026-11-20):
+  Very Low ≈ 0.15–2.59 | Low ≈ 1.71–5.46 | High ≈ 5.53–15.40 | Very High ≈ 8.62–170.15
+  (Medium category not observed in fixture data — may appear during peak season.)
 - **Influenza** = `pathogen_target='Influenza A virus'` (influenza A only; note in provenance).
 - **COVID-19** = `pathogen_target='SARS-CoV-2'`
 - **RSV** = `pathogen_target='RSV'`
@@ -221,7 +238,7 @@ NHSN jurisdiction codes verified from live data (Build 0.3):
 | `WY` | Wyoming | 8 |
 | `PR` | Puerto Rico | 2 |
 | `VI` | U.S. Virgin Islands | 2 |
-| `GU` | Guam | — |
+| `GU` | Guam | 9 |
 
 NWSS `state_territory` uses full English names (title case). NREVSS `rgnm-fkqb` uses
 `"Region N"` format for HHS regions.

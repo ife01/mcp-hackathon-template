@@ -92,14 +92,35 @@ Status → `"insufficient_coverage"`.
 
 ---
 
-## 2026-11-20 — Build 0.3: NHSN counts vs. rates decision
+## 2026-11-20 — Build 0.3: NHSN counts vs. rates decision (vdzy-6i9v rate/level)
 
-**Decision:** Use **published rates and official levels** as the primary signal:
+**Decision:** Use **published rates and official levels** from `vdzy-6i9v` as the primary signal:
 - `totalconfflunewadmper100k` / `totalconfc19newadmper100k` / `totalconfrsvnewadmper100k`
 - `totalconfflunewadmper100klevel` / `totalconfc19newadmper100klevel` / `totalconfrsvnewadmper100klevel`
 
 Raw counts (`totalconfflunewadm` etc.) are retained in the data but used only for
 the small-number guard in trend analytics (< 10 admissions average).
+
+All 3 pathogens have parallel `hosprep` columns (`totalconfc19newadmhosprep`,
+`totalconfflunewadmhosprep`, `totalconfrsvnewadmhosprep`) — confirmed from live data.
+Values are identical per row (one hospital reporting count per week regardless of pathogen).
+The adapter attaches `totalconfflunewadmhosprep` as the coverage indicator.
+
+---
+
+## 2026-11-20 — Build 0.3: NWSS site_wval_category aggregation strategy
+
+**Decision:** `site_wval_category` (Very Low / Low / Medium / High / Very High) is
+CDC-assigned per site and cannot be reliably derived from the numeric `site_wval`
+value — fixture data shows overlapping numeric ranges between adjacent categories.
+
+The NWSS adapter must:
+1. Use `site_wval_category` **directly from source data** (never recompute from wval).
+2. Aggregate to state level using **modal category** across reporting sites for `official_level`.
+3. Compute **median `site_wval`** as the numeric value for trend analytics.
+
+Observed numeric ranges (GA + CA fixtures): Very Low ≈ 0.15–2.59, Low ≈ 1.71–5.46,
+High ≈ 5.53–15.40, Very High ≈ 8.62–170.15. Medium not observed — may appear at peak.
 
 ---
 
