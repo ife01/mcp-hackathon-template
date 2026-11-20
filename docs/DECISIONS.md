@@ -36,3 +36,18 @@ has not yet been completed.
 **Decision:** Proceeding to Build 0.2. wxO integration will be completed in Build 3.5
 (manual walkthrough) once domain tools are implemented. The 🛑 Human checkpoint for wxO
 access remains open.
+
+## 2026-11-20 — Build 0.2: Package layout mapping and wxO transport choice
+
+**Layout mapping:** `src/example_server/` will be renamed to `src/resp_mcp/` in
+Build 0.4. `app.py` becomes `server.py` (per the plan's architecture). `models.py`
+splits into `models/common.py` and `models/tool_io.py`. `utils.py` is replaced by
+the hardened `clients/socrata.py`. All other submodule paths map 1:1 (see
+docs/NOTES_TEMPLATE.md §2 for the full table).
+
+**wxO transport choice:** Streamable HTTP (remote MCP toolkit via IBM Code Engine or
+prebuilt image) is the target for the Phase 5 container demo — it gives wxO a stable
+public `/mcp` URL and matches the hackathon judging setup. Local MCP toolkit (stdio
+inside Orchestrate) is the fallback if Code Engine credentials are unavailable during
+the weekend. The local toolkit is lowest overhead and uses the same server code
+unchanged (no transport change needed in `server.py`).
