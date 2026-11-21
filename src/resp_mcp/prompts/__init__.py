@@ -1,17 +1,20 @@
 """Prompts sub-package — reusable conversation starters.
 
-Each prompt module exposes a register(mcp) function. Add imports here as
-prompts are implemented in Phase 3.
+Two prompts are registered:
+  weekly_respiratory_briefing(jurisdiction, audience)
+  regional_hotspot_review(pathogen, hhs_region)
 """
 
 from __future__ import annotations
 
 from fastmcp import FastMCP
 
+from resp_mcp.prompts import briefing
+
 
 def register_prompts(mcp: FastMCP) -> None:
-    """Register all prompts with the MCP server. (Phase 3 — currently empty.)"""
-    pass
+    """Register both prompts with the MCP server."""
+    briefing.register(mcp)
 
 
 __all__ = ["register_prompts"]

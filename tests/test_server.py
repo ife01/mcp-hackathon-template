@@ -63,3 +63,26 @@ async def test_four_tools_registered():
         "find_jurisdictions_with_rising_activity",
     }
     assert set(names) == expected, f"Unexpected tools: {set(names) ^ expected}"
+
+
+@pytest.mark.asyncio
+async def test_two_prompts_registered():
+    """Phase 3 — server must have both prompts registered."""
+    prompts = await mcp.list_prompts()
+    names = {p.name for p in prompts}
+    assert names == {
+        "weekly_respiratory_briefing",
+        "regional_hotspot_review",
+    }
+
+
+@pytest.mark.asyncio
+async def test_three_resources_registered():
+    """Phase 3 — server must have all three resources registered."""
+    resources = await mcp.list_resources()
+    uris = {str(r.uri) for r in resources}
+    assert uris == {
+        "resp://sources",
+        "resp://methods",
+        "resp://jurisdictions",
+    }
