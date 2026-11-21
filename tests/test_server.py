@@ -51,8 +51,15 @@ def test_routes_register_without_error():
 
 
 @pytest.mark.asyncio
-async def test_zero_tools_registered():
-    """Phase 0 skeleton — server must start with zero tools registered."""
+async def test_four_tools_registered():
+    """Phase 3 — server must have all four tools registered."""
     tools = await mcp.list_tools()
     names = [t.name for t in tools]
-    assert tools == [], f"Expected no tools in skeleton, found: {names}"
+    assert len(tools) == 4, f"Expected 4 tools, found: {names}"
+    expected = {
+        "get_respiratory_snapshot",
+        "assess_trend",
+        "compare_to_prior_seasons",
+        "find_jurisdictions_with_rising_activity",
+    }
+    assert set(names) == expected, f"Unexpected tools: {set(names) ^ expected}"
