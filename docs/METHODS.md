@@ -57,7 +57,34 @@ TrendResult(
 
 ## 3. Cross-Signal Concordance (`analytics/concordance.py`)
 
-*Documented in Build 2.3.*
+### Patterns
+
+| Pattern | Condition |
+|---------|-----------|
+| `concordant_increase` | All usable signals increasing |
+| `concordant_decrease` | All usable signals decreasing |
+| `stable` | All usable signals stable |
+| `early_warning` | ≥1 signal increasing, rest stable, none decreasing |
+| `mixed` | Mix of increasing/decreasing, or decreasing+stable |
+| `insufficient_data` | No usable signals (all insufficient_data) |
+
+Signals with `direction=insufficient_data` are excluded from pattern classification but noted in the explanation.
+
+### Lag Guard
+
+If `max(latest_week_ending) - min(latest_week_ending) > 14 days` across usable signals, `temporal_alignment_note` is set and the explanation is qualified with "interpret concordance with caution."
+
+---
+
+## 4. Deterministic Narrative (`analytics/narrative.py`)
+
+Builds 2–4 plain-English sentences from templates:
+1. Current level (with CDC official level if available)
+2. Trend direction (from Build 2.1 heuristic, with disclaimer)
+3. Season comparison (rank vs. prior seasons, % of prior peak)
+4. Concordance summary (only when ≥2 signals available)
+
+All numeric values are rounded to 1 decimal place. No LLM is used.
 
 ---
 
