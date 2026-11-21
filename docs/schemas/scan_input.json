@@ -1,0 +1,92 @@
+{
+  "$defs": {
+    "Pathogen": {
+      "description": "The three respiratory pathogens tracked by this server.",
+      "enum": [
+        "influenza",
+        "covid19",
+        "rsv"
+      ],
+      "title": "Pathogen",
+      "type": "string"
+    },
+    "Signal": {
+      "description": "The three surveillance signal types available.",
+      "enum": [
+        "hospital_admissions",
+        "wastewater",
+        "test_positivity"
+      ],
+      "title": "Signal",
+      "type": "string"
+    }
+  },
+  "description": "Input for find_jurisdictions_with_rising_activity.\n\nScans all jurisdictions for a pathogen/signal and returns those with a\nrising trend, optionally filtered to an HHS region.",
+  "properties": {
+    "pathogen": {
+      "$ref": "#/$defs/Pathogen",
+      "description": "Respiratory pathogen: 'influenza', 'covid19', or 'rsv'. Aliases: 'flu' \u2192 influenza, 'covid'/'sars-cov-2' \u2192 covid19."
+    },
+    "signal": {
+      "$ref": "#/$defs/Signal",
+      "description": "Surveillance signal: 'hospital_admissions' (NHSN), 'wastewater' (NWSS), or 'test_positivity' (NREVSS)."
+    },
+    "hhs_region": {
+      "anyOf": [
+        {
+          "maximum": 10,
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Filter to a specific HHS region (1\u201310). Omit to scan all 50 states + DC.",
+      "title": "Hhs Region"
+    },
+    "min_level": {
+      "anyOf": [
+        {
+          "maxLength": 16,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Minimum CDC official level to include (Very Low | Low | Medium | High | Very High). Applies only to hospital_admissions signal.",
+      "title": "Min Level"
+    },
+    "limit": {
+      "default": 10,
+      "description": "Maximum number of jurisdictions to return (1\u201356).",
+      "maximum": 56,
+      "minimum": 1,
+      "title": "Limit",
+      "type": "integer"
+    },
+    "as_of": {
+      "anyOf": [
+        {
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "ISO date string (YYYY-MM-DD) to restrict analysis to data on or before this date. Omit to use the most recent available data. Useful for reproducible demos and evaluation.",
+      "title": "As Of"
+    }
+  },
+  "required": [
+    "pathogen",
+    "signal"
+  ],
+  "title": "ScanInput",
+  "type": "object"
+}

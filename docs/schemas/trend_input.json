@@ -1,0 +1,71 @@
+{
+  "$defs": {
+    "Pathogen": {
+      "description": "The three respiratory pathogens tracked by this server.",
+      "enum": [
+        "influenza",
+        "covid19",
+        "rsv"
+      ],
+      "title": "Pathogen",
+      "type": "string"
+    },
+    "Signal": {
+      "description": "The three surveillance signal types available.",
+      "enum": [
+        "hospital_admissions",
+        "wastewater",
+        "test_positivity"
+      ],
+      "title": "Signal",
+      "type": "string"
+    }
+  },
+  "description": "Input for assess_trend.\n\nReturns a time series and heuristic trend classification for one\njurisdiction / pathogen / signal combination.",
+  "properties": {
+    "jurisdiction": {
+      "description": "US state code (e.g. 'GA'), territory (e.g. 'PR'), or 'USA'/'national'. Case-insensitive; common aliases accepted.",
+      "maxLength": 64,
+      "minLength": 1,
+      "title": "Jurisdiction",
+      "type": "string"
+    },
+    "pathogen": {
+      "$ref": "#/$defs/Pathogen",
+      "description": "Respiratory pathogen: 'influenza', 'covid19', or 'rsv'. Aliases: 'flu' \u2192 influenza, 'covid'/'sars-cov-2' \u2192 covid19."
+    },
+    "signal": {
+      "$ref": "#/$defs/Signal",
+      "description": "Surveillance signal: 'hospital_admissions' (NHSN), 'wastewater' (NWSS), or 'test_positivity' (NREVSS)."
+    },
+    "lookback_weeks": {
+      "default": 8,
+      "description": "Number of weeks of history to retrieve and display (4\u201352). Trend uses the most recent 4 of these weeks.",
+      "maximum": 52,
+      "minimum": 4,
+      "title": "Lookback Weeks",
+      "type": "integer"
+    },
+    "as_of": {
+      "anyOf": [
+        {
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "ISO date string (YYYY-MM-DD) to restrict analysis to data on or before this date. Omit to use the most recent available data. Useful for reproducible demos and evaluation.",
+      "title": "As Of"
+    }
+  },
+  "required": [
+    "jurisdiction",
+    "pathogen",
+    "signal"
+  ],
+  "title": "TrendInput",
+  "type": "object"
+}

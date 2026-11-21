@@ -1,0 +1,401 @@
+{
+  "$defs": {
+    "Pathogen": {
+      "description": "The three respiratory pathogens tracked by this server.",
+      "enum": [
+        "influenza",
+        "covid19",
+        "rsv"
+      ],
+      "title": "Pathogen",
+      "type": "string"
+    },
+    "PathogenSnapshot": {
+      "description": "All three signal readings for one pathogen within a snapshot.",
+      "properties": {
+        "pathogen": {
+          "$ref": "#/$defs/Pathogen"
+        },
+        "signals": {
+          "items": {
+            "$ref": "#/$defs/SignalReading"
+          },
+          "title": "Signals",
+          "type": "array"
+        },
+        "concordance_pattern": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cross-signal concordance pattern for this pathogen (concordant_increase | stable | early_warning | mixed | \u2026).",
+          "title": "Concordance Pattern"
+        },
+        "concordance_note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Concordance Note"
+        }
+      },
+      "required": [
+        "pathogen",
+        "signals"
+      ],
+      "title": "PathogenSnapshot",
+      "type": "object"
+    },
+    "Provenance": {
+      "description": "Data lineage for a single signal/series.\n\nAttached once per series (not per row) to keep tool outputs compact.",
+      "properties": {
+        "dataset_id": {
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "dataset_name": {
+          "title": "Dataset Name",
+          "type": "string"
+        },
+        "url": {
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "latest_week_ending": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Latest Week Ending"
+        },
+        "retrieved_at": {
+          "format": "date-time",
+          "title": "Retrieved At",
+          "type": "string"
+        },
+        "source_last_updated": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Last Updated"
+        },
+        "geography_level": {
+          "enum": [
+            "national",
+            "state",
+            "hhs_region",
+            "site_aggregate"
+          ],
+          "title": "Geography Level",
+          "type": "string"
+        },
+        "notes": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Notes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "dataset_id",
+        "dataset_name",
+        "url",
+        "latest_week_ending",
+        "retrieved_at",
+        "geography_level"
+      ],
+      "title": "Provenance",
+      "type": "object"
+    },
+    "Signal": {
+      "description": "The three surveillance signal types available.",
+      "enum": [
+        "hospital_admissions",
+        "wastewater",
+        "test_positivity"
+      ],
+      "title": "Signal",
+      "type": "string"
+    },
+    "SignalReading": {
+      "description": "Latest reading for one signal within a snapshot.",
+      "properties": {
+        "signal": {
+          "$ref": "#/$defs/Signal"
+        },
+        "status": {
+          "default": "ok",
+          "enum": [
+            "ok",
+            "unavailable",
+            "insufficient_coverage"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "latest": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/WeeklyObservation"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "trend": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TrendSummary"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "provenance": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Provenance"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Populated when status != ok (e.g. error or caveat text).",
+          "title": "Message"
+        }
+      },
+      "required": [
+        "signal"
+      ],
+      "title": "SignalReading",
+      "type": "object"
+    },
+    "TrendSummary": {
+      "description": "Serialisable version of TrendResult for tool outputs.",
+      "properties": {
+        "direction": {
+          "description": "increasing | stable | decreasing | insufficient_data",
+          "title": "Direction",
+          "type": "string"
+        },
+        "pct_change": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Relative change as a decimal (0.15 = 15%). None when unavailable.",
+          "title": "Pct Change"
+        },
+        "abs_change": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Absolute change in the signal's native unit.",
+          "title": "Abs Change"
+        },
+        "window_weeks": {
+          "description": "Number of non-null weeks used in the calculation.",
+          "title": "Window Weeks",
+          "type": "integer"
+        },
+        "method": {
+          "description": "Method identifier (e.g. '2w_vs_prior_2w').",
+          "title": "Method",
+          "type": "string"
+        },
+        "basis": {
+          "description": "server_heuristic \u2014 NOT an official CDC classification. Use official_level in WeeklyObservation for authoritative CDC levels.",
+          "title": "Basis",
+          "type": "string"
+        }
+      },
+      "required": [
+        "direction",
+        "window_weeks",
+        "method",
+        "basis"
+      ],
+      "title": "TrendSummary",
+      "type": "object"
+    },
+    "WeeklyObservation": {
+      "description": "A single weekly data point for a jurisdiction/pathogen/signal combination.\n\nProvenance is NOT embedded here \u2014 it lives on the parent container.",
+      "properties": {
+        "jurisdiction": {
+          "title": "Jurisdiction",
+          "type": "string"
+        },
+        "week_ending": {
+          "format": "date",
+          "title": "Week Ending",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        },
+        "unit": {
+          "enum": [
+            "admissions_per_100k",
+            "admissions_count",
+            "percent_positive",
+            "wval"
+          ],
+          "title": "Unit",
+          "type": "string"
+        },
+        "official_level": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Official Level"
+        },
+        "coverage": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ]
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Coverage"
+        }
+      },
+      "required": [
+        "jurisdiction",
+        "week_ending",
+        "value",
+        "unit"
+      ],
+      "title": "WeeklyObservation",
+      "type": "object"
+    }
+  },
+  "description": "Output for get_respiratory_snapshot.\n\nUSE WHEN: You need a quick multi-pathogen, multi-signal status overview for\none jurisdiction.",
+  "properties": {
+    "jurisdiction": {
+      "title": "Jurisdiction",
+      "type": "string"
+    },
+    "as_of_week_ending": {
+      "anyOf": [
+        {
+          "format": "date",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Latest week_ending date across all retrieved data.",
+      "title": "As Of Week Ending"
+    },
+    "pathogens": {
+      "items": {
+        "$ref": "#/$defs/PathogenSnapshot"
+      },
+      "title": "Pathogens",
+      "type": "array"
+    },
+    "summary": {
+      "description": "1\u20133 sentence plain-English summary.",
+      "title": "Summary",
+      "type": "string"
+    },
+    "caveats": {
+      "description": "Data caveats and limitations from all sources.",
+      "items": {
+        "type": "string"
+      },
+      "title": "Caveats",
+      "type": "array"
+    }
+  },
+  "required": [
+    "jurisdiction",
+    "pathogens",
+    "summary"
+  ],
+  "title": "SnapshotOutput",
+  "type": "object"
+}

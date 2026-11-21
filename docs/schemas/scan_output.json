@@ -1,0 +1,235 @@
+{
+  "$defs": {
+    "Pathogen": {
+      "description": "The three respiratory pathogens tracked by this server.",
+      "enum": [
+        "influenza",
+        "covid19",
+        "rsv"
+      ],
+      "title": "Pathogen",
+      "type": "string"
+    },
+    "Provenance": {
+      "description": "Data lineage for a single signal/series.\n\nAttached once per series (not per row) to keep tool outputs compact.",
+      "properties": {
+        "dataset_id": {
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "dataset_name": {
+          "title": "Dataset Name",
+          "type": "string"
+        },
+        "url": {
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "latest_week_ending": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Latest Week Ending"
+        },
+        "retrieved_at": {
+          "format": "date-time",
+          "title": "Retrieved At",
+          "type": "string"
+        },
+        "source_last_updated": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Last Updated"
+        },
+        "geography_level": {
+          "enum": [
+            "national",
+            "state",
+            "hhs_region",
+            "site_aggregate"
+          ],
+          "title": "Geography Level",
+          "type": "string"
+        },
+        "notes": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Notes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "dataset_id",
+        "dataset_name",
+        "url",
+        "latest_week_ending",
+        "retrieved_at",
+        "geography_level"
+      ],
+      "title": "Provenance",
+      "type": "object"
+    },
+    "ScanRow": {
+      "description": "One jurisdiction result from a national scan.",
+      "properties": {
+        "jurisdiction": {
+          "title": "Jurisdiction",
+          "type": "string"
+        },
+        "trend_direction": {
+          "title": "Trend Direction",
+          "type": "string"
+        },
+        "latest_value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Latest Value"
+        },
+        "latest_week_ending": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Latest Week Ending"
+        },
+        "official_level": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Official Level"
+        },
+        "pct_change": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pct Change"
+        }
+      },
+      "required": [
+        "jurisdiction",
+        "trend_direction"
+      ],
+      "title": "ScanRow",
+      "type": "object"
+    },
+    "Signal": {
+      "description": "The three surveillance signal types available.",
+      "enum": [
+        "hospital_admissions",
+        "wastewater",
+        "test_positivity"
+      ],
+      "title": "Signal",
+      "type": "string"
+    }
+  },
+  "description": "Output for find_jurisdictions_with_rising_activity.\n\nUSE WHEN: You need to identify which states/territories are currently\nexperiencing rising activity \u2014 for regional hotspot analysis.\nDO NOT use for a single-jurisdiction question; use get_respiratory_snapshot\nor assess_trend instead.",
+  "properties": {
+    "pathogen": {
+      "$ref": "#/$defs/Pathogen"
+    },
+    "signal": {
+      "$ref": "#/$defs/Signal"
+    },
+    "as_of_week_ending": {
+      "anyOf": [
+        {
+          "format": "date",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "As Of Week Ending"
+    },
+    "rising": {
+      "description": "Jurisdictions with increasing trend, ranked by latest_value descending.",
+      "items": {
+        "$ref": "#/$defs/ScanRow"
+      },
+      "title": "Rising",
+      "type": "array"
+    },
+    "provenance": {
+      "$ref": "#/$defs/Provenance"
+    },
+    "n_jurisdictions_scanned": {
+      "title": "N Jurisdictions Scanned",
+      "type": "integer"
+    },
+    "n_insufficient_data": {
+      "description": "Jurisdictions excluded due to insufficient data.",
+      "title": "N Insufficient Data",
+      "type": "integer"
+    },
+    "summary": {
+      "description": "1\u20132 sentence plain-English summary.",
+      "title": "Summary",
+      "type": "string"
+    },
+    "caveats": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Caveats",
+      "type": "array"
+    }
+  },
+  "required": [
+    "pathogen",
+    "signal",
+    "rising",
+    "provenance",
+    "n_jurisdictions_scanned",
+    "n_insufficient_data",
+    "summary"
+  ],
+  "title": "ScanOutput",
+  "type": "object"
+}

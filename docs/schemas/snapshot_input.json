@@ -1,0 +1,51 @@
+{
+  "$defs": {
+    "Pathogen": {
+      "description": "The three respiratory pathogens tracked by this server.",
+      "enum": [
+        "influenza",
+        "covid19",
+        "rsv"
+      ],
+      "title": "Pathogen",
+      "type": "string"
+    }
+  },
+  "description": "Input for get_respiratory_snapshot.\n\nReturns the latest week's levels across all three signals for the requested\npathogens in a single jurisdiction.",
+  "properties": {
+    "jurisdiction": {
+      "description": "US state code (e.g. 'GA'), territory (e.g. 'PR'), or 'USA'/'national'. Case-insensitive; common aliases accepted.",
+      "maxLength": 64,
+      "minLength": 1,
+      "title": "Jurisdiction",
+      "type": "string"
+    },
+    "pathogens": {
+      "description": "List of pathogens to include. Defaults to all three ('influenza', 'covid19', 'rsv').",
+      "items": {
+        "$ref": "#/$defs/Pathogen"
+      },
+      "title": "Pathogens",
+      "type": "array"
+    },
+    "as_of": {
+      "anyOf": [
+        {
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "ISO date string (YYYY-MM-DD) to restrict analysis to data on or before this date. Omit to use the most recent available data. Useful for reproducible demos and evaluation.",
+      "title": "As Of"
+    }
+  },
+  "required": [
+    "jurisdiction"
+  ],
+  "title": "SnapshotInput",
+  "type": "object"
+}

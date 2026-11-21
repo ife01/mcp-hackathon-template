@@ -1,0 +1,269 @@
+{
+  "$defs": {
+    "Pathogen": {
+      "description": "The three respiratory pathogens tracked by this server.",
+      "enum": [
+        "influenza",
+        "covid19",
+        "rsv"
+      ],
+      "title": "Pathogen",
+      "type": "string"
+    },
+    "Provenance": {
+      "description": "Data lineage for a single signal/series.\n\nAttached once per series (not per row) to keep tool outputs compact.",
+      "properties": {
+        "dataset_id": {
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "dataset_name": {
+          "title": "Dataset Name",
+          "type": "string"
+        },
+        "url": {
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "latest_week_ending": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Latest Week Ending"
+        },
+        "retrieved_at": {
+          "format": "date-time",
+          "title": "Retrieved At",
+          "type": "string"
+        },
+        "source_last_updated": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Last Updated"
+        },
+        "geography_level": {
+          "enum": [
+            "national",
+            "state",
+            "hhs_region",
+            "site_aggregate"
+          ],
+          "title": "Geography Level",
+          "type": "string"
+        },
+        "notes": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Notes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "dataset_id",
+        "dataset_name",
+        "url",
+        "latest_week_ending",
+        "retrieved_at",
+        "geography_level"
+      ],
+      "title": "Provenance",
+      "type": "object"
+    },
+    "SeasonPoint": {
+      "description": "One prior-season data point at the equivalent week.",
+      "properties": {
+        "season": {
+          "description": "Season label, e.g. '2024-25'.",
+          "title": "Season",
+          "type": "string"
+        },
+        "week_ending": {
+          "format": "date",
+          "title": "Week Ending",
+          "type": "string"
+        },
+        "week_of_season": {
+          "title": "Week Of Season",
+          "type": "integer"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        },
+        "alignment_note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Alignment Note"
+        }
+      },
+      "required": [
+        "season",
+        "week_ending",
+        "week_of_season"
+      ],
+      "title": "SeasonPoint",
+      "type": "object"
+    },
+    "SeasonSummary": {
+      "description": "Serialisable version of SeasonComparison for tool outputs.",
+      "properties": {
+        "current_season": {
+          "title": "Current Season",
+          "type": "string"
+        },
+        "current_week_of_season": {
+          "title": "Current Week Of Season",
+          "type": "integer"
+        },
+        "current_value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Current Value"
+        },
+        "prior": {
+          "items": {
+            "$ref": "#/$defs/SeasonPoint"
+          },
+          "title": "Prior",
+          "type": "array"
+        },
+        "rank_vs_prior": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Rank of current value vs. prior seasons at this week (1 = highest).",
+          "title": "Rank Vs Prior"
+        },
+        "pct_of_prior_peak": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "current_value / max(prior_values) * 100.",
+          "title": "Pct Of Prior Peak"
+        },
+        "method": {
+          "default": "week_of_season_aligned",
+          "title": "Method",
+          "type": "string"
+        },
+        "notes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Notes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "current_season",
+        "current_week_of_season"
+      ],
+      "title": "SeasonSummary",
+      "type": "object"
+    },
+    "Signal": {
+      "description": "The three surveillance signal types available.",
+      "enum": [
+        "hospital_admissions",
+        "wastewater",
+        "test_positivity"
+      ],
+      "title": "Signal",
+      "type": "string"
+    }
+  },
+  "description": "Output for compare_to_prior_seasons.\n\nUSE WHEN: You need historical context \u2014 is this season worse or better than\ntypical? Includes prior-season data points for citation.",
+  "properties": {
+    "jurisdiction": {
+      "title": "Jurisdiction",
+      "type": "string"
+    },
+    "pathogen": {
+      "$ref": "#/$defs/Pathogen"
+    },
+    "signal": {
+      "$ref": "#/$defs/Signal"
+    },
+    "comparison": {
+      "$ref": "#/$defs/SeasonSummary"
+    },
+    "provenance": {
+      "$ref": "#/$defs/Provenance"
+    },
+    "summary": {
+      "description": "1\u20132 sentence plain-English summary.",
+      "title": "Summary",
+      "type": "string"
+    },
+    "caveats": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Caveats",
+      "type": "array"
+    }
+  },
+  "required": [
+    "jurisdiction",
+    "pathogen",
+    "signal",
+    "comparison",
+    "provenance",
+    "summary"
+  ],
+  "title": "SeasonOutput",
+  "type": "object"
+}
