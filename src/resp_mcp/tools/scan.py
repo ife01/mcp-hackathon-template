@@ -23,6 +23,7 @@ from resp_mcp.reference.jurisdictions import (
 )
 from resp_mcp.sources import nhsn, nrevss, nwss
 from resp_mcp.tools._helpers import (
+    classify_tool_error,
     date_window,
     parse_as_of,
     resolve_pathogen,
@@ -78,6 +79,21 @@ def register(mcp: FastMCP) -> None:
         Returns: list of rising jurisdictions with trend direction, latest value,
         and CDC level, plus scan provenance and caveats.
         """
+        try:
+            return await _find_jurisdictions_impl(
+                pathogen, signal, hhs_region, min_level, limit, as_of
+            )
+        except Exception as exc:  # noqa: BLE001
+            return classify_tool_error(exc)
+
+    async def _find_jurisdictions_impl(
+        pathogen: str,
+        signal: str,
+        hhs_region: int | None,
+        min_level: str | None,
+        limit: int,
+        as_of: str | None,
+    ) -> dict:
         inp = ScanInput(
             pathogen=resolve_pathogen(pathogen),
             signal=resolve_signal(signal),

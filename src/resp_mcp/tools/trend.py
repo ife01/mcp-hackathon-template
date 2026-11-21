@@ -18,6 +18,7 @@ from resp_mcp.models.tool_io import TrendInput, TrendOutput
 from resp_mcp.reference.jurisdictions import resolve_jurisdiction
 from resp_mcp.sources import nhsn, nrevss, nwss
 from resp_mcp.tools._helpers import (
+    classify_tool_error,
     date_window,
     parse_as_of,
     resolve_pathogen,
@@ -65,6 +66,20 @@ def register(mcp: FastMCP) -> None:
 
         Returns: weekly series, trend direction, % change, provenance, and caveats.
         """
+        try:
+            return await _assess_trend_impl(
+                jurisdiction, pathogen, signal, lookback_weeks, as_of
+            )
+        except Exception as exc:  # noqa: BLE001
+            return classify_tool_error(exc)
+
+    async def _assess_trend_impl(
+        jurisdiction: str,
+        pathogen: str,
+        signal: str,
+        lookback_weeks: int,
+        as_of: str | None,
+    ) -> dict:
         inp = TrendInput(
             jurisdiction=jurisdiction,
             pathogen=resolve_pathogen(pathogen),

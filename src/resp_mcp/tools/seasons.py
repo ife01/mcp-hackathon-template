@@ -17,6 +17,7 @@ from resp_mcp.models.tool_io import SeasonInput, SeasonOutput
 from resp_mcp.reference.jurisdictions import resolve_jurisdiction
 from resp_mcp.sources import nhsn, nrevss, nwss
 from resp_mcp.tools._helpers import (
+    classify_tool_error,
     date_window,
     parse_as_of,
     resolve_pathogen,
@@ -67,6 +68,20 @@ def register(mcp: FastMCP) -> None:
         Returns: season comparison with prior-season data points, rank, % of
         prior peak, provenance, and caveats.
         """
+        try:
+            return await _compare_to_prior_seasons_impl(
+                jurisdiction, pathogen, signal, prior_seasons, as_of
+            )
+        except Exception as exc:  # noqa: BLE001
+            return classify_tool_error(exc)
+
+    async def _compare_to_prior_seasons_impl(
+        jurisdiction: str,
+        pathogen: str,
+        signal: str,
+        prior_seasons: int,
+        as_of: str | None,
+    ) -> dict:
         inp = SeasonInput(
             jurisdiction=jurisdiction,
             pathogen=resolve_pathogen(pathogen),

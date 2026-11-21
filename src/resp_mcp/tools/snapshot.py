@@ -25,6 +25,7 @@ from resp_mcp.models.tool_io import (
 from resp_mcp.reference.jurisdictions import resolve_jurisdiction
 from resp_mcp.sources.registry import SignalUnavailable, fetch_all
 from resp_mcp.tools._helpers import (
+    classify_tool_error,
     date_window,
     parse_as_of,
     resolve_pathogen,
@@ -67,6 +68,18 @@ def register(mcp: FastMCP) -> None:
         Returns: jurisdiction, latest week-ending date, per-pathogen signal
         readings, cross-signal concordance pattern, and caveats.
         """
+        try:
+            return await _get_respiratory_snapshot_impl(
+                jurisdiction, pathogens, as_of
+            )
+        except Exception as exc:  # noqa: BLE001
+            return classify_tool_error(exc)
+
+    async def _get_respiratory_snapshot_impl(
+        jurisdiction: str,
+        pathogens: list[str] | None,
+        as_of: str | None,
+    ) -> dict:
         inp = SnapshotInput(
             jurisdiction=jurisdiction,
             pathogens=[resolve_pathogen(p) for p in (pathogens or list(Pathogen))],

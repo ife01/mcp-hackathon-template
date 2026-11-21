@@ -11,6 +11,7 @@ from datetime import date
 
 from resp_mcp.analytics.seasons import SeasonComparison
 from resp_mcp.analytics.trend import TrendResult
+from resp_mcp.clients.socrata import UpstreamRateLimited, UpstreamUnavailable
 from resp_mcp.models.common import (
     Pathogen,
     Provenance,
@@ -23,6 +24,47 @@ from resp_mcp.models.tool_io import (
 )
 
 logger = logging.getLogger(__name__)
+
+# ── Structured error response ─────────────────────────────────────────────────
+
+_AS_OF_MIN = date(2020, 1, 1)
+_AS_OF_MAX_FUTURE_DAYS = 7  # allow at most 1 week into the future
+
+
+def structured_error(code: str, message: str, **extras) -> dict:
+    """Return a structured error dict (instead of raising) for tool outputs."""
+    return {"error": code, "message": message, **extras}
+
+
+def classify_tool_error(exc: Exception) -> dict:
+    """Map a caught exception to a structured error dict."""
+    from resp_mcp.reference.jurisdictions import (
+        UnknownJurisdiction,  # local to avoid circular
+    )
+
+    if isinstance(exc, UnknownJurisdiction):
+        return structured_error(
+            "unknown_jurisdiction",
+            str(exc),
+            suggestions=exc.suggestions,
+        )
+    if isinstance(exc, ValueError):
+        return structured_error("invalid_input", str(exc))
+    if isinstance(exc, UpstreamRateLimited):
+        return structured_error(
+            "rate_limited",
+            "CDC Socrata API rate limit reached. "
+            "Retry in a few seconds or set SOCRATA_APP_TOKEN in .env.",
+        )
+    if isinstance(exc, UpstreamUnavailable):
+        return structured_error(
+            "upstream_unavailable",
+            f"CDC data source temporarily unavailable: {exc}. "
+            "Please retry shortly.",
+        )
+    # Unexpected — log and return generic
+    logger.exception("Unexpected tool error: %s", exc)
+    return structured_error("internal_error", f"Unexpected error: {exc}")
 
 # ── Pathogen / signal alias resolution ───────────────────────────────────────
 
@@ -88,15 +130,30 @@ def resolve_signal(text: str) -> Signal:
 
 
 def parse_as_of(as_of: str | None) -> date | None:
-    """Parse the as_of string to a date, or return None."""
+    """Parse the as_of string to a date, validate it is in an acceptable range."""
     if as_of is None:
         return None
     try:
-        return date.fromisoformat(as_of)
+        parsed = date.fromisoformat(as_of)
     except ValueError as exc:
         raise ValueError(
             f"Invalid as_of date {as_of!r}. Expected YYYY-MM-DD."
         ) from exc
+    if parsed < _AS_OF_MIN:
+        raise ValueError(
+            f"as_of date {as_of!r} is before the earliest supported date "
+            f"({_AS_OF_MIN.isoformat()}). "
+            "CDC NHSN reporting began in 2020."
+        )
+    today = date.today()
+    max_allowed = date.fromordinal(today.toordinal() + _AS_OF_MAX_FUTURE_DAYS)
+    if parsed > max_allowed:
+        raise ValueError(
+            f"as_of date {as_of!r} is too far in the future "
+            f"(max: {max_allowed.isoformat()}). "
+            "Use today's date or omit as_of to get the latest data."
+        )
+    return parsed
 
 
 # ── TrendSummary conversion ────────────────────────────────────────────────────
