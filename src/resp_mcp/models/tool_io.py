@@ -57,10 +57,51 @@ _AS_OF_FIELD = Field(
     description=(
         "ISO date string (YYYY-MM-DD) to restrict analysis to data on or before "
         "this date. Omit to use the most recent available data. "
-        "Useful for reproducible demos and evaluation."
+        "Applied to data retrieved now, not an as-published historical vintage. "
+        "Use frozen snapshots for reproducible replay."
     ),
     pattern=r"^\d{4}-\d{2}-\d{2}$",
 )
+
+# These annotations are also used on registered tool functions: the client must
+# see the same constraints and descriptions that runtime validation enforces.
+JurisdictionArg = Annotated[str, _JURISDICTION_FIELD]
+PathogenArg = Annotated[
+    str, Field(description=_PATHOGEN_FIELD.description, max_length=32)
+]
+SignalArg = Annotated[str, Field(description=_SIGNAL_FIELD.description, max_length=32)]
+AsOfArg = Annotated[
+    str | None,
+    Field(description=_AS_OF_FIELD.description, pattern=r"^\d{4}-\d{2}-\d{2}$"),
+]
+LookbackArg = Annotated[
+    int,
+    Field(
+        ge=4,
+        le=52,
+        description="History to display; trend uses four consecutive weeks.",
+    ),
+]
+PriorSeasonsArg = Annotated[
+    int, Field(ge=1, le=5, description="Number of prior seasons requested (1–5).")
+]
+RegionArg = Annotated[
+    int | None,
+    Field(ge=1, le=10, description="HHS region, or omit for 50 states and DC."),
+]
+LimitArg = Annotated[
+    int, Field(ge=1, le=56, description="Maximum results returned (1–56).")
+]
+LevelArg = Literal["Very Low", "Low", "Moderate", "High", "Very High"] | None
+PathogensArg = Annotated[
+    list[PathogenArg] | None,
+    Field(
+        min_length=1,
+        max_length=3,
+        description="Up to three unique pathogens; omit for all. Aliases flu and "
+        "covid accepted.",
+    ),
+]
 
 
 # ── Shared output components ───────────────────────────────────────────────────
@@ -69,6 +110,7 @@ _AS_OF_FIELD = Field(
 class TrendSummary(BaseModel):
     """Serialisable version of TrendResult for tool outputs."""
 
+    notes: list[str] = Field(default_factory=list)
     direction: str = Field(
         description="increasing | stable | decreasing | insufficient_data"
     )
@@ -81,7 +123,7 @@ class TrendSummary(BaseModel):
         description="Absolute change in the signal's native unit.",
     )
     window_weeks: int = Field(
-        description="Number of non-null weeks used in the calculation.",
+        description="Number of recent observation slots inspected (at most four).",
     )
     method: str = Field(description="Method identifier (e.g. '2w_vs_prior_2w').")
     basis: str = Field(
@@ -117,8 +159,11 @@ class SeasonSummary(BaseModel):
     )
     pct_of_prior_peak: float | None = Field(
         default=None,
-        description="current_value / max(prior_values) * 100.",
+        description="Current / highest peak among complete eligible prior seasons * "
+        "100; null without full seasons.",
     )
+    n_prior_compared: int = 0
+    prior_season_peaks: dict[str, float] = Field(default_factory=dict)
     method: str = "week_of_season_aligned"
     notes: list[str] = Field(default_factory=list)
 
@@ -136,6 +181,8 @@ class SnapshotInput(BaseModel):
     jurisdiction: Annotated[str, _JURISDICTION_FIELD]
     pathogens: list[Pathogen] = Field(
         default_factory=lambda: list(Pathogen),
+        min_length=1,
+        max_length=3,
         description=(
             "List of pathogens to include. Defaults to all three "
             "('influenza', 'covid19', 'rsv')."
@@ -148,7 +195,10 @@ class SignalReading(BaseModel):
     """Latest reading for one signal within a snapshot."""
 
     signal: Signal
-    status: Literal["ok", "unavailable", "insufficient_coverage"] = "ok"
+    status: Literal[
+        "ok", "unavailable", "insufficient_coverage", "insufficient_data"
+    ] = "ok"
+    role: Literal["local", "national_context"] = "local"
     latest: WeeklyObservation | None = None
     trend: TrendSummary | None = None
     provenance: Provenance | None = None
@@ -292,18 +342,16 @@ class ScanInput(BaseModel):
         ge=1,
         le=10,
         description=(
-            "Filter to a specific HHS region (1–10). "
-            "Omit to scan all 50 states + DC."
+            "Filter to a specific HHS region (1–10). Omit to scan all 50 states + DC."
         ),
     )
-    min_level: str | None = Field(
+    min_level: LevelArg = Field(
         default=None,
         description=(
             "Minimum CDC official level to include "
-            "(Very Low | Low | Medium | High | Very High). "
+            "(Very Low | Low | Moderate | High | Very High). "
             "Applies only to hospital_admissions signal."
         ),
-        max_length=16,
     )
     limit: int = Field(
         default=10,
@@ -323,6 +371,7 @@ class ScanRow(BaseModel):
     latest_week_ending: date | None = None
     official_level: str | None = None
     pct_change: float | None = None
+    provenance: Provenance | None = None
 
 
 class ScanOutput(BaseModel):
@@ -344,6 +393,11 @@ class ScanOutput(BaseModel):
     )
     provenance: Provenance
     n_jurisdictions_scanned: int
+    status: Literal["ok", "partial", "insufficient_data"] = "ok"
+    n_assessed: int = 0
+    n_unavailable: int = 0
+    n_rising_total: int = 0
+    unavailable_jurisdictions: list[str] = Field(default_factory=list)
     n_insufficient_data: int = Field(
         description="Jurisdictions excluded due to insufficient data.",
     )

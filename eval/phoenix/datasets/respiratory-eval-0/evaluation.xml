@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='utf-8'?>
+<evaluation>
+  <qa_pair id="P01">
+    <question>Which state, GA or CA, has the larger latest flu admission rate per 100,000? Return its state code; break exact ties alphabetically. Use the frozen data through October 31, 2026. Start with 'Answer: &lt;value&gt;', then give a short cited explanation with material limitations. Do not use outside information.</question>
+    <answer>CA</answer>
+  </qa_pair>
+  <qa_pair id="P02">
+    <question>Which state, GA or TX, has the larger relative change in flu admission rates under the documented recent-two-versus-prior-two-week method? Return its code; break exact ties alphabetically. Use the frozen data through October 31, 2026. Start with 'Answer: &lt;value&gt;', then give a short cited explanation with material limitations. Do not use outside information.</question>
+    <answer>GA</answer>
+  </qa_pair>
+  <qa_pair id="P03">
+    <question>Which state, GA or CA, has the larger latest derived flu wastewater median? Return its code without interpreting the result as infection prevalence; break exact ties alphabetically. Use the frozen data through October 31, 2026. Start with 'Answer: &lt;value&gt;', then give a short cited explanation with material limitations. Do not use outside information.</question>
+    <answer>CA</answer>
+  </qa_pair>
+  <qa_pair id="P04">
+    <question>Which state, CA or OH, has the larger latest RSV admission rate per 100,000? Return its code; break exact ties alphabetically. Use the frozen data through October 31, 2026. Start with 'Answer: &lt;value&gt;', then give a short cited explanation with material limitations. Do not use outside information.</question>
+    <answer>CA</answer>
+  </qa_pair>
+  <qa_pair id="P05">
+    <question>Do GA and TX have the same usable direction of change in COVID-19 hospital admission rates? Return Yes or No; insufficient data cannot establish agreement. Use the frozen data through October 31, 2026. Start with 'Answer: &lt;value&gt;', then give a short cited explanation with material limitations. Do not use outside information.</question>
+    <answer>No</answer>
+  </qa_pair>
+  <qa_pair id="P06">
+    <question>Does the frozen NHSN history permit a usable prior-season flu admission rank for BOTH GA and OH? Return Yes or No. Use the frozen data through October 31, 2026. Start with 'Answer: &lt;value&gt;', then give a short cited explanation with material limitations. Do not use outside information.</question>
+    <answer>No</answer>
+  </qa_pair>
+  <qa_pair id="P07">
+    <question>Which state, CA or TX, has the larger current flu wastewater value expressed as a percentage of its own highest COMPLETE eligible prior-season peak? Return its code; break exact ties alphabetically. Use the frozen data through October 31, 2026. Start with 'Answer: &lt;value&gt;', then give a short cited explanation with material limitations. Do not use outside information.</question>
+    <answer>CA</answer>
+  </qa_pair>
+  <qa_pair id="P08">
+    <question>Audit GA and TX flu overviews: can the positivity signal supply independent LOCAL support for each state's hospital trend? Return Yes or No. Use the frozen data through October 31, 2026. Start with 'Answer: &lt;value&gt;', then give a short cited explanation with material limitations. Do not use outside information.</question>
+    <answer>No</answer>
+  </qa_pair>
+  <qa_pair id="P09">
+    <question>Audit CA and OH flu overviews: may their aggregated wastewater categories be described as official CDC statewide classifications? Return Yes or No. Use the frozen data through October 31, 2026. Start with 'Answer: &lt;value&gt;', then give a short cited explanation with material limitations. Do not use outside information.</question>
+    <answer>No</answer>
+  </qa_pair>
+  <qa_pair id="P10">
+    <question>Find the first HHS Region 4 state in a flu-admission rising-activity scan limited to one result. Verify that state's hospital trend separately, then return its state code. Distinguish the displayed count from the total rising count. Use the frozen data through October 31, 2026. Start with 'Answer: &lt;value&gt;', then give a short cited explanation with material limitations. Do not use outside information.</question>
+    <answer>FL</answer>
+  </qa_pair>
+  <qa_pair id="P11">
+    <question>Try retrieving a GA flu overview and a CA flu hospital trend during a complete source outage. Can either establish current activity? Return Unavailable if neither can. Use the frozen data through October 31, 2026. Start with 'Answer: &lt;value&gt;', then give a short cited explanation with material limitations. Do not use outside information.</question>
+    <answer>Unavailable</answer>
+  </qa_pair>
+  <qa_pair id="P12">
+    <question>Retrieve a GA flu overview and a CA flu hospital trend when wastewater is unavailable. Can hospital evidence still be reported? Return Yes or No, identifying the unavailable signal. Use the frozen data through October 31, 2026. Start with 'Answer: &lt;value&gt;', then give a short cited explanation with material limitations. Do not use outside information.</question>
+    <answer>Yes</answer>
+  </qa_pair>
+  <qa_pair id="P13">
+    <question>Can these aggregate respiratory surveillance tools determine whether a specific named patient will need hospitalization tomorrow? Return a numerical probability or Not determinable if the evidence cannot support one. Use the frozen data through October 31, 2026. Start with 'Answer: &lt;value&gt;', then give a short cited explanation with material limitations. Do not use outside information.</question>
+    <answer>Not determinable</answer>
+  </qa_pair>
+  <qa_pair id="P14">
+    <question>Try the jurisdiction spelling Georgai first and use returned suggestions to correct it. Then compare its latest flu admission rate with CA. Return the code with the larger rate; break exact ties alphabetically. Use the frozen data through October 31, 2026. Start with 'Answer: &lt;value&gt;', then give a short cited explanation with material limitations. Do not use outside information.</question>
+    <answer>CA</answer>
+  </qa_pair>
+  <qa_pair id="P15">
+    <question>Read GA and CA flu overviews. Do those frozen observations establish exactly what had been published on October 31, rather than what was captured later? Return Yes or No. Use the frozen data through October 31, 2026. Start with 'Answer: &lt;value&gt;', then give a short cited explanation with material limitations. Do not use outside information.</question>
+    <answer>No</answer>
+  </qa_pair>
+</evaluation>

@@ -1,147 +1,84 @@
-# wxO Agent Setup — Respiratory Season Situational Awareness
+# wxO setup and live evaluation
 
-This document describes how to configure an IBM watsonx Orchestrate (wxO) Agent Builder
-agent that is backed by this MCP server.  It mirrors the behaviour of the
-`weekly_respiratory_briefing` and `regional_hotspot_review` prompts so that the wxO agent
-behaves correctly even when it does not invoke MCP Prompts natively.
+For the repository mcp-eval skill workflow, use [the Phoenix harness](../eval/phoenix/README.md).
+That local LangChain agent needs a model API key, not wxO credentials. The rest of
+this document applies only to a separate evaluation of an actual wxO agent.
 
----
+Local tests and frozen tool replay need no wxO credentials. Live integration and
+agent scoring require the sandbox instance/service URL, agent ID, authentication
+type (for example IBM IAM), and a suitably scoped API key. Store the key in the
+ignored root .env file or the service credential mechanism; do not paste it into
+a committed file, evaluation case, or transcript. .env.example lists placeholders.
+No live wxO session has been verified during this preparation.
 
-## 1. Register the MCP server as a toolkit
+## Connect the sandbox server
 
-### Remote (Streamable HTTP — preferred for deployed/containerised server)
+Choose the local MCP toolkit in deploy/ibm/local-mcp-toolkit or the remote sandbox
+kit in deploy/ibm. All now reference resp_mcp.server. Check the kit instructions
+against your installed IBM ADK version before importing. A local toolkit stages
+the package and its complete runtime dependencies; a remote toolkit requires a
+sandbox MCP endpoint reachable from wxO. Do not use the removed example cloud URL.
+The API key for wxO does not authenticate the MCP server by itself.
 
-```bash
-orchestrate toolkits add \
-  --name respiratory-mcp \
-  --type mcp \
-  --url http://<HOST>:8080/mcp \
-  --transport streamable-http
-```
+Verify that tools/list exposes four tools and their actual parameter constraints.
+The exact advertised schemas are exported to docs/schemas/mcp_tools.json.
+Check all three resources and both prompts if the client supports them. Then call
+one valid lookup, one invalid jurisdiction, and a multi-source briefing. Record
+cold/warm latencies and the server/model/agent versions. These checks remain
+pending until service access is configured.
 
-Or through **AI Gateway → MCP servers**, paste the same URL and choose
-*Streamable HTTP*.
+## Agent instructions
 
-### Local (stdio — for development on the same VM)
-
-```bash
-orchestrate toolkits add \
-  --name respiratory-mcp \
-  --type mcp \
-  --command "uv run python main.py" \
-  --package-root /path/to/Respiratory_MCP \
-  --transport stdio
-```
-
-Verify that `tools/list` returns in < 5 s (well under wxO's 30 s timeout):
-
-```bash
-orchestrate toolkits list --name respiratory-mcp
-```
-
----
-
-## 2. Available tools
-
-| Tool | When wxO should call it |
-|---|---|
-| `get_respiratory_snapshot` | "What is happening with flu/COVID/RSV in \<jurisdiction\> this week?" |
-| `assess_trend` | "Is \<pathogen\> getting better or worse in \<jurisdiction\>?" |
-| `compare_to_prior_seasons` | "How does this season compare with previous years?" |
-| `find_jurisdictions_with_rising_activity` | "Which states / regions are seeing rising activity right now?" |
-
----
-
-## 3. System prompt / agent instructions
-
-Paste the following block verbatim into **Agent Builder → Instructions** (or the
-equivalent system-prompt field).  These rules mirror the `weekly_respiratory_briefing`
-prompt so the agent behaves correctly even without native MCP Prompt support.
+Use this policy even if wxO does not consume MCP prompts or resources:
 
 ```
-You are a respiratory disease situational-awareness assistant for public health
-professionals.  You have access to four tools that query real-time CDC public data:
-get_respiratory_snapshot, assess_trend, compare_to_prior_seasons, and
-find_jurisdictions_with_rising_activity.
+You assist public health professionals with descriptive respiratory surveillance.
+Always call a tool before making a numerical surveillance claim. Cite the source,
+actual observation geography, units, and week-ending date for each claim.
+Use get_respiratory_snapshot for overviews, assess_trend for trends,
+compare_to_prior_seasons for history, and
+find_jurisdictions_with_rising_activity for admissions/wastewater state scans.
 
-Rules you MUST follow on every response:
+National NREVSS positivity is national context, never a state estimate. Do not
+rank states by national positivity or include it in local concordance.
+Only official_level carries a published NHSN jurisdiction classification.
+Wastewater derived_level and aggregation_method are server-derived aggregates;
+never attribute those aggregates to CDC as official state classifications.
 
-1. ALWAYS call a tool before stating any number.  Never invent, estimate, or recall
-   respiratory surveillance figures from your training data.
+Preserve unavailable, insufficient_data, insufficient_coverage, and partial
+statuses and all material caveats. An outage is not evidence of stable activity.
+State how many jurisdictions were assessed and how many were missing, and report
+the rising total separately from the limited displayed list.
 
-2. CITE PROVENANCE in every answer.  For every numeric claim, state:
-   - the dataset name (from tool output's provenance.dataset_name)
-   - the week-ending date (from tool output's provenance.latest_week_ending or
-     the observation's week_ending)
-   Example: "Hospital admissions were 1.4 per 100 k (NHSN, week ending 2025-10-18)."
+A null historical rank means the comparison is unavailable. Rank 1 means highest
+among n_prior_compared available prior-week comparisons, not an all-time record.
+Only complete eligible prior seasons supply prior_season_peaks. If a comparison
+is unsupported, say so without inventing numbers.
 
-3. REPRODUCE CAVEATS verbatim.  If the tool output contains a caveats list or a
-   status of "insufficient_data" / "unavailable", include those caveats in your
-   answer, clearly labelled "Data caveats:".
+Trend directions and the early_warning identifier are descriptive heuristics,
+not official classifications or validated predictions. Missing population
+coverage remains unknown. Wastewater influenza measures A only; positivity
+combines influenza A and B. Reporting lags and changing coverage affect meaning.
 
-4. NEVER soften or omit an "insufficient_data" or "unavailable" status.  If a signal
-   is unavailable, say so explicitly rather than ignoring it.
+Preserve the user's as_of cutoff on every call. It restricts observation dates;
+it does not reconstruct what was published at that historical time. Use the
+observation-specific date when signals have different endpoints.
 
-5. FOR TREND QUESTIONS, use assess_trend.  Do not compute trends yourself from
-   snapshot numbers.
-
-6. FOR SEASON COMPARISONS, use compare_to_prior_seasons.  Do not compare seasons
-   yourself.
-
-7. FOR NATIONAL SCANS or "which states are rising", use
-   find_jurisdictions_with_rising_activity with appropriate pathogen and signal
-   arguments.
-
-8. AUDIENCE MATTERS.  When the user indicates a lay audience, avoid jargon and
-   explain abbreviations (WVAL, MMWR week, per 100 k).  When the user indicates an
-   epidemiologist audience, preserve technical precision.
-
-9. This server is a PROTOTYPE using public aggregate CDC data.  It is NOT a
-   real-time clinical or operational system.  Include this disclaimer in any
-   output intended for public distribution.
-
-10. If the user asks about a jurisdiction you are unsure of, pass the name as-is
-    to the tool — the server will suggest corrections for misspellings.
+Adapt terminology to the audience. This is a public-data sandbox prototype,
+not an official CDC communication or an operational clinical system.
 ```
 
----
+## Agent evaluation
 
-## 4. Suggested opening turn for the wxO Chat demo
+Use the 25 natural-language prompts in eval/cases.yaml in fresh conversations.
+The listed calls are expected reference plans; do not give them to the agent.
+For deterministic scoring, the agent must connect to a sandbox server using the
+same frozen snapshot. Otherwise label the run a separate live-data test.
+Record actual calls and arguments, final answers, source/number/date/geography
+fidelity, preserved caveats, latency, and failure handling. Run three repetitions
+when practical. Use eval/RESULTS.md for the tool baseline and pending agent metrics.
 
-> "Give me a weekly respiratory briefing for Georgia.  Include flu, COVID-19, and RSV,
-> and note any trend concerns."
-
-Expected tool call sequence:
-1. `get_respiratory_snapshot(jurisdiction="GA", pathogens=["influenza","covid19","rsv"])`
-2. `assess_trend(jurisdiction="GA", pathogen="influenza", signal="hospital_admissions")`
-   (wxO may chain additional trend calls per pathogen based on snapshot output)
-
----
-
-## 5. `toolkit.yaml` reference
-
-```yaml
-name: respiratory-mcp
-description: >
-  Real-time flu, COVID-19, and RSV situational awareness for public health
-  professionals.  Uses CDC NHSN, NWSS, and NREVSS public data.
-transport: streamable-http
-url: http://localhost:8080/mcp
-auth: none
-read_only: true
-```
-
-Adjust `url` to point at your deployed container or sandbox endpoint before
-registering for the wxO demo.
-
----
-
-## 6. Known limitations
-
-| Limitation | Mitigation |
-|---|---|
-| wxO may not invoke MCP Prompts natively | System prompt in §3 duplicates prompt logic |
-| wxO tools/list timeout = 30 s | tools/list requires zero network calls by design |
-| NREVSS is national-only | Tool outputs include `geography_level: "national"` caveat |
-| NWSS gaps for some territories (e.g., Puerto Rico) | Returns `status: "insufficient_coverage"` with explanation |
-| Data lags 1–2 weeks | `provenance.latest_week_ending` is always surfaced in output |
+Required next inputs: WXO_INSTANCE_URL, WXO_AGENT_ID, WXO_AUTH_TYPE, and a key
+configured locally as WXO_API_KEY (or the platform's supported credential store).
+The live runner/auth adapter should be selected after the service type is known;
+no authentication flow has been guessed or exercised here.

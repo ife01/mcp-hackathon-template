@@ -131,3 +131,74 @@ the minimum latest-available date across all three sources (all had data through
 2026-11-14 as of reconnaissance on 2026-11-20). Two-week buffer ensures data
 finalization across all reporting systems.
 
+
+
+## 2026-11-22 — Public health correctness and evaluation preparation
+
+This entry supersedes earlier decisions assigning modal wastewater categories
+to official_level, applying national values to state observations, inferring no
+sites from empty results, and treating a two-week lag as finalization.
+
+- NREVSS observations remain USA and are national context for state queries.
+  They are excluded from local concordance and cannot support state scans.
+- Wastewater uses distinct valid sites; conflicting duplicates are excluded.
+  The median and unique modal category are explicitly derived, not official.
+  Two sites do not establish population representativeness; coverage is unknown.
+- Trends require four consecutive recent weeks; no backdating over missing
+  values. NHSN counts reach the small-number guard, which requires BOTH window
+  means below 10. Missing counts are disclosed. The reported window is four.
+- No historical data means null rank. Complete eligible seasons alone supply
+  peaks. Fallbacks return the actual observation date; season boundaries and
+  reporting-transition exclusions are explicit. Single signals cannot agree
+  with themselves and therefore cannot establish concordance.
+- Empty, insufficient-coverage, unavailable, and partially assessed results are
+  distinct. Scans use one logical paginated query and report the total before
+  limiting, with per-jurisdiction provenance. Source failures cannot imply zero
+  rising activity. Query cap/deadline breaches return errors rather than partial
+  series. Sources/pathogens in snapshots run concurrently.
+- Captured a NEW snapshot_v2 through 2026-10-31 with metadata, per-pathogen
+  coverage and SHA-256 hashes. Full pagination repairs short NWSS extracts.
+  NHSN returned only 29 weeks from this endpoint despite requesting 2023 onward;
+  valid historical abstention remains required. Original snapshots are preserved.
+  Gzip keeps every raw-data artifact below the plan's 2 MB file limit.
+- Added 25 deterministic tool cases, independent raw-data calculations, HTTP
+  replay with no network fallback, and transcripts. These are preliminary tool
+  evidence; live wxO tool selection and answer grounding have NOT been scored.
+- Fixed Docker entrypoint copying and frozen installs, deployment package names,
+  actual tool input schemas, and documentation. Removed an unverified remote URL
+  and disabled the example cloud.gov route. No deployment or publication occurred.
+
+Validation outcomes and explicit unverified integrations are in VERIFICATION.md.
+wxO service access, human review of methods/outputs, and final agent scoring are
+still separate requirements from the build plan. No credentials were requested
+or stored during local preparation.
+
+
+### Published category label correction
+
+The fresh capture includes the category **Moderate**, not Medium, in NHSN and
+NWSS. Input enums, minimum-level filtering, prompts, resources, and active docs
+now use the observed label. Historical decision entries above retain their
+original wording. NHSN coverage is also read from the requested pathogen's own
+reporting fields rather than borrowing influenza coverage.
+
+### Phoenix agent evaluation harness (2026-11-22)
+
+Implemented the mcp-eval workflow with independent frozen snapshot_v2 references,
+15 questions, versioned prompts, separate agent/judge model settings, Phoenix
+datasets/experiments/OTLP traces, three semantic judges and deterministic public
+health evidence checks. Only query and case ID reach the agent; expected answers
+and reference facts are reserved for evaluators. Scripted verification outputs
+cannot pass the evidence gate or be reported as real model results.
+
+The skill's legacy langchain-mcp-adapters cannot import RequestContext with the
+installed MCP 2.x SDK. Use the locked LangChain native MCPAdapter with the real
+FastMCP stdio transport instead of downgrading the production server or patching
+libraries. This namespace is beta; actual subprocess and graph verification is
+recorded in VERIFICATION.md. Evaluation dependencies remain development-only.
+
+Disable automatic Phoenix/LangSmith pytest plugins to avoid unrelated storage
+initialization during ordinary tests. Keep Phoenix storage inside ignored
+.phoenix, bind its helper to loopback, and use UTF-8 for Windows console output.
+No .env or model credentials were created. Standard Bearer Chat Completions
+model access is needed for real evaluations; wxO authentication is separate.

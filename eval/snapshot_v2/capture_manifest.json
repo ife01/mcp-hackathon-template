@@ -1,0 +1,206 @@
+{
+  "as_of": "2026-10-31",
+  "requested_start": "2023-07-01",
+  "retrieved_at": "2026-11-22T20:59:23.467779+00:00",
+  "complete": true,
+  "semantics": "Week-ending cutoff using data retrieved now; not an as-published vintage.",
+  "sources": {
+    "nhsn": {
+      "dataset_id": "vdzy-6i9v",
+      "rowsUpdatedAt": 1795193415
+    },
+    "nrevss": {
+      "dataset_id": "seuz-s2cv",
+      "rowsUpdatedAt": 1795196331
+    },
+    "nwss": {
+      "dataset_id": "atcp-73re",
+      "rowsUpdatedAt": 1795190780
+    }
+  },
+  "files": {
+    "nhsn_ca.json.gz": {
+      "sha256": "1df74aeb580b4076472a89867cadc388659e7cb55d98795ec5d7dd2872a5b603",
+      "rows": 29,
+      "coverage": {
+        "all": {
+          "weeks": 29,
+          "first": "2026-04-18",
+          "last": "2026-10-31"
+        }
+      }
+    },
+    "nhsn_ga.json.gz": {
+      "sha256": "105000ea63dd9491d9dad65a494680e314514fee603890262f2ef1f0b6b0c102",
+      "rows": 29,
+      "coverage": {
+        "all": {
+          "weeks": 29,
+          "first": "2026-04-18",
+          "last": "2026-10-31"
+        }
+      }
+    },
+    "nhsn_oh.json.gz": {
+      "sha256": "4851488f0af3f28ab47cb555a24a42998258ce802614145ca06ebc55a4c929ba",
+      "rows": 29,
+      "coverage": {
+        "all": {
+          "weeks": 29,
+          "first": "2026-04-18",
+          "last": "2026-10-31"
+        }
+      }
+    },
+    "nhsn_pr.json.gz": {
+      "sha256": "fcb48ff623b365cde64eec349dc6c0abf6f7d9b1ced2f91a1869f6ad36774402",
+      "rows": 29,
+      "coverage": {
+        "all": {
+          "weeks": 29,
+          "first": "2026-04-18",
+          "last": "2026-10-31"
+        }
+      }
+    },
+    "nhsn_scan_national.json.gz": {
+      "sha256": "943ac321383e0372722147571e2589bdfecc6ea11bdb4c8de484484e319f334e",
+      "rows": 513,
+      "coverage": {
+        "all": {
+          "weeks": 9,
+          "first": "2026-09-05",
+          "last": "2026-10-31"
+        }
+      }
+    },
+    "nhsn_tx.json.gz": {
+      "sha256": "4c454f134c3bb9711378dcc169903eca6d05c3a0af2129766298611058b427c5",
+      "rows": 29,
+      "coverage": {
+        "all": {
+          "weeks": 29,
+          "first": "2026-04-18",
+          "last": "2026-10-31"
+        }
+      }
+    },
+    "nhsn_usa.json.gz": {
+      "sha256": "f62e27328061795ffc4b3fd65a10e840e61903d07cafd245200248164f6101a7",
+      "rows": 29,
+      "coverage": {
+        "all": {
+          "weeks": 29,
+          "first": "2026-04-18",
+          "last": "2026-10-31"
+        }
+      }
+    },
+    "nrevss_national.json.gz": {
+      "sha256": "c4f3fcf75665cb4de918a54de70e88cbbf9adbd766ad41ee63f98a0cd4ce78fd",
+      "rows": 525,
+      "coverage": {
+        "COVID-19": {
+          "weeks": 175,
+          "first": "2023-07-01",
+          "last": "2026-10-31"
+        },
+        "Influenza": {
+          "weeks": 175,
+          "first": "2023-07-01",
+          "last": "2026-10-31"
+        },
+        "RSV": {
+          "weeks": 175,
+          "first": "2023-07-01",
+          "last": "2026-10-31"
+        }
+      }
+    },
+    "nwss_california.json.gz": {
+      "sha256": "7baf938bfe9ad2a6a62fbdf7858c7820eb8e26dae37a8b6cf33c3a496cacaf42",
+      "rows": 40255,
+      "coverage": {
+        "Influenza A virus": {
+          "weeks": 175,
+          "first": "2023-07-01",
+          "last": "2026-10-31"
+        },
+        "RSV": {
+          "weeks": 175,
+          "first": "2023-07-01",
+          "last": "2026-10-31"
+        },
+        "SARS-CoV-2": {
+          "weeks": 175,
+          "first": "2023-07-01",
+          "last": "2026-10-31"
+        }
+      }
+    },
+    "nwss_georgia.json.gz": {
+      "sha256": "32650eaa1ad1cecf2f20619f6e4318a4b8de7418852947f9e1d65f578e8fec43",
+      "rows": 9623,
+      "coverage": {
+        "Influenza A virus": {
+          "weeks": 175,
+          "first": "2023-07-01",
+          "last": "2026-10-31"
+        },
+        "RSV": {
+          "weeks": 175,
+          "first": "2023-07-01",
+          "last": "2026-10-31"
+        },
+        "SARS-CoV-2": {
+          "weeks": 175,
+          "first": "2023-07-01",
+          "last": "2026-10-31"
+        }
+      }
+    },
+    "nwss_ohio.json.gz": {
+      "sha256": "c8fd04541ff2eb4deed876416d6041174b0ce9106e356f8efc787626c38fa40c",
+      "rows": 28250,
+      "coverage": {
+        "Influenza A virus": {
+          "weeks": 175,
+          "first": "2023-07-01",
+          "last": "2026-10-31"
+        },
+        "RSV": {
+          "weeks": 175,
+          "first": "2023-07-01",
+          "last": "2026-10-31"
+        },
+        "SARS-CoV-2": {
+          "weeks": 175,
+          "first": "2023-07-01",
+          "last": "2026-10-31"
+        }
+      }
+    },
+    "nwss_texas.json.gz": {
+      "sha256": "1a9bdcafd2c64a9ec417a94c85d93178c1a7f6a53e9a55611a498015fa1cb9ab",
+      "rows": 22917,
+      "coverage": {
+        "Influenza A virus": {
+          "weeks": 175,
+          "first": "2023-07-01",
+          "last": "2026-10-31"
+        },
+        "RSV": {
+          "weeks": 175,
+          "first": "2023-07-01",
+          "last": "2026-10-31"
+        },
+        "SARS-CoV-2": {
+          "weeks": 175,
+          "first": "2023-07-01",
+          "last": "2026-10-31"
+        }
+      }
+    }
+  },
+  "warning": "Counts describe stored rows only. They do not prove complete retrieval, source finalization, or population representativeness."
+}

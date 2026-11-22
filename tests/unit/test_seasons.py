@@ -38,6 +38,7 @@ def _obs_at_equivalent_weeks(
 ) -> list[WeeklyObservation]:
     """Build observations at reference date AND equivalent dates in n prior seasons."""
     from resp_mcp.reference.epiweeks import same_week_prior_seasons
+
     prior_dates = same_week_prior_seasons(reference_date, n_seasons)
     pairs = [(reference_date, base_value)]
     for i, pd in enumerate(prior_dates):
@@ -97,6 +98,7 @@ def test_prior_week_of_season_matches_current():
 def test_current_above_all_priors_ranks_1():
     ref = date(2026, 11, 14)
     from resp_mcp.reference.epiweeks import same_week_prior_seasons
+
     prior_dates = same_week_prior_seasons(ref, 3)
     pairs = [(ref, 10.0)]  # current = 10, highest
     for i, pd in enumerate(prior_dates):
@@ -109,6 +111,7 @@ def test_current_above_all_priors_ranks_1():
 def test_current_below_all_priors_ranks_last():
     ref = date(2026, 11, 14)
     from resp_mcp.reference.epiweeks import same_week_prior_seasons
+
     prior_dates = same_week_prior_seasons(ref, 3)
     pairs = [(ref, 0.1)]  # current = 0.1, lowest
     for i, pd in enumerate(prior_dates):
@@ -129,13 +132,14 @@ def test_rank_none_when_current_value_missing():
 
 
 def test_pct_of_prior_peak_calculated():
+    from datetime import timedelta
+
     ref = date(2026, 11, 14)
-    from resp_mcp.reference.epiweeks import same_week_prior_seasons
-    prior_dates = same_week_prior_seasons(ref, 2)
-    # current=5.0, prior=[10.0, 8.0] → peak=10.0 → 50%
-    pairs = [(ref, 5.0), (prior_dates[0], 10.0), (prior_dates[1], 8.0)]
-    obs = _make_obs(pairs)
-    result = compare_to_prior_seasons(obs, ref, n_seasons=2)
+    first, last = week_ending(2025, 27), week_ending(2026, 26)
+    pairs = [
+        (first + timedelta(weeks=i), 10.0) for i in range((last - first).days // 7 + 1)
+    ]
+    result = compare_to_prior_seasons(_make_obs(pairs + [(ref, 5.0)]), ref, n_seasons=1)
     assert result.pct_of_prior_peak == pytest.approx(50.0)
 
 
@@ -153,6 +157,7 @@ def test_pct_of_prior_peak_none_when_no_prior_data():
 def test_missing_prior_week_uses_plus_one_fallback():
     ref = date(2026, 11, 14)
     from resp_mcp.reference.epiweeks import same_week_prior_seasons
+
     prior_dates = same_week_prior_seasons(ref, 1)
     exact_date = prior_dates[0]
     # Provide value one week later instead of on exact date
@@ -168,6 +173,7 @@ def test_missing_prior_week_uses_plus_one_fallback():
 def test_missing_prior_week_uses_minus_one_fallback():
     ref = date(2026, 11, 14)
     from resp_mcp.reference.epiweeks import same_week_prior_seasons
+
     prior_dates = same_week_prior_seasons(ref, 1)
     exact_date = prior_dates[0]
     # Provide value one week earlier
@@ -196,6 +202,7 @@ def test_53_week_year_alignment():
     # week 27, 2025 starts the 2025-26 season
     ref = week_ending(2025, 27)  # wos = 1
     from resp_mcp.reference.epiweeks import same_week_prior_seasons
+
     prior_dates = same_week_prior_seasons(ref, 1)
     # Should land on week 27 of 2024 (start of 2024-25 season)
     expected = week_ending(2024, 27)
@@ -206,6 +213,7 @@ def test_season_comparison_handles_53_week_year():
     """Build observations for a 53-week year scenario and verify no crash."""
     ref = week_ending(2025, 27)
     from resp_mcp.reference.epiweeks import same_week_prior_seasons
+
     prior_dates = same_week_prior_seasons(ref, 2)
     pairs = [(ref, 1.0)] + [(pd, float(i + 2)) for i, pd in enumerate(prior_dates)]
     obs = _make_obs(pairs)
@@ -247,6 +255,7 @@ def test_mid_history_no_data_for_one_prior_season():
     """If a prior season has no data (new source), value=None, no crash."""
     ref = date(2026, 11, 14)
     from resp_mcp.reference.epiweeks import same_week_prior_seasons
+
     prior_dates = same_week_prior_seasons(ref, 3)
     # Only provide current and 2 of 3 prior seasons
     pairs = [(ref, 5.0), (prior_dates[0], 4.0), (prior_dates[1], 6.0)]

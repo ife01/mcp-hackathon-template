@@ -13,8 +13,8 @@ This template ships deployment kits for two targets:
 
 ## The server code doesn't change
 
-Every kit runs the **same** server in `src/example_server/`. The entry point
-`app.py` auto-selects its transport:
+Every kit runs the **same** server in `src/resp_mcp/`. The entry point
+`server.py` auto-selects its transport:
 
 - a platform port (`DATABRICKS_APP_PORT` or `PORT`) → **HTTP** on that port;
 - `MCP_TRANSPORT=streamable-http` → HTTP on `MCP_HOST:MCP_PORT`;

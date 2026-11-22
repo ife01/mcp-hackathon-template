@@ -147,6 +147,17 @@
           ],
           "default": null,
           "title": "Pct Change"
+        },
+        "provenance": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Provenance"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "required": [
@@ -202,6 +213,38 @@
     "n_jurisdictions_scanned": {
       "title": "N Jurisdictions Scanned",
       "type": "integer"
+    },
+    "status": {
+      "default": "ok",
+      "enum": [
+        "ok",
+        "partial",
+        "insufficient_data"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "n_assessed": {
+      "default": 0,
+      "title": "N Assessed",
+      "type": "integer"
+    },
+    "n_unavailable": {
+      "default": 0,
+      "title": "N Unavailable",
+      "type": "integer"
+    },
+    "n_rising_total": {
+      "default": 0,
+      "title": "N Rising Total",
+      "type": "integer"
+    },
+    "unavailable_jurisdictions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Unavailable Jurisdictions",
+      "type": "array"
     },
     "n_insufficient_data": {
       "description": "Jurisdictions excluded due to insufficient data.",

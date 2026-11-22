@@ -1,0 +1,29 @@
+{
+  "id": "E2",
+  "category": "robustness",
+  "prompt": "Rank states by rising flu test positivity.",
+  "passed": true,
+  "replay_seconds": 0.009512999997241423,
+  "checks": [
+    {
+      "check": "expected error",
+      "passed": true,
+      "actual": "unsupported_geography",
+      "expected": "unsupported_geography"
+    }
+  ],
+  "calls": [
+    {
+      "tool": "find_jurisdictions_with_rising_activity",
+      "arguments": {
+        "pathogen": "influenza",
+        "signal": "test_positivity",
+        "as_of": "2026-10-31"
+      },
+      "output": {
+        "error": "unsupported_geography",
+        "message": "Test positivity is national-only. Use assess_trend with jurisdiction='USA'; state hotspots cannot be inferred."
+      }
+    }
+  ]
+}

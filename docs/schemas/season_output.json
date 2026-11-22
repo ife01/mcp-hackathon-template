@@ -191,8 +191,20 @@
             }
           ],
           "default": null,
-          "description": "current_value / max(prior_values) * 100.",
+          "description": "Current / highest peak among complete eligible prior seasons * 100; null without full seasons.",
           "title": "Pct Of Prior Peak"
+        },
+        "n_prior_compared": {
+          "default": 0,
+          "title": "N Prior Compared",
+          "type": "integer"
+        },
+        "prior_season_peaks": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "title": "Prior Season Peaks",
+          "type": "object"
         },
         "method": {
           "default": "week_of_season_aligned",

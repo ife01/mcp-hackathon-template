@@ -82,7 +82,8 @@ def assess_concordance(
 
     # Filter to signals with usable (non-insufficient) data
     usable = [
-        st for st in signal_trends
+        st
+        for st in signal_trends
         if st.trend.direction != TrendDirection.insufficient_data
     ]
     insufficient_count = len(signal_trends) - len(usable)
@@ -90,7 +91,7 @@ def assess_concordance(
     if not usable:
         return ConcordanceResult(
             pattern="insufficient_data",
-            signals_used=[st.signal for st in signal_trends],
+            signals_used=[],
             temporal_alignment_note=None,
             explanation=(
                 "All signals have insufficient data for trend classification."
@@ -98,6 +99,14 @@ def assess_concordance(
         )
 
     signals_used = [st.signal for st in usable]
+    if len(set(signals_used)) < 2:
+        return ConcordanceResult(
+            pattern="insufficient_data",
+            signals_used=signals_used,
+            temporal_alignment_note=None,
+            explanation="At least two distinct usable signals are required for "
+            "concordance.",
+        )
 
     # ── Lag guard ─────────────────────────────────────────────────────────────
     week_endings = [
@@ -127,16 +136,7 @@ def assess_concordance(
 
     # Determine pattern
     pattern: ConcordancePattern
-    if len(usable) == 1:
-        # Single signal — report its direction directly
-        d = usable[0].trend.direction
-        if d == _inc:
-            pattern = "concordant_increase"
-        elif d == _dec:
-            pattern = "concordant_decrease"
-        else:
-            pattern = "stable"
-    elif n_increasing == len(usable):
+    if n_increasing == len(usable):
         pattern = "concordant_increase"
     elif n_decreasing == len(usable):
         pattern = "concordant_decrease"
@@ -153,9 +153,7 @@ def assess_concordance(
         pattern = "mixed"
 
     # ── Explanation ───────────────────────────────────────────────────────────
-    explanation = _build_explanation(
-        pattern, usable, insufficient_count, lag_note
-    )
+    explanation = _build_explanation(pattern, usable, insufficient_count, lag_note)
 
     return ConcordanceResult(
         pattern=pattern,
@@ -176,20 +174,15 @@ def _build_explanation(
 
     base: str
     if pattern == "concordant_increase":
-        base = (
-            f"All {n} available signal(s) ({signal_names}) show an increasing trend."
-        )
+        base = f"All {n} available signal(s) ({signal_names}) show an increasing trend."
     elif pattern == "concordant_decrease":
-        base = (
-            f"All {n} available signal(s) ({signal_names}) show a decreasing trend."
-        )
+        base = f"All {n} available signal(s) ({signal_names}) show a decreasing trend."
     elif pattern == "stable":
-        base = (
-            f"All {n} available signal(s) ({signal_names}) show a stable trend."
-        )
+        base = f"All {n} available signal(s) ({signal_names}) show a stable trend."
     elif pattern == "early_warning":
         rising = [
-            st.signal.value for st in usable
+            st.signal.value
+            for st in usable
             if st.trend.direction == TrendDirection.increasing
         ]
         base = (
@@ -207,8 +200,7 @@ def _build_explanation(
     suffix = ""
     if insufficient_count > 0:
         suffix += (
-            f" {insufficient_count} signal(s) had insufficient data "
-            "and were excluded."
+            f" {insufficient_count} signal(s) had insufficient data and were excluded."
         )
     if lag_note:
         suffix += f" Note: {lag_note}"

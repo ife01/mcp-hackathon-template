@@ -1,0 +1,198 @@
+{
+  "id": "B3",
+  "category": "trend",
+  "prompt": "Assess the recent covid19 hospital_admissions trend for OH, through October 31, 2026.",
+  "passed": true,
+  "replay_seconds": 0.019659999990835786,
+  "checks": [
+    {
+      "check": "trend direction",
+      "passed": true,
+      "actual": "increasing",
+      "expected": "increasing"
+    },
+    {
+      "check": "trend window",
+      "passed": true,
+      "actual": 4,
+      "expected": 4
+    },
+    {
+      "check": "units",
+      "passed": true,
+      "actual": "admissions_per_100k",
+      "expected": "admissions_per_100k"
+    },
+    {
+      "check": "latest value",
+      "passed": true,
+      "actual": 0.87,
+      "expected": 0.87
+    },
+    {
+      "check": "actual observation geography",
+      "passed": true,
+      "actual": "OH",
+      "expected": "OH"
+    },
+    {
+      "check": "latest date",
+      "passed": true,
+      "actual": "2026-10-31",
+      "expected": "2026-10-31"
+    }
+  ],
+  "calls": [
+    {
+      "tool": "assess_trend",
+      "arguments": {
+        "jurisdiction": "OH",
+        "pathogen": "covid19",
+        "signal": "hospital_admissions",
+        "as_of": "2026-10-31"
+      },
+      "output": {
+        "jurisdiction": "OH",
+        "pathogen": "covid19",
+        "signal": "hospital_admissions",
+        "series": [
+          {
+            "jurisdiction": "OH",
+            "week_ending": "2026-09-12",
+            "value": 0.6,
+            "unit": "admissions_per_100k",
+            "official_level": "Very Low",
+            "derived_level": null,
+            "aggregation_method": null,
+            "raw_count": 71.0,
+            "coverage": {
+              "n_hospitals": 191,
+              "pct_hospitals": 88.84
+            }
+          },
+          {
+            "jurisdiction": "OH",
+            "week_ending": "2026-09-19",
+            "value": 0.5,
+            "unit": "admissions_per_100k",
+            "official_level": "Very Low",
+            "derived_level": null,
+            "aggregation_method": null,
+            "raw_count": 59.0,
+            "coverage": {
+              "n_hospitals": 191,
+              "pct_hospitals": 88.84
+            }
+          },
+          {
+            "jurisdiction": "OH",
+            "week_ending": "2026-09-26",
+            "value": 0.61,
+            "unit": "admissions_per_100k",
+            "official_level": "Very Low",
+            "derived_level": null,
+            "aggregation_method": null,
+            "raw_count": 72.0,
+            "coverage": {
+              "n_hospitals": 189,
+              "pct_hospitals": 87.91
+            }
+          },
+          {
+            "jurisdiction": "OH",
+            "week_ending": "2026-10-03",
+            "value": 0.81,
+            "unit": "admissions_per_100k",
+            "official_level": "Very Low",
+            "derived_level": null,
+            "aggregation_method": null,
+            "raw_count": 96.0,
+            "coverage": {
+              "n_hospitals": 194,
+              "pct_hospitals": 90.23
+            }
+          },
+          {
+            "jurisdiction": "OH",
+            "week_ending": "2026-10-10",
+            "value": 0.73,
+            "unit": "admissions_per_100k",
+            "official_level": "Very Low",
+            "derived_level": null,
+            "aggregation_method": null,
+            "raw_count": 86.0,
+            "coverage": {
+              "n_hospitals": 194,
+              "pct_hospitals": 90.23
+            }
+          },
+          {
+            "jurisdiction": "OH",
+            "week_ending": "2026-10-17",
+            "value": 0.87,
+            "unit": "admissions_per_100k",
+            "official_level": "Very Low",
+            "derived_level": null,
+            "aggregation_method": null,
+            "raw_count": 103.0,
+            "coverage": {
+              "n_hospitals": 194,
+              "pct_hospitals": 90.23
+            }
+          },
+          {
+            "jurisdiction": "OH",
+            "week_ending": "2026-10-24",
+            "value": 0.95,
+            "unit": "admissions_per_100k",
+            "official_level": "Very Low",
+            "derived_level": null,
+            "aggregation_method": null,
+            "raw_count": 112.0,
+            "coverage": {
+              "n_hospitals": 195,
+              "pct_hospitals": 90.7
+            }
+          },
+          {
+            "jurisdiction": "OH",
+            "week_ending": "2026-10-31",
+            "value": 0.87,
+            "unit": "admissions_per_100k",
+            "official_level": "Very Low",
+            "derived_level": null,
+            "aggregation_method": null,
+            "raw_count": 103.0,
+            "coverage": {
+              "n_hospitals": 192,
+              "pct_hospitals": 89.3
+            }
+          }
+        ],
+        "trend": {
+          "notes": [],
+          "direction": "increasing",
+          "pct_change": 0.13749999999999984,
+          "abs_change": 0.10999999999999988,
+          "window_weeks": 4,
+          "method": "2w_vs_prior_2w",
+          "basis": "server_heuristic"
+        },
+        "provenance": {
+          "dataset_id": "vdzy-6i9v",
+          "dataset_name": "Weekly Hospital Respiratory Admission Levels and Rates by Jurisdiction, National Healthcare Safety Network (NHSN)",
+          "url": "https://data.cdc.gov/resource/vdzy-6i9v.json",
+          "latest_week_ending": "2026-10-31",
+          "retrieved_at": "2026-11-22T22:11:32.929664Z",
+          "source_last_updated": null,
+          "geography_level": "state",
+          "notes": []
+        },
+        "summary": "Covid19 hospital_admissions in OH is increasing. Latest value: 0.9 admissions_per_100k. Trend is a server heuristic; see official_level for authoritative CDC classification.",
+        "caveats": [
+          "as_of filters observation weeks in data retrieved now; it does not reconstruct what was published at that historical time."
+        ]
+      }
+    }
+  ]
+}

@@ -14,6 +14,7 @@ from resp_mcp.reference.jurisdictions import (
 
 # ── Registry completeness ─────────────────────────────────────────────────────
 
+
 def test_all_50_states_plus_dc_present():
     all_j = get_all_jurisdictions()
     state_codes = {j.code for j in all_j if j.type == "state"}
@@ -46,6 +47,7 @@ def test_guam_is_region_9():
 
 # ── Exact code matching ───────────────────────────────────────────────────────
 
+
 def test_resolve_uppercase_code():
     j = resolve_jurisdiction("GA")
     assert j.code == "GA"
@@ -63,6 +65,7 @@ def test_resolve_mixed_case_code():
 
 
 # ── Exact name matching ───────────────────────────────────────────────────────
+
 
 def test_resolve_full_name():
     j = resolve_jurisdiction("Georgia")
@@ -85,6 +88,7 @@ def test_resolve_full_name_ohio():
 
 
 # ── Alias matching ────────────────────────────────────────────────────────────
+
 
 def test_resolve_alias_us():
     assert resolve_jurisdiction("US").code == "USA"
@@ -111,6 +115,7 @@ def test_resolve_alias_virgin_islands():
 
 
 # ── Typo suggestions ──────────────────────────────────────────────────────────
+
 
 def test_typo_georgai_suggests_georgia():
     with pytest.raises(UnknownJurisdiction) as exc_info:
@@ -143,6 +148,7 @@ def test_completely_unknown_has_no_suggestions():
 
 
 # ── Input guard ───────────────────────────────────────────────────────────────
+
 
 def test_empty_string_raises_value_error():
     with pytest.raises(ValueError, match="empty"):
@@ -178,6 +184,7 @@ def test_only_control_characters_raises():
 
 # ── HHS region lookup ─────────────────────────────────────────────────────────
 
+
 def test_hhs_region_4_contains_georgia():
     region4 = get_by_hhs_region(4)
     codes = {j.code for j in region4}
@@ -204,6 +211,7 @@ def test_all_hhs_regions_1_to_10_have_members():
 
 
 # ── Full name helper ──────────────────────────────────────────────────────────
+
 
 def test_jurisdiction_full_name_ga():
     assert jurisdiction_full_name("GA") == "Georgia"

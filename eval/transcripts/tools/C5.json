@@ -1,0 +1,121 @@
+{
+  "id": "C5",
+  "category": "season",
+  "prompt": "Compare USA flu test_positivity with three prior seasons through October 31, 2026; state when historical evidence is missing.",
+  "passed": true,
+  "replay_seconds": 0.03268959998968057,
+  "checks": [
+    {
+      "check": "historical rank",
+      "passed": true,
+      "actual": 1,
+      "expected": 1
+    },
+    {
+      "check": "usable prior-week count",
+      "passed": true,
+      "actual": 3,
+      "expected": 3
+    },
+    {
+      "check": "complete-season peak set",
+      "passed": true,
+      "actual": {
+        "2025-26": 31.7,
+        "2024-25": 31.6,
+        "2023-24": 18.2
+      },
+      "expected": {
+        "2025-26": 31.7,
+        "2024-25": 31.6,
+        "2023-24": 18.2
+      }
+    },
+    {
+      "check": "percent of complete prior peak",
+      "passed": true,
+      "actual": 31.861198738170348,
+      "expected": 31.861198738170348
+    },
+    {
+      "check": "current historical value",
+      "passed": true,
+      "actual": 10.1,
+      "expected": 10.1
+    }
+  ],
+  "calls": [
+    {
+      "tool": "compare_to_prior_seasons",
+      "arguments": {
+        "jurisdiction": "USA",
+        "pathogen": "influenza",
+        "signal": "test_positivity",
+        "prior_seasons": 3,
+        "as_of": "2026-10-31"
+      },
+      "output": {
+        "jurisdiction": "USA",
+        "pathogen": "influenza",
+        "signal": "test_positivity",
+        "comparison": {
+          "current_season": "2026-27",
+          "current_week_of_season": 17,
+          "current_value": 10.1,
+          "prior": [
+            {
+              "season": "2025-26",
+              "week_ending": "2025-10-25",
+              "week_of_season": 17,
+              "value": 0.8,
+              "alignment_note": null
+            },
+            {
+              "season": "2024-25",
+              "week_ending": "2024-10-26",
+              "week_of_season": 17,
+              "value": 1.0,
+              "alignment_note": null
+            },
+            {
+              "season": "2023-24",
+              "week_ending": "2023-10-28",
+              "week_of_season": 17,
+              "value": 1.8,
+              "alignment_note": null
+            }
+          ],
+          "rank_vs_prior": 1,
+          "pct_of_prior_peak": 31.861198738170348,
+          "n_prior_compared": 3,
+          "prior_season_peaks": {
+            "2025-26": 31.7,
+            "2024-25": 31.6,
+            "2023-24": 18.2
+          },
+          "method": "week_of_season_aligned",
+          "notes": []
+        },
+        "provenance": {
+          "dataset_id": "seuz-s2cv",
+          "dataset_name": "Percent of Tests Positive for Viral Respiratory Pathogens",
+          "url": "https://data.cdc.gov/resource/seuz-s2cv.json",
+          "latest_week_ending": "2026-10-31",
+          "retrieved_at": "2026-11-22T22:11:33.630121Z",
+          "source_last_updated": null,
+          "geography_level": "national",
+          "notes": [
+            "Recent weeks may be incomplete or revised; a two-week lag does not guarantee finalization.",
+            "Influenza test positivity includes both influenza A and B."
+          ]
+        },
+        "summary": "Influenza test_positivity in USA, week 17 of the 2026-27 season. Highest among 3 available prior-week comparisons.",
+        "caveats": [
+          "Recent weeks may be incomplete or revised; a two-week lag does not guarantee finalization.",
+          "Influenza test positivity includes both influenza A and B.",
+          "as_of filters observation weeks in data retrieved now; it does not reconstruct what was published at that historical time."
+        ]
+      }
+    }
+  ]
+}

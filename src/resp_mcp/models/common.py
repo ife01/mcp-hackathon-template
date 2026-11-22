@@ -54,9 +54,7 @@ class Provenance(BaseModel):
     latest_week_ending: date | None
     retrieved_at: datetime
     source_last_updated: datetime | None = None
-    geography_level: Literal[
-        "national", "state", "hhs_region", "site_aggregate"
-    ]
+    geography_level: Literal["national", "state", "hhs_region", "site_aggregate"]
     notes: list[str] = []
 
 
@@ -72,10 +70,12 @@ class WeeklyObservation(BaseModel):
     jurisdiction: str
     week_ending: date
     value: float | None
-    unit: Literal[
-        "admissions_per_100k", "admissions_count", "percent_positive", "wval"
-    ]
-    # Official CDC level label when available (Very Low/Low/Medium/High/Very High)
+    unit: Literal["admissions_per_100k", "admissions_count", "percent_positive", "wval"]
+    # Official CDC level label when available (Very Low/Low/Moderate/High/Very High)
     official_level: str | None = None
+    derived_level: str | None = None
+    aggregation_method: str | None = None
+    # Preserve counts alongside rates so the small-number guard runs in production.
+    raw_count: float | None = None
     # Source-specific coverage metadata (e.g. {"n_sites": 4} or {"pct_hospitals": 68.1})
     coverage: dict[str, float | int] | None = None

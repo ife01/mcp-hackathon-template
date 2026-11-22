@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import logging
 
-from pydantic import field_validator
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -36,7 +36,8 @@ class Settings(BaseSettings):
     cache_ttl_seconds: int = 3600
 
     # ── HTTP client ────────────────────────────────────────────────────────
-    http_timeout_seconds: int = 15
+    http_timeout_seconds: int = Field(default=6, ge=1, le=15)
+    http_total_timeout_seconds: float = Field(default=20, gt=0, le=25)
 
     # ── Security: outbound domain allowlist ───────────────────────────────
     # Only these hosts may be contacted by the Socrata client.

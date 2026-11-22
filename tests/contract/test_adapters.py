@@ -34,6 +34,7 @@ def _load(name: str) -> list[dict]:
 
 # ── NHSN adapter ──────────────────────────────────────────────────────────────
 
+
 @pytest.mark.asyncio
 async def test_nhsn_ga_flu_returns_observations():
     ga = resolve_jurisdiction("GA")
@@ -42,8 +43,10 @@ async def test_nhsn_ga_flu_returns_observations():
     with patch("resp_mcp.sources.nhsn.query", new_callable=AsyncMock) as mock_q:
         mock_q.return_value = rows
         obs, prov = await nhsn.fetch_series(
-            ga, Pathogen.influenza,
-            date(2026, 10, 1), date(2026, 11, 14),
+            ga,
+            Pathogen.influenza,
+            date(2026, 10, 1),
+            date(2026, 11, 14),
         )
 
     assert len(obs) > 0
@@ -62,8 +65,10 @@ async def test_nhsn_ga_flu_hand_checked_value():
     with patch("resp_mcp.sources.nhsn.query", new_callable=AsyncMock) as mock_q:
         mock_q.return_value = rows
         obs, _ = await nhsn.fetch_series(
-            ga, Pathogen.influenza,
-            date(2026, 1, 1), date(2026, 11, 14),
+            ga,
+            Pathogen.influenza,
+            date(2026, 1, 1),
+            date(2026, 11, 14),
         )
 
     latest = max(obs, key=lambda o: o.week_ending)
@@ -80,8 +85,10 @@ async def test_nhsn_usa_national_provenance():
     with patch("resp_mcp.sources.nhsn.query", new_callable=AsyncMock) as mock_q:
         mock_q.return_value = rows
         _, prov = await nhsn.fetch_series(
-            usa, Pathogen.covid19,
-            date(2026, 10, 1), date(2026, 11, 14),
+            usa,
+            Pathogen.covid19,
+            date(2026, 10, 1),
+            date(2026, 11, 14),
         )
 
     assert prov.geography_level == "national"
@@ -95,8 +102,10 @@ async def test_nhsn_coverage_attached():
     with patch("resp_mcp.sources.nhsn.query", new_callable=AsyncMock) as mock_q:
         mock_q.return_value = rows
         obs, _ = await nhsn.fetch_series(
-            ga, Pathogen.influenza,
-            date(2026, 10, 1), date(2026, 11, 14),
+            ga,
+            Pathogen.influenza,
+            date(2026, 10, 1),
+            date(2026, 11, 14),
         )
 
     for o in obs:
@@ -114,8 +123,10 @@ async def test_nhsn_empty_rows_returns_empty_list():
     with patch("resp_mcp.sources.nhsn.query", new_callable=AsyncMock) as mock_q:
         mock_q.return_value = []
         obs, prov = await nhsn.fetch_series(
-            ga, Pathogen.influenza,
-            date(2026, 10, 1), date(2026, 11, 14),
+            ga,
+            Pathogen.influenza,
+            date(2026, 10, 1),
+            date(2026, 11, 14),
         )
 
     assert obs == []
@@ -124,13 +135,15 @@ async def test_nhsn_empty_rows_returns_empty_list():
 
 # ── NWSS adapter ──────────────────────────────────────────────────────────────
 
+
 @pytest.mark.asyncio
 async def test_nwss_georgia_flu_aggregates_sites():
     ga = resolve_jurisdiction("GA")
     rows = _load("nwss_georgia")
     # Filter to flu + recent weeks for speed
     flu_rows = [
-        r for r in rows
+        r
+        for r in rows
         if r.get("pathogen_target") == "Influenza A virus"
         and r.get("week_end", "")[:10] >= "2026-10-01"
     ]
@@ -138,8 +151,10 @@ async def test_nwss_georgia_flu_aggregates_sites():
     with patch("resp_mcp.sources.nwss.query", new_callable=AsyncMock) as mock_q:
         mock_q.return_value = flu_rows
         obs, prov = await nwss.fetch_series(
-            ga, Pathogen.influenza,
-            date(2026, 10, 1), date(2026, 11, 14),
+            ga,
+            Pathogen.influenza,
+            date(2026, 10, 1),
+            date(2026, 11, 14),
         )
 
     assert len(obs) > 0
@@ -168,8 +183,10 @@ async def test_nwss_low_coverage_returns_none_value():
     with patch("resp_mcp.sources.nwss.query", new_callable=AsyncMock) as mock_q:
         mock_q.return_value = single_site_rows
         obs, prov = await nwss.fetch_series(
-            ga, Pathogen.influenza,
-            date(2026, 11, 14), date(2026, 11, 14),
+            ga,
+            Pathogen.influenza,
+            date(2026, 11, 14),
+            date(2026, 11, 14),
         )
 
     assert len(obs) == 1
@@ -182,16 +199,23 @@ async def test_nwss_median_calculation():
     """3 sites with wvals 1.0, 2.0, 3.0 → median = 2.0."""
     ga = resolve_jurisdiction("GA")
     three_sites = [
-        {"state_territory": "Georgia", "week_end": "2026-11-14",
-         "site": f"ID:{i}", "site_wval": str(float(i)),
-         "site_wval_category": "Low"} for i in [1, 2, 3]
+        {
+            "state_territory": "Georgia",
+            "week_end": "2026-11-14",
+            "site": f"ID:{i}",
+            "site_wval": str(float(i)),
+            "site_wval_category": "Low",
+        }
+        for i in [1, 2, 3]
     ]
 
     with patch("resp_mcp.sources.nwss.query", new_callable=AsyncMock) as mock_q:
         mock_q.return_value = three_sites
         obs, _ = await nwss.fetch_series(
-            ga, Pathogen.covid19,
-            date(2026, 11, 14), date(2026, 11, 14),
+            ga,
+            Pathogen.covid19,
+            date(2026, 11, 14),
+            date(2026, 11, 14),
         )
 
     assert obs[0].value == pytest.approx(2.0)
@@ -202,23 +226,35 @@ async def test_nwss_modal_category():
     """3 Very Low + 1 Low → official_level = Very Low."""
     ga = resolve_jurisdiction("GA")
     rows = [
-        {"state_territory": "Georgia", "week_end": "2026-11-14",
-         "site": f"ID:{i}", "site_wval": "1.5",
-         "site_wval_category": "Very Low"} for i in range(3)
+        {
+            "state_territory": "Georgia",
+            "week_end": "2026-11-14",
+            "site": f"ID:{i}",
+            "site_wval": "1.5",
+            "site_wval_category": "Very Low",
+        }
+        for i in range(3)
     ] + [
-        {"state_territory": "Georgia", "week_end": "2026-11-14",
-         "site": "ID:99", "site_wval": "3.0",
-         "site_wval_category": "Low"},
+        {
+            "state_territory": "Georgia",
+            "week_end": "2026-11-14",
+            "site": "ID:99",
+            "site_wval": "3.0",
+            "site_wval_category": "Low",
+        },
     ]
 
     with patch("resp_mcp.sources.nwss.query", new_callable=AsyncMock) as mock_q:
         mock_q.return_value = rows
         obs, _ = await nwss.fetch_series(
-            ga, Pathogen.rsv,
-            date(2026, 11, 14), date(2026, 11, 14),
+            ga,
+            Pathogen.rsv,
+            date(2026, 11, 14),
+            date(2026, 11, 14),
         )
 
-    assert obs[0].official_level == "Very Low"
+    assert obs[0].official_level is None
+    assert obs[0].derived_level == "Very Low"
 
 
 @pytest.mark.asyncio
@@ -228,8 +264,10 @@ async def test_nwss_pr_no_coverage_note():
     with patch("resp_mcp.sources.nwss.query", new_callable=AsyncMock) as mock_q:
         mock_q.return_value = []  # PR has no rows
         obs, prov = await nwss.fetch_series(
-            pr, Pathogen.influenza,
-            date(2026, 10, 1), date(2026, 11, 14),
+            pr,
+            Pathogen.influenza,
+            date(2026, 10, 1),
+            date(2026, 11, 14),
         )
 
     assert obs == []
@@ -238,6 +276,7 @@ async def test_nwss_pr_no_coverage_note():
 
 # ── NREVSS adapter ────────────────────────────────────────────────────────────
 
+
 @pytest.mark.asyncio
 async def test_nrevss_national_flu_returns_observations():
     usa = resolve_jurisdiction("USA")
@@ -245,7 +284,8 @@ async def test_nrevss_national_flu_returns_observations():
 
     # Filter to flu rows for the test window
     flu_rows = [
-        r for r in rows
+        r
+        for r in rows
         if r.get("pathogen") == "Influenza"
         and r.get("week_end", "")[:10] >= "2026-10-01"
     ]
@@ -253,8 +293,10 @@ async def test_nrevss_national_flu_returns_observations():
     with patch("resp_mcp.sources.nrevss.query", new_callable=AsyncMock) as mock_q:
         mock_q.return_value = flu_rows
         obs, prov = await nrevss.fetch_series(
-            usa, Pathogen.influenza,
-            date(2026, 10, 1), date(2026, 11, 14),
+            usa,
+            Pathogen.influenza,
+            date(2026, 10, 1),
+            date(2026, 11, 14),
         )
 
     assert len(obs) > 0
@@ -267,41 +309,52 @@ async def test_nrevss_national_flu_returns_observations():
 async def test_nrevss_state_jurisdiction_adds_national_caveat():
     ga = resolve_jurisdiction("GA")
     rows = [
-        {"week_end": "2026-11-14T00:00:00.000",
-         "pathogen": "Influenza",
-         "percent_test_positivity": "11.8"},
+        {
+            "week_end": "2026-11-14T00:00:00.000",
+            "pathogen": "Influenza",
+            "percent_test_positivity": "11.8",
+        },
     ]
 
     with patch("resp_mcp.sources.nrevss.query", new_callable=AsyncMock) as mock_q:
         mock_q.return_value = rows
         obs, prov = await nrevss.fetch_series(
-            ga, Pathogen.influenza,
-            date(2026, 11, 14), date(2026, 11, 14),
+            ga,
+            Pathogen.influenza,
+            date(2026, 11, 14),
+            date(2026, 11, 14),
         )
 
     assert len(obs) == 1
-    assert obs[0].jurisdiction == "GA"
+    assert obs[0].jurisdiction == "USA"
     assert any("national level" in n for n in prov.notes)
 
 
 @pytest.mark.asyncio
 async def test_nrevss_flu_note_about_a_and_b():
     usa = resolve_jurisdiction("USA")
-    rows = [{"week_end": "2026-11-14T00:00:00.000",
-             "pathogen": "Influenza",
-             "percent_test_positivity": "11.8"}]
+    rows = [
+        {
+            "week_end": "2026-11-14T00:00:00.000",
+            "pathogen": "Influenza",
+            "percent_test_positivity": "11.8",
+        }
+    ]
 
     with patch("resp_mcp.sources.nrevss.query", new_callable=AsyncMock) as mock_q:
         mock_q.return_value = rows
         _, prov = await nrevss.fetch_series(
-            usa, Pathogen.influenza,
-            date(2026, 11, 14), date(2026, 11, 14),
+            usa,
+            Pathogen.influenza,
+            date(2026, 11, 14),
+            date(2026, 11, 14),
         )
 
     assert any("influenza A and B" in n for n in prov.notes)
 
 
 # ── Registry partial failure ──────────────────────────────────────────────────
+
 
 @pytest.mark.asyncio
 async def test_registry_partial_failure_returns_unavailable():
@@ -310,26 +363,36 @@ async def test_registry_partial_failure_returns_unavailable():
 
     async def good_nhsn(*args, **kwargs):
         return [], nrevss.Provenance(  # just reuse a placeholder
-            dataset_id="vdzy-6i9v", dataset_name="NHSN",
+            dataset_id="vdzy-6i9v",
+            dataset_name="NHSN",
             url="https://data.cdc.gov/resource/vdzy-6i9v.json",
-            latest_week_ending=None, retrieved_at=datetime.now(timezone.utc),
+            latest_week_ending=None,
+            retrieved_at=datetime.now(timezone.utc),
             geography_level="state",
         ) if False else (_ for _ in ()).throw(Exception("NWSS down"))
 
     with (
-        patch("resp_mcp.sources.nhsn.fetch_series",
-              new_callable=AsyncMock,
-              return_value=([], _make_prov("vdzy-6i9v", "state"))),
-        patch("resp_mcp.sources.nwss.fetch_series",
-              new_callable=AsyncMock,
-              side_effect=Exception("NWSS connection failed")),
-        patch("resp_mcp.sources.nrevss.fetch_series",
-              new_callable=AsyncMock,
-              return_value=([], _make_prov("seuz-s2cv", "national"))),
+        patch(
+            "resp_mcp.sources.nhsn.fetch_series",
+            new_callable=AsyncMock,
+            return_value=([], _make_prov("vdzy-6i9v", "state")),
+        ),
+        patch(
+            "resp_mcp.sources.nwss.fetch_series",
+            new_callable=AsyncMock,
+            side_effect=Exception("NWSS connection failed"),
+        ),
+        patch(
+            "resp_mcp.sources.nrevss.fetch_series",
+            new_callable=AsyncMock,
+            return_value=([], _make_prov("seuz-s2cv", "national")),
+        ),
     ):
         results = await fetch_all(
-            ga, Pathogen.influenza,
-            date(2026, 10, 1), date(2026, 11, 14),
+            ga,
+            Pathogen.influenza,
+            date(2026, 10, 1),
+            date(2026, 11, 14),
         )
 
     signals = {type(r).__name__ for r in results}
@@ -338,12 +401,15 @@ async def test_registry_partial_failure_returns_unavailable():
 
     unavailable = [r for r in results if isinstance(r, SignalUnavailable)]
     assert any(r.signal == Signal.wastewater for r in unavailable)
-    assert any("NWSS" in r.error or "connection" in r.error.lower()
-               for r in unavailable)
+    assert any(
+        r.dataset_id == "atcp-73re" and "source unavailable" in r.error
+        for r in unavailable
+    )
 
 
 def _make_prov(dataset_id: str, geo_level: str):
     from resp_mcp.models.common import Provenance
+
     return Provenance(
         dataset_id=dataset_id,
         dataset_name="test",
@@ -362,16 +428,27 @@ async def test_registry_all_succeed_returns_three_signal_results():
     prov_nrevss = _make_prov("seuz-s2cv", "national")
 
     with (
-        patch("resp_mcp.sources.nhsn.fetch_series",
-              new_callable=AsyncMock, return_value=([], prov_nhsn)),
-        patch("resp_mcp.sources.nwss.fetch_series",
-              new_callable=AsyncMock, return_value=([], prov_nwss)),
-        patch("resp_mcp.sources.nrevss.fetch_series",
-              new_callable=AsyncMock, return_value=([], prov_nrevss)),
+        patch(
+            "resp_mcp.sources.nhsn.fetch_series",
+            new_callable=AsyncMock,
+            return_value=([], prov_nhsn),
+        ),
+        patch(
+            "resp_mcp.sources.nwss.fetch_series",
+            new_callable=AsyncMock,
+            return_value=([], prov_nwss),
+        ),
+        patch(
+            "resp_mcp.sources.nrevss.fetch_series",
+            new_callable=AsyncMock,
+            return_value=([], prov_nrevss),
+        ),
     ):
         results = await fetch_all(
-            ga, Pathogen.influenza,
-            date(2026, 10, 1), date(2026, 11, 14),
+            ga,
+            Pathogen.influenza,
+            date(2026, 10, 1),
+            date(2026, 11, 14),
         )
 
     assert len(results) == 3

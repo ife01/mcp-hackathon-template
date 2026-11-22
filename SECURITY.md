@@ -1,48 +1,47 @@
-# Security Policy
+# Security and data handling
 
-As a U.S. Government agency, the General Services Administration (GSA) takes seriously our responsibility to protect the public's information, including financial and personal information, from unwarranted disclosure.
+This repository is a read-only hackathon prototype using public aggregate CDC
+data. It does not request line-level records, PII, PHI, or internal CDC access.
+No production authorization or operational readiness is implied.
 
-Software developed by the U.S. General Services Administration (GSA) is subject to the GSA Vulnerability Disclosure Policy.
+## Request boundaries
 
-Please consult our policy for:
+Only fixed public CDC/Socrata origins are allowed by the data client. Tool inputs
+cannot supply an outbound URL. SoQL values come from validated reference codes,
+pathogens, and dates; string literals are escaped. Redirects and environment
+proxies are disabled. Query deadlines, retries, a 50,000-row cap, and per-key
+single-flight caching bound request behavior. Reaching the cap produces an error.
 
-How to submit a report if you believe you have discovered a vulnerability.
-GSA's coordinated disclosure policy.
-Information on how you may conduct security research on GSA developed software and systems.
-Important legal and policy guidelines.
+The test suite blocks unmocked HTTP requests by default. Live tests require the
+live marker and RUN_LIVE=1. Snapshot capture is an explicit network operation;
+offline replay has no network fallback and verifies file hashes.
 
-## Supported Versions
+## Access and credentials
 
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
+The MCP endpoint has no built-in authentication. Keep it in an authorized sandbox
+and behind appropriate platform authentication/network controls when connecting
+remote clients. Do not expose it publicly. Container examples bind the host port
+to loopback; the cloud.gov manifest creates no route by default. No deployment was
+performed as part of evaluation preparation.
 
-| Version (Branch) | Supported          |
-| ------- | ------------------ |
-| main   | :white_check_mark: |
-| other  | :x:
+Keep wxO API keys and optional Socrata tokens in environment variables or the
+ignored root .env file. Never include keys in commits, prompts, screenshots, or
+evaluation transcripts. The service URL, agent ID, and authentication type are
+needed to configure a future live-agent evaluation; local checks require none.
 
-## Security Researchers
+## Errors and integrity
 
-Security researchers shall:
+Unexpected exception contents and upstream response bodies are not returned to
+clients. Application error logs use exception categories and source identifiers,
+not upstream bodies or query URLs. Treat all tool inputs and retrieved content as
+untrusted. Keep access controls and log retention consistent with the sandbox.
+Dependencies are recorded in uv.lock; container installs use the frozen lock.
 
-- Make every effort to avoid privacy violations, degradation of user experience, disruption to production systems, and destruction or manipulation of data.
-- Only use exploits to the extent necessary to confirm a vulnerability. Do not use an exploit to compromise or exfiltrate data, establish command line access and/or persistence, or use the exploit to "pivot" to other systems. Once you've established that a vulnerability exists, or encountered any of the sensitive data outlined above, you must stop your test and notify us immediately.
-- Keep confidential any information about discovered vulnerabilities for up to 90 calendar days after you have notified GSA. For details, please review Coordinated Disclosure.
+Published NHSN categories, server-derived wastewater aggregates, national context,
+missing coverage, and unavailable sources are distinguished. Data lags and
+prototype thresholds limit interpretation; see docs/METHODS.md.
 
-## Hackathon note
-
-MCP servers built from this template expose their `/mcp` endpoint **without authentication** by default (matching the public-data pilot posture). This is acceptable for a hackathon over public data. Before any non-hackathon use, front the endpoint with authentication and review your agency's ATO requirements. Never commit secrets — keep API keys in environment variables / `.env` (git-ignored), not in source.
-
-The starter HTTP helper uses a fixed API origin, rejects absolute or escaping paths,
-disables redirects and environment proxies, and sanitizes upstream failures. Do not
-replace its relative path with a tool-supplied URL. If a tool must fetch arbitrary
-URLs, require exact destination allowlists, connection-time validation of every
-resolved IPv4/IPv6 address, validation at every redirect hop, credential stripping
-across origins, and network-level egress controls. A DNS lookup followed by a normal
-hostname request is vulnerable to DNS rebinding.
-
-Treat all tool arguments, retrieved content, and agent-to-agent messages as
-untrusted. Do not include upstream response bodies, headers, full URLs, query
-strings, stack traces, credentials, names, SSNs, dates of birth, addresses, or other
-sensitive values in MCP errors or logs. Use structured logs with explicitly
-allowlisted fields and define retention and access controls before processing PII.
+Report suspected vulnerabilities privately to the repository maintainer. Do not
+include secrets or sensitive records in a public issue. The upstream template's
+GSA policy applies to GSA-operated systems; this fork is not represented as a
+GSA-operated service.

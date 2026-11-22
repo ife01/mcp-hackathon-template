@@ -15,6 +15,7 @@ from resp_mcp.reference.epiweeks import (
 
 # ── mmwr_week ─────────────────────────────────────────────────────────────────
 
+
 def test_mmwr_week_known_date():
     # 2026-11-14 is MMWR week 45 of 2026 (confirmed from epiweeks library)
     yr, wk = mmwr_week(date(2026, 11, 14))
@@ -31,6 +32,7 @@ def test_mmwr_week_start_of_year():
 
 # ── week_ending ───────────────────────────────────────────────────────────────
 
+
 def test_week_ending_is_saturday():
     d = week_ending(2026, 46)
     assert d.weekday() == 5  # Saturday = 5
@@ -42,6 +44,7 @@ def test_week_ending_known_value():
 
 
 # ── season_of ─────────────────────────────────────────────────────────────────
+
 
 def test_season_of_in_first_half():
     # Week 46 of 2026 is in the 2026-27 season (after week 27)
@@ -66,6 +69,7 @@ def test_season_of_exactly_week_26():
 
 
 # ── week_of_season ────────────────────────────────────────────────────────────
+
 
 def test_week_of_season_week_27_is_1():
     d = week_ending(2026, 27)
@@ -94,6 +98,7 @@ def test_week_of_season_week_1_in_new_year():
 
 # ── 53-week year boundaries ───────────────────────────────────────────────────
 
+
 def test_weeks_in_52_week_year():
     # 2026 is a 52-week MMWR year
     assert _weeks_in_mmwr_year(2026) == 52
@@ -111,6 +116,7 @@ def test_weeks_in_another_52_week_year():
 
 
 # ── same_week_prior_seasons ───────────────────────────────────────────────────
+
 
 def test_same_week_prior_seasons_returns_n_dates():
     d = week_ending(2026, 45)

@@ -29,7 +29,7 @@ API on 2026-11-20 (Build 0.3). Every field referenced in source adapters appears
 | `totalconfflunewadm` | Influenza new admissions count | count |
 | `totalconfc19newadm` | COVID-19 new admissions count | count |
 | `totalconfrsvnewadm` | RSV new admissions count | count |
-| `totalconfflunewadmper100klevel` | Official CDC level for flu (Very Low/Low/Medium/High/Very High) | level |
+| `totalconfflunewadmper100klevel` | Official CDC level for flu (Very Low/Low/Moderate/High/Very High) | level |
 | `totalconfc19newadmper100klevel` | Official CDC level for COVID-19 | level |
 | `totalconfrsvnewadmper100klevel` | Official CDC level for RSV | level |
 | `totalconfc19newadmhosprep` | Hospitals reporting COVID-19 (count) | count |
@@ -76,7 +76,7 @@ API on 2026-11-20 (Build 0.3). Every field referenced in source adapters appears
 | `population_served` | Population served by this site | count |
 | `source` | Data source (e.g. `"State_Territory"`, `"WastewaterSCAN"`, `"CDC_Verily"`) | — |
 | `site_wval` | Viral activity level numeric value (CDC-assigned; not a simple 1–5 scale) | wval |
-| `site_wval_category` | Official CDC category (Very Low / Low / Medium / High / Very High) | level |
+| `site_wval_category` | Official CDC category (Very Low / Low / Moderate / High / Very High) | level |
 | `pathogen_target` | One of `"Influenza A virus"`, `"SARS-CoV-2"`, `"RSV"` | — |
 | `date_included_in_wval` | Date site was included in WVAL calculation | ISO date |
 | `date_updated` | Timestamp of last update for this record | datetime |
@@ -90,14 +90,14 @@ API on 2026-11-20 (Build 0.3). Every field referenced in source adapters appears
   numerically (e.g., Very Low max=2.59, Low min=1.71 — same numeric range). The adapter
   must use the `site_wval_category` column directly from the source data; it must NOT
   attempt to recompute or infer categories from the numeric `site_wval`. When aggregating
-  to state level, use the **modal category** across reporting sites as `official_level`.
+  to state level, use the **modal category** across reporting sites as `derived_level` (a server aggregation, not an official CDC jurisdiction classification).
   Observed ranges (from GA + CA fixtures, 2026-11-20):
   Very Low ≈ 0.15–2.59 | Low ≈ 1.71–5.46 | High ≈ 5.53–15.40 | Very High ≈ 8.62–170.15
-  (Medium category not observed in fixture data — may appear during peak season.)
+  (Moderate is present in the new snapshot_v2 capture.)
 - **Influenza** = `pathogen_target='Influenza A virus'` (influenza A only; note in provenance).
 - **COVID-19** = `pathogen_target='SARS-CoV-2'`
 - **RSV** = `pathogen_target='RSV'`
-- **Puerto Rico**: zero rows — no wastewater sites. Status → `"insufficient_coverage"`.
+- **Puerto Rico**: no rows observed in reconnaissance; this does not establish that surveillance sites do not exist. Empty series return `insufficient_data`.
 - **Low coverage guard**: fewer than 2 sites reporting → `value=None` + provenance note
   `"insufficient wastewater coverage"`.
 - `geography_level` = `"site_aggregate"` (not `"state"` — it is an aggregation of sites).
@@ -242,3 +242,19 @@ NHSN jurisdiction codes verified from live data (Build 0.3):
 
 NWSS `state_territory` uses full English names (title case). NREVSS `rgnm-fkqb` uses
 `"Region N"` format for HHS regions.
+
+
+## Evaluation-readiness correction — 2026-11-22
+
+The current production methods are defined in METHODS.md; older decision-log
+entries are historical and are superseded by the correction entry. NHSN raw
+counts now reach trend analytics. NREVSS observations always retain USA geography.
+NWSS uses valid distinct sites and labels aggregated categories as derived.
+
+Fresh paginated capture is in eval/snapshot_v2 (gzip JSON, losslessly compressed).
+Its capture_manifest.json records the requested window, source update timestamps,
+actual coverage by pathogen, and SHA-256 hashes. Through 2026-10-31, the selected
+NHSN dataset returned 29 weeks beginning 2026-04-18. NWSS and NREVSS returned 175
+weeks per pathogen beginning 2023-07-01 for the captured series. Requested history
+is not the same as available history. Do not describe the NHSN files as 160 weeks
+or use them to establish a prior-season peak.

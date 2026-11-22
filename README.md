@@ -1,189 +1,104 @@
-# GSA MCP Hackathon — Server Template
+# Respiratory Season Situational Awareness MCP Server
 
-A ready-to-run starter for building a [Model Context Protocol (MCP)](https://modelcontextprotocol.io) server in Python, plus deployment kits for **IBM Cloud (watsonx Orchestrate)** and **Databricks**.
+Turn public CDC respiratory surveillance into source-cited weekly briefings with
+explicit geography, reporting lag, coverage, and analytical uncertainty.
 
-Built with [FastMCP](https://github.com/jlowin/fastmcp) and [uv](https://docs.astral.sh/uv/). If you have never built an MCP server before, start with **[QUICKSTART.md](QUICKSTART.md)**.
+This read-only sandbox prototype supports epidemiologists preparing situation
+updates for influenza, COVID-19, and RSV. It combines NHSN hospital admissions,
+NWSS wastewater, and national NREVSS test positivity. It is not an official CDC
+product, a clinical system, or a validated outbreak prediction service.
 
----
+## Tools and MCP surface
 
-## What is an MCP server?
+| Tool | Purpose |
+| --- | --- |
+| `get_respiratory_snapshot` | Latest multi-pathogen signals, dates, provenance, coverage, and concordance |
+| `assess_trend` | Four-consecutive-week heuristic trend and supporting series |
+| `compare_to_prior_seasons` | Available equivalent-week ranks and complete prior-season peaks |
+| `find_jurisdictions_with_rising_activity` | State/DC scan of admissions or wastewater with missingness counts |
 
-An MCP server exposes **tools** (functions the model can call), **prompts** (reusable conversation starters), and **resources** (data the model can read) to an AI client such as Claude Desktop, Claude Code, or an agent platform like watsonx Orchestrate. You write the tools; the client's model decides when to call them.
+Prompts: `weekly_respiratory_briefing`, `regional_hotspot_review`.
+Resources: `resp://sources`, `resp://methods`, `resp://jurisdictions`.
 
-This template gives you a working server with one example of each, so you can replace the examples with your own service and deploy.
-
----
-
-## Repo structure
-
-```
-mcp-hackathon-template/
-├── README.md                  # This file
-├── QUICKSTART.md              # 5-minute clone → run → connect walkthrough
-├── main.py                    # Local entry point (uv run python main.py)
-├── pyproject.toml             # Package + dependencies (uv)
-├── requirements.txt           # Mirror of runtime deps (for buildpack hosts)
-├── Dockerfile                 # Container image (streamable-HTTP, port 8080)
-├── manifest.yaml              # cloud.gov (Cloud Foundry) deploy
-├── server.json                # MCP registry metadata
-├── .env.example               # Copy to .env for local dev
-├── .github/workflows/ci.yml   # Lint + test on push/PR
-├── docs/                      # Vendor-contributed reference materials
-├── src/
-│   └── example_server/        # ← rename to your service
-│       ├── app.py             # Thin entry point: builds FastMCP, picks transport
-│       ├── config.py          # Settings from env vars / .env
-│       ├── models.py          # Pydantic models & enums for tool params
-│       ├── utils.py           # Shared helpers (HTTP client, pagination)
-│       ├── routes.py          # HTTP-only routes (/health, /version)
-│       ├── tools/             # ONE FILE PER TOOL
-│       │   ├── __init__.py    #   register_tools(mcp) aggregator
-│       │   └── example_tool.py
-│       ├── prompts/
-│       │   ├── __init__.py    #   register_prompts(mcp) aggregator
-│       │   └── example.py
-│       └── resources/
-│           ├── __init__.py    #   register_resources(mcp) aggregator
-│           └── example.py
-├── tests/                     # Import + registration smoke tests
-├── eval/                      # Stub → build a Phoenix eval harness (see mcp-eval skill)
-└── deploy/
-    ├── README.md              # Which deployment kit to use
-    ├── ibm/                   # watsonx Orchestrate: 3 kits (see below)
-    └── databricks/            # Databricks Apps kit
+```mermaid
+flowchart LR
+    Agent[Agent / MCP client] --> Tools[Goal-oriented tools]
+    Tools --> Analytics[Pure analytics]
+    Tools --> Sources[CDC source adapters]
+    Sources --> Client[Bounded Socrata client and cache]
+    Client --> CDC[Public CDC datasets]
 ```
 
----
+## Run and verify
 
-## Getting started
+Python 3.11+ and uv are required. From the repository root:
 
-### Prerequisites
-- [uv](https://docs.astral.sh/uv/) — `pip install uv` or `brew install uv`
-
-### Install and run
-
-```bash
-cp .env.example .env
-uv sync
+```shell
+uv sync --frozen --group dev
 uv run python main.py
 ```
 
-The server starts in **stdio** mode — it talks JSON-RPC over stdin/stdout, which is how local clients (Claude Desktop, Claude Code) launch it. See [QUICKSTART.md](QUICKSTART.md) to connect a client.
+The default transport is stdio. Set `MCP_TRANSPORT=streamable-http`,
+`MCP_HOST=127.0.0.1`, and `MCP_PORT=8080` for local HTTP at `/mcp`.
+Platform `PORT` or `DATABRICKS_APP_PORT` selects HTTP automatically.
 
-### Verify
-
-```bash
-uv sync --group dev
-uv run pytest tests/ -v      # tests
-uv run ruff check .          # lint
+```shell
+uv run pytest tests/ -q
+uv run ruff check .
+uv run ruff format --check .
+uv run python scripts/export_schemas.py
+uv run python eval/run_eval.py
 ```
 
----
+Example tool call:
 
-## The one-tool-per-file pattern
-
-Each tool lives in its own file under `src/example_server/tools/` and exposes a `register(mcp)` function. `tools/__init__.py` calls each one from a single `register_tools(mcp)`. This keeps the tool list scannable and lets you add or remove an integration by touching two files.
-
-**Step 1 — create `src/example_server/tools/my_tool.py`:**
-
-```python
-from typing import Annotated
-from urllib.parse import quote
-from fastmcp import FastMCP
-
-from example_server.utils import fetch_json
-
-
-def register(mcp: FastMCP) -> None:
-    @mcp.tool(
-        name="example_get_thing",
-        annotations={
-            "title": "Get a thing",
-            "readOnlyHint": True,
-            "destructiveHint": False,
-            "idempotentHint": True,
-            "openWorldHint": True,
-        },
-    )
-    async def get_thing(thing_id: Annotated[str, "The ID to fetch."]) -> dict:
-        """One-line summary. Document the data source, its update cadence,
-        and the return shape here — the model reads this docstring."""
-        safe_id = quote(thing_id, safe="")
-        return await fetch_json(f"things/{safe_id}")
+```json
+{"name":"get_respiratory_snapshot","arguments":{"jurisdiction":"GA","pathogens":["influenza"],"as_of":"2026-10-31"}}
 ```
 
-**Step 2 — wire it up in `tools/__init__.py`:**
+The result distinguishes local admissions/wastewater from national positivity
+context, preserves each observation date, and reports unavailable or insufficient
+signals explicitly. It does not substitute a national estimate for a state value.
 
-```python
-from example_server.tools import example_tool, my_tool
+## Evaluation evidence
 
-def register_tools(mcp) -> None:
-    example_tool.register(mcp)
-    my_tool.register(mcp)  # ← add this line
+The deterministic tool baseline uses 25 cases, independent raw-data reference
+calculations, frozen HTTP replay with no live fallback, and hash-verified snapshots.
+See [evaluation instructions](eval/README.md), [results](eval/RESULTS.md), and
+[verification record](docs/VERIFICATION.md). These tool-level results do not measure
+an LLM's tool selection, argument accuracy, or final-answer grounding. The [Phoenix agent harness](eval/phoenix/README.md) is implemented and verified
+without model credentials; real model scoring is pending. wxO platform evaluation
+remains a separate step.
+
+## Interpretation limits
+
+- NREVSS is national-only. It is context for a state briefing and cannot rank states.
+- Wastewater medians and modal categories are server-derived; `official_level`
+  is reserved for published NHSN jurisdiction classifications. Population coverage
+  is unknown and changing sites can affect trends.
+- Trend thresholds are heuristics. Sparse counts, missing weeks, and stale data
+  can prevent classification. The `early_warning` pattern is descriptive.
+- In the captured NHSN source, history through the evaluation cutoff contains only
+  29 weeks; unavailable historical comparisons are withheld. Complete prior-season
+  peaks require every expected weekly value.
+- `as_of` is a week-ending cutoff on retrieved data, not an as-published historical
+  vintage. Two weeks of reporting lag does not guarantee finalization.
+
+See [methods](docs/METHODS.md), [data dictionary](docs/DATA_DICTIONARY.md),
+[decision log](docs/DECISIONS.md), and [security](SECURITY.md).
+
+## Sandbox packaging and wxO
+
+```shell
+docker build -t respiratory-mcp .
+docker run --rm -p 127.0.0.1:8080:8080 respiratory-mcp
 ```
 
-**Step 3 — add any API key** as a typed field in `config.py` and document the env var in `.env.example`.
+The container installs locked runtime dependencies. Docker execution is pending
+on a host with Docker; consult the verification record before claiming it passed.
+Nothing has been publicly deployed or registered. Existing deployment kits use
+`resp_mcp.server`; the cloud.gov manifest creates no public route by default.
 
-Prompts (`prompts/`) and resources (`resources/`) follow the exact same `register(mcp)` + aggregator pattern.
-
----
-
-## Rename the package
-
-Before publishing your server, rename `example_server` to your service (e.g. `census_mcp`):
-
-1. Rename the folder `src/example_server/` → `src/<your_name>/`.
-2. Update `pyproject.toml`: the `[project].name`, `[project.scripts]`, and `[tool.hatch.build.targets.wheel].packages`.
-3. Find-and-replace `example_server` across `src/`, `tests/`, `main.py`, `Dockerfile`, and `manifest.yaml`.
-
----
-
-## Tool design tips (federal data)
-
-- **Return structured data, not prose.** Return dicts/lists with consistent keys and let the model narrate.
-- **Document freshness.** Federal datasets lag; state the update frequency and "as-of" date in the docstring.
-- **Expose pagination.** Use `PaginationParams` / `paginate()` from `utils.py`, and return `has_more` / `next_offset`.
-- **Use explicit timeouts.** `utils.fetch_json` defaults to 30s.
-- **Actionable errors.** Return an error dict with a `hint`, not a raw stack trace.
-- **Constrain outbound requests.** Keep API origins in operator-controlled code or configuration, pass only validated relative paths to `fetch_json`, and encode path segments. Never pass a tool-supplied URL directly to an HTTP client.
-- **Treat redirects and DNS as security boundaries.** Redirects are disabled by default. A server that must fetch caller-supplied URLs needs connection-time IP validation on every hop plus network egress controls; a one-time DNS check is not sufficient.
-- **Keep sensitive data out of errors and logs.** Do not expose or log upstream bodies, headers, full URLs, query strings, credentials, stack traces, SSNs, dates of birth, or addresses.
-
----
-
-## Deploying
-
-Local development uses stdio. To share your server with an agent platform, deploy it and register it. See **[deploy/README.md](deploy/README.md)** for a chooser, then:
-
-- **IBM watsonx Orchestrate** — [deploy/ibm/](deploy/ibm/) (three kits: local stdio toolkit, Code Engine build-from-Git, and prebuilt image).
-- **Databricks Apps** — [deploy/databricks/](deploy/databricks/).
-
-Both read the same server code; `app.py` automatically serves HTTP when the platform injects a port.
-
----
-
-## Partner reference materials
-
-The [`docs/`](docs/) directory contains educational reference materials that
-IBM and Databricks may contribute for hackathon participants. Vendor-contributed
-materials do not represent the views, positions, or policies of GSA or the
-United States Government.
-
-GSA does not endorse any commercial product, service, or enterprise referenced
-in these materials. Reference to a commercial product, service, or enterprise
-does not constitute or imply endorsement, recommendation, or favoring by GSA or
-the United States Government. These materials are provided for educational
-purposes only. See [`docs/README.md`](docs/README.md) for the complete notice and
-contribution guidance.
-
----
-
-## Evaluations
-
-Measuring how well an LLM can use your tools is the real test of server quality. This template intentionally does **not** ship an eval harness — see [eval/README.md](eval/README.md) for how to build one with the `mcp-eval` skill.
-
----
-
-## License
-
-[MIT](LICENSE). See [SECURITY.md](SECURITY.md) for the vulnerability disclosure policy and hackathon security notes.
+[wxO setup and live-evaluation prerequisites](docs/WXO_AGENT_SETUP.md) describe
+credentials and the remaining service checks. No wxO credentials are needed for
+local tests or frozen replay. MIT license; see LICENSE.

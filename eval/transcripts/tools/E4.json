@@ -1,0 +1,30 @@
+{
+  "id": "E4",
+  "category": "robustness",
+  "prompt": "Assess Georgia flu admissions as of January 1, 2015.",
+  "passed": true,
+  "replay_seconds": 0.006958700003451668,
+  "checks": [
+    {
+      "check": "expected error",
+      "passed": true,
+      "actual": "invalid_input",
+      "expected": "invalid_input"
+    }
+  ],
+  "calls": [
+    {
+      "tool": "assess_trend",
+      "arguments": {
+        "jurisdiction": "GA",
+        "pathogen": "influenza",
+        "signal": "hospital_admissions",
+        "as_of": "2015-01-01"
+      },
+      "output": {
+        "error": "invalid_input",
+        "message": "as_of date '2015-01-01' is before the earliest supported date (2020-01-01). CDC NHSN reporting began in 2020."
+      }
+    }
+  ]
+}

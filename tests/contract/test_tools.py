@@ -64,13 +64,15 @@ def _obs(value: float, week: date, signal: Signal) -> list[WeeklyObservation]:
     }[signal]
     obs = []
     for i in range(8):
-        obs.append(WeeklyObservation(
-            jurisdiction="GA",
-            week_ending=date.fromordinal(week.toordinal() - (7 - i) * 7),
-            value=round(value * (0.8 + 0.05 * i), 2),
-            unit=unit,
-            official_level="Low" if i < 4 else "Medium",
-        ))
+        obs.append(
+            WeeklyObservation(
+                jurisdiction="GA",
+                week_ending=date.fromordinal(week.toordinal() - (7 - i) * 7),
+                value=round(value * (0.8 + 0.05 * i), 2),
+                unit=unit,
+                official_level="Low" if i < 4 else "Moderate",
+            )
+        )
     return obs
 
 
@@ -83,17 +85,29 @@ async def test_snapshot_returns_dict_with_jurisdiction():
     prov = _prov("vdzy-6i9v", "state", date(2026, 11, 14))
 
     with (
-        patch("resp_mcp.sources.nhsn.fetch_series", new_callable=AsyncMock,
-              return_value=(ga_obs, prov)),
-        patch("resp_mcp.sources.nwss.fetch_series", new_callable=AsyncMock,
-              return_value=([], _prov("atcp-73re", "site_aggregate"))),
-        patch("resp_mcp.sources.nrevss.fetch_series", new_callable=AsyncMock,
-              return_value=([], _prov("seuz-s2cv", "national"))),
+        patch(
+            "resp_mcp.sources.nhsn.fetch_series",
+            new_callable=AsyncMock,
+            return_value=(ga_obs, prov),
+        ),
+        patch(
+            "resp_mcp.sources.nwss.fetch_series",
+            new_callable=AsyncMock,
+            return_value=([], _prov("atcp-73re", "site_aggregate")),
+        ),
+        patch(
+            "resp_mcp.sources.nrevss.fetch_series",
+            new_callable=AsyncMock,
+            return_value=([], _prov("seuz-s2cv", "national")),
+        ),
     ):
-        result = await mcp.call_tool("get_respiratory_snapshot", {
-            "jurisdiction": "GA",
-            "pathogens": ["influenza"],
-        })
+        result = await mcp.call_tool(
+            "get_respiratory_snapshot",
+            {
+                "jurisdiction": "GA",
+                "pathogens": ["influenza"],
+            },
+        )
 
     # FastMCP returns list of content items; get the text
     data = _result_to_dict(result)
@@ -112,17 +126,29 @@ async def test_snapshot_pr_returns_ok():
     nwss_prov.notes.append("No wastewater surveillance sites in Puerto Rico.")
 
     with (
-        patch("resp_mcp.sources.nhsn.fetch_series", new_callable=AsyncMock,
-              return_value=(obs, prov)),
-        patch("resp_mcp.sources.nwss.fetch_series", new_callable=AsyncMock,
-              return_value=([], nwss_prov)),
-        patch("resp_mcp.sources.nrevss.fetch_series", new_callable=AsyncMock,
-              return_value=([], _prov("seuz-s2cv", "national"))),
+        patch(
+            "resp_mcp.sources.nhsn.fetch_series",
+            new_callable=AsyncMock,
+            return_value=(obs, prov),
+        ),
+        patch(
+            "resp_mcp.sources.nwss.fetch_series",
+            new_callable=AsyncMock,
+            return_value=([], nwss_prov),
+        ),
+        patch(
+            "resp_mcp.sources.nrevss.fetch_series",
+            new_callable=AsyncMock,
+            return_value=([], _prov("seuz-s2cv", "national")),
+        ),
     ):
-        result = await mcp.call_tool("get_respiratory_snapshot", {
-            "jurisdiction": "PR",
-            "pathogens": ["influenza"],
-        })
+        result = await mcp.call_tool(
+            "get_respiratory_snapshot",
+            {
+                "jurisdiction": "PR",
+                "pathogens": ["influenza"],
+            },
+        )
 
     data = _result_to_dict(result)
 
@@ -136,17 +162,29 @@ async def test_snapshot_usa_national():
     prov = _prov("vdzy-6i9v", "national", date(2026, 11, 14))
 
     with (
-        patch("resp_mcp.sources.nhsn.fetch_series", new_callable=AsyncMock,
-              return_value=(obs_national, prov)),
-        patch("resp_mcp.sources.nwss.fetch_series", new_callable=AsyncMock,
-              return_value=([], _prov("atcp-73re", "site_aggregate"))),
-        patch("resp_mcp.sources.nrevss.fetch_series", new_callable=AsyncMock,
-              return_value=([], _prov("seuz-s2cv", "national"))),
+        patch(
+            "resp_mcp.sources.nhsn.fetch_series",
+            new_callable=AsyncMock,
+            return_value=(obs_national, prov),
+        ),
+        patch(
+            "resp_mcp.sources.nwss.fetch_series",
+            new_callable=AsyncMock,
+            return_value=([], _prov("atcp-73re", "site_aggregate")),
+        ),
+        patch(
+            "resp_mcp.sources.nrevss.fetch_series",
+            new_callable=AsyncMock,
+            return_value=([], _prov("seuz-s2cv", "national")),
+        ),
     ):
-        result = await mcp.call_tool("get_respiratory_snapshot", {
-            "jurisdiction": "USA",
-            "pathogens": ["influenza"],
-        })
+        result = await mcp.call_tool(
+            "get_respiratory_snapshot",
+            {
+                "jurisdiction": "USA",
+                "pathogens": ["influenza"],
+            },
+        )
 
     data = _result_to_dict(result)
 
@@ -159,18 +197,30 @@ async def test_snapshot_as_of_filters_data():
     prov = _prov("vdzy-6i9v", "state", date(2026, 11, 14))
 
     with (
-        patch("resp_mcp.sources.nhsn.fetch_series", new_callable=AsyncMock,
-              return_value=(obs, prov)),
-        patch("resp_mcp.sources.nwss.fetch_series", new_callable=AsyncMock,
-              return_value=([], _prov("atcp-73re", "site_aggregate"))),
-        patch("resp_mcp.sources.nrevss.fetch_series", new_callable=AsyncMock,
-              return_value=([], _prov("seuz-s2cv", "national"))),
+        patch(
+            "resp_mcp.sources.nhsn.fetch_series",
+            new_callable=AsyncMock,
+            return_value=(obs, prov),
+        ),
+        patch(
+            "resp_mcp.sources.nwss.fetch_series",
+            new_callable=AsyncMock,
+            return_value=([], _prov("atcp-73re", "site_aggregate")),
+        ),
+        patch(
+            "resp_mcp.sources.nrevss.fetch_series",
+            new_callable=AsyncMock,
+            return_value=([], _prov("seuz-s2cv", "national")),
+        ),
     ):
-        result = await mcp.call_tool("get_respiratory_snapshot", {
-            "jurisdiction": "GA",
-            "pathogens": ["influenza"],
-            "as_of": "2026-10-31",
-        })
+        result = await mcp.call_tool(
+            "get_respiratory_snapshot",
+            {
+                "jurisdiction": "GA",
+                "pathogens": ["influenza"],
+                "as_of": "2026-10-31",
+            },
+        )
 
     data = _result_to_dict(result)
 
@@ -186,13 +236,19 @@ async def test_trend_returns_series_and_direction():
     obs = _obs(2.5, date(2026, 11, 14), Signal.hospital_admissions)
     prov = _prov("vdzy-6i9v", "state", date(2026, 11, 14))
 
-    with patch("resp_mcp.sources.nhsn.fetch_series", new_callable=AsyncMock,
-               return_value=(obs, prov)):
-        result = await mcp.call_tool("assess_trend", {
-            "jurisdiction": "GA",
-            "pathogen": "influenza",
-            "signal": "hospital_admissions",
-        })
+    with patch(
+        "resp_mcp.sources.nhsn.fetch_series",
+        new_callable=AsyncMock,
+        return_value=(obs, prov),
+    ):
+        result = await mcp.call_tool(
+            "assess_trend",
+            {
+                "jurisdiction": "GA",
+                "pathogen": "influenza",
+                "signal": "hospital_admissions",
+            },
+        )
 
     data = _result_to_dict(result)
 
@@ -209,14 +265,20 @@ async def test_trend_flu_alias():
     obs = _obs(2.5, date(2026, 11, 14), Signal.hospital_admissions)
     prov = _prov("vdzy-6i9v", "state", date(2026, 11, 14))
 
-    with patch("resp_mcp.sources.nhsn.fetch_series", new_callable=AsyncMock,
-               return_value=(obs, prov)):
+    with patch(
+        "resp_mcp.sources.nhsn.fetch_series",
+        new_callable=AsyncMock,
+        return_value=(obs, prov),
+    ):
         # 'flu' alias should resolve to 'influenza'
-        result = await mcp.call_tool("assess_trend", {
-            "jurisdiction": "GA",
-            "pathogen": "flu",
-            "signal": "hospital_admissions",
-        })
+        result = await mcp.call_tool(
+            "assess_trend",
+            {
+                "jurisdiction": "GA",
+                "pathogen": "flu",
+                "signal": "hospital_admissions",
+            },
+        )
 
     data = _result_to_dict(result)
 
@@ -228,13 +290,19 @@ async def test_trend_provenance_attached():
     obs = _obs(2.5, date(2026, 11, 14), Signal.hospital_admissions)
     prov = _prov("vdzy-6i9v", "state", date(2026, 11, 14))
 
-    with patch("resp_mcp.sources.nhsn.fetch_series", new_callable=AsyncMock,
-               return_value=(obs, prov)):
-        result = await mcp.call_tool("assess_trend", {
-            "jurisdiction": "GA",
-            "pathogen": "influenza",
-            "signal": "hospital_admissions",
-        })
+    with patch(
+        "resp_mcp.sources.nhsn.fetch_series",
+        new_callable=AsyncMock,
+        return_value=(obs, prov),
+    ):
+        result = await mcp.call_tool(
+            "assess_trend",
+            {
+                "jurisdiction": "GA",
+                "pathogen": "influenza",
+                "signal": "hospital_admissions",
+            },
+        )
 
     data = _result_to_dict(result)
 
@@ -252,12 +320,15 @@ async def test_season_returns_comparison():
     with patch("resp_mcp.sources.nhsn.fetch_series", new_callable=AsyncMock) as mock:
         mock.return_value = ([], prov)
         # (Empty series → comparison with no prior data, still a valid response)
-        result = await mcp.call_tool("compare_to_prior_seasons", {
-            "jurisdiction": "GA",
-            "pathogen": "influenza",
-            "signal": "hospital_admissions",
-            "prior_seasons": 2,
-        })
+        result = await mcp.call_tool(
+            "compare_to_prior_seasons",
+            {
+                "jurisdiction": "GA",
+                "pathogen": "influenza",
+                "signal": "hospital_admissions",
+                "prior_seasons": 2,
+            },
+        )
 
     data = _result_to_dict(result)
 
@@ -271,50 +342,66 @@ async def test_season_returns_comparison():
 
 @pytest.mark.asyncio
 async def test_scan_returns_scan_output():
-    # Mock all state fetches to return a consistent set of data
-    obs = _obs(2.5, date(2026, 11, 14), Signal.hospital_admissions)
-    prov = _prov("vdzy-6i9v", "state", date(2026, 11, 14))
+    from resp_mcp.reference.jurisdictions import get_by_hhs_region
 
-    with patch("resp_mcp.sources.nhsn.fetch_series", new_callable=AsyncMock,
-               return_value=(obs, prov)):
-        result = await mcp.call_tool("find_jurisdictions_with_rising_activity", {
-            "pathogen": "influenza",
-            "signal": "hospital_admissions",
-            "hhs_region": 4,  # Just region 4 to keep the test fast
-            "limit": 5,
-        })
-
-    data = _result_to_dict(result)
-
-    assert data["pathogen"] == "influenza"
-    assert data["signal"] == "hospital_admissions"
-    assert "rising" in data
-    assert "n_jurisdictions_scanned" in data
-    assert isinstance(data["rising"], list)
+    values = {
+        j.code: (
+            _obs(2.5, date(2026, 11, 14), Signal.hospital_admissions),
+            _prov("vdzy-6i9v", "state", date(2026, 11, 14)),
+        )
+        for j in get_by_hhs_region(4)
+    }
+    for code, (obs, _) in values.items():
+        for i, o in enumerate(obs):
+            o.jurisdiction = code
+            o.value = 1 + i * 0.3
+    with patch("resp_mcp.tools.scan.fetch_many", AsyncMock(return_value=values)):
+        data = _result_to_dict(
+            await mcp.call_tool(
+                "find_jurisdictions_with_rising_activity",
+                {
+                    "pathogen": "influenza",
+                    "signal": "hospital_admissions",
+                    "hhs_region": 4,
+                    "limit": 5,
+                    "as_of": "2026-11-14",
+                },
+            )
+        )
+    assert data["n_assessed"] == 8
+    assert len(data["rising"]) == 5
+    assert data["n_rising_total"] == 8
+    assert all(r["provenance"]["dataset_id"] == "vdzy-6i9v" for r in data["rising"])
 
 
 @pytest.mark.asyncio
 async def test_scan_all_stable_returns_empty_rising():
-    # Flat (stable) data → no rising jurisdictions
-    # Constant value across all 8 weeks → trend is stable → rising = []
-    obs = [WeeklyObservation(
-        jurisdiction="GA",
-        week_ending=date.fromordinal(date(2026, 11, 14).toordinal() - i * 7),
-        value=2.0,  # constant → stable
-        unit="admissions_per_100k",
-    ) for i in range(8)]
-    prov = _prov("vdzy-6i9v", "state", date(2026, 11, 14))
+    async def stable(jurs, pathogen, signal, start, end):
+        result = {}
+        for jur in jurs:
+            obs = [
+                WeeklyObservation(
+                    jurisdiction=jur.code,
+                    week_ending=end - __import__("datetime").timedelta(weeks=i),
+                    value=2,
+                    unit="admissions_per_100k",
+                )
+                for i in range(4)
+            ]
+            result[jur.code] = (obs, _prov("vdzy-6i9v", "state", end))
+        return result
 
-    stable_fetch = AsyncMock(return_value=(obs, prov))
-    # Patch through the scan module's _ADAPTERS dict, which holds direct refs
-    import resp_mcp.tools.scan as _scan_mod
-    from resp_mcp.models.common import Signal as _Signal
-    with patch.dict(_scan_mod._ADAPTERS, {_Signal.hospital_admissions: stable_fetch}):
-        result = await mcp.call_tool("find_jurisdictions_with_rising_activity", {
-            "pathogen": "influenza",
-            "signal": "hospital_admissions",
-            "hhs_region": 4,
-        })
-
-    data = _result_to_dict(result)
+    with patch("resp_mcp.tools.scan.fetch_many", side_effect=stable):
+        data = _result_to_dict(
+            await mcp.call_tool(
+                "find_jurisdictions_with_rising_activity",
+                {
+                    "pathogen": "influenza",
+                    "signal": "hospital_admissions",
+                    "hhs_region": 4,
+                },
+            )
+        )
     assert data["rising"] == []
+    assert data["n_assessed"] == 8
+    assert data["status"] == "ok"

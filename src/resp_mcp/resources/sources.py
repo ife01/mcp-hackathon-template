@@ -25,9 +25,9 @@ from data.cdc.gov with no authentication required (app token improves rate limit
 - **Cadence**: Weekly (Fridays); data through the prior Saturday
 - **Geography**: 50 states + DC + Puerto Rico + Virgin Islands + national (USA)
 - **Unit**: admissions per 100,000 population (per100k)
-- **Official levels**: Very Low / Low / Medium / High / Very High (CDC-assigned per jurisdiction per week)
+- **Official levels**: Very Low / Low / Moderate / High / Very High (CDC-assigned per jurisdiction per week)
 - **Caveats**:
-  - Mandatory reporting began 2024; pre-2024 data may undercount due to voluntary participation.
+  - Mandatory reporting began November 1, 2024; coverage changes limit historical comparison.
   - Coverage metric (% hospitals reporting) varies by jurisdiction.
 
 ---
@@ -40,12 +40,12 @@ from data.cdc.gov with no authentication required (app token improves rate limit
 - **Cadence**: Weekly; typically updated within 1–2 weeks of collection
 - **Geography**: Site-level data aggregated to state level by this server
 - **Unit**: WVAL (Wastewater Viral Activity Level, a composite index)
-- **Official levels**: Very Low / Low / Medium / High / Very High (site_wval_category, CDC-assigned per site)
+- **Official levels**: Very Low / Low / Moderate / High / Very High (site_wval_category, CDC-assigned per site)
 - **Caveats**:
   - Influenza A only (not influenza B); NREVSS covers A+B combined.
-  - Fewer than 2 sites reporting → value set to None (insufficient coverage).
-  - Puerto Rico: zero sites → no wastewater signal available.
-  - State aggregate = median site_wval; official level = modal site_wval_category.
+  - Fewer than 2 distinct sites with usable values → value set to None (insufficient coverage).
+  - No returned rows means no observations in the requested window; site existence cannot be inferred.
+  - Server aggregate = median valid distinct sites; unique modal category is derived_level, never official_level.
 
 ---
 
@@ -54,11 +54,11 @@ from data.cdc.gov with no authentication required (app token improves rate limit
 - **URL**: https://data.cdc.gov/resource/seuz-s2cv.json
 - **Full name**: Percent of Tests Positive for Viral Respiratory Pathogens
 - **Signal**: test_positivity
-- **Cadence**: Weekly; most recent week may be incomplete (≥90% complete two weeks back)
+- **Cadence**: Weekly; recent weeks may be incomplete or revised; no finalization guarantee
 - **Geography**: National only — no state or HHS region breakdown
 - **Unit**: percent positive (%)
 - **Caveats**:
-  - For state-level queries, the national value is applied with a provenance note.
+  - For state queries, USA observations remain national context and are excluded from local concordance.
   - Influenza: combined A+B (not split by subtype).
   - No official CDC level classification for this signal.
 

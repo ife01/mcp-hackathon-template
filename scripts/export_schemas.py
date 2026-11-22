@@ -16,6 +16,7 @@ Outputs:
 
 from __future__ import annotations
 
+import asyncio
 import json
 from pathlib import Path
 
@@ -47,7 +48,22 @@ _MODELS = [
 for name, model in _MODELS:
     schema = model.model_json_schema()
     out = SCHEMA_DIR / f"{name}.json"
-    out.write_text(json.dumps(schema, indent=2))
+    out.write_text(json.dumps(schema, indent=2) + "\n", encoding="utf-8")
     print(f"  wrote {out}")
 
 print(f"\nExported {len(_MODELS)} schemas to {SCHEMA_DIR}/")
+
+
+async def export_registered():
+    from resp_mcp.server import mcp
+
+    registered = {
+        tool.name: {"description": tool.description, "inputSchema": tool.parameters}
+        for tool in await mcp.list_tools()
+    }
+    (SCHEMA_DIR / "mcp_tools.json").write_text(
+        json.dumps(registered, indent=2) + "\n", encoding="utf-8"
+    )
+
+
+asyncio.run(export_registered())

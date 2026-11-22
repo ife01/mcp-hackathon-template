@@ -9,9 +9,9 @@ Key columns (verified Build 0.3):
 
 Decisions (from docs/DECISIONS.md):
 - Site-level data aggregated to state level using median site_wval.
-- official_level = modal site_wval_category across reporting sites.
+- derived_level = unique modal site category; official_level is never fabricated.
 - state_territory uses full English names (mapped from 2-letter codes).
-- Puerto Rico: zero rows → status insufficient_coverage.
+- Empty results indicate missing observations, not absence of surveillance.
 - Fewer than 2 sites → value=None + provenance note.
 - Influenza = pathogen_target='Influenza A virus' (A only; note in provenance).
 """
@@ -19,6 +19,7 @@ Decisions (from docs/DECISIONS.md):
 from __future__ import annotations
 
 import logging
+import math
 import statistics
 from collections import Counter
 from datetime import date, datetime, timezone
@@ -30,9 +31,7 @@ from resp_mcp.reference.jurisdictions import Jurisdiction, jurisdiction_full_nam
 logger = logging.getLogger(__name__)
 
 DATASET_ID = "atcp-73re"
-DATASET_NAME = (
-    "CDC Wastewater Viral Activity Level for SARS-CoV-2, Influenza A and RSV"
-)
+DATASET_NAME = "CDC Wastewater Viral Activity Level for SARS-CoV-2, Influenza A and RSV"
 DATASET_URL = f"https://data.cdc.gov/resource/{DATASET_ID}.json"
 
 _PATHOGEN_MAP: dict[Pathogen, str] = {
@@ -41,21 +40,23 @@ _PATHOGEN_MAP: dict[Pathogen, str] = {
     Pathogen.rsv: "RSV",
 }
 
-_LEVEL_ORDER = ["Very Low", "Low", "Medium", "High", "Very High"]
+_LEVEL_ORDER = ["Very Low", "Low", "Moderate", "High", "Very High"]
 
 
 def _modal_category(categories: list[str]) -> str | None:
     """Return the most common category string, or None if list is empty."""
     if not categories:
         return None
-    return Counter(categories).most_common(1)[0][0]
+    ranked = Counter(categories).most_common()
+    return ranked[0][0] if len(ranked) == 1 or ranked[0][1] > ranked[1][1] else None
 
 
 def _parse_float(val) -> float | None:
     if val is None or val == "":
         return None
     try:
-        return float(val)
+        parsed = float(val)
+        return parsed if math.isfinite(parsed) and parsed >= 0 else None
     except (ValueError, TypeError):
         return None
 
@@ -70,7 +71,7 @@ async def fetch_series(
 
     Aggregates site-level rows to weekly state-level observations:
     - value = median site_wval across reporting sites
-    - official_level = modal site_wval_category
+    - derived_level = unique modal site_wval_category (not official)
 
     Args:
         jurisdiction: Resolved Jurisdiction (maps code to full state name).
@@ -85,7 +86,9 @@ async def fetch_series(
     full_name = jurisdiction_full_name(jurisdiction.code)
 
     where = soql_and(
-        soql_eq("state_territory", full_name),
+        soql_eq("state_territory", full_name)
+        if jurisdiction.type != "national"
+        else "",
         soql_eq("pathogen_target", pathogen_target),
         soql_gte("week_end", start.isoformat()),
         soql_lte("week_end", end.isoformat()),
@@ -103,10 +106,18 @@ async def fetch_series(
         DATASET_ID,
         select=select,
         where=where,
-        order="week_end ASC",
+        order="week_end ASC, state_territory ASC, site ASC",
         limit=5000,
     )
 
+    return parse_rows(rows, jurisdiction, pathogen)
+
+
+def parse_rows(
+    rows: list[dict], jurisdiction: Jurisdiction, pathogen: Pathogen
+) -> tuple[list[WeeklyObservation], Provenance]:
+    """Parse one jurisdiction's rows without network access."""
+    full_name = jurisdiction_full_name(jurisdiction.code)
     retrieved_at = datetime.now(timezone.utc)
 
     # Group rows by week_end
@@ -123,29 +134,52 @@ async def fetch_series(
     latest_week: date | None = None
     notes: list[str] = []
 
+    notes.append(
+        "Site aggregate is server-derived, not an official CDC "
+        "jurisdiction classification."
+    )
+    notes.append(
+        "Population coverage fraction is unknown; two valid sites do not "
+        "establish representativeness."
+    )
     if pathogen == Pathogen.influenza:
         notes.append("Wastewater measures influenza A (Influenza A virus) only.")
 
     for wk in sorted(by_week):
-        site_rows = by_week[wk]
+        # Use one record per identified site. A duplicated site must not inflate
+        # coverage or overweight the median. Conflicting duplicates are excluded.
+        grouped: dict[str, list[dict]] = {}
+        for row in by_week[wk]:
+            if row.get("site"):
+                key = f"{row.get('state_territory', '')}:{row['site']}"
+                grouped.setdefault(key, []).append(row)
+        site_rows = []
+        for records in grouped.values():
+            signatures = {
+                (_parse_float(r.get("site_wval")), r.get("site_wval_category"))
+                for r in records
+            }
+            if len(signatures) == 1:
+                site_rows.append(records[0])
+            else:
+                notes.append("Conflicting duplicate site/week records excluded.")
+        site_rows = [
+            r for r in site_rows if _parse_float(r.get("site_wval")) is not None
+        ]
         wvals = [
             _parse_float(r.get("site_wval"))
             for r in site_rows
             if _parse_float(r.get("site_wval")) is not None
         ]
         categories = [
-            r["site_wval_category"]
-            for r in site_rows
-            if r.get("site_wval_category")
+            r["site_wval_category"] for r in site_rows if r.get("site_wval_category")
         ]
         n_sites = len(site_rows)
 
         if n_sites < 2:
             value: float | None = None
             if "insufficient wastewater coverage" not in notes:
-                notes.append(
-                    "insufficient wastewater coverage (< 2 sites reporting)"
-                )
+                notes.append("insufficient wastewater coverage (< 2 sites reporting)")
         else:
             value = statistics.median(wvals) if wvals else None
 
@@ -154,7 +188,11 @@ async def fetch_series(
             week_ending=wk,
             value=value,
             unit="wval",
-            official_level=_modal_category(categories),
+            official_level=None,
+            derived_level=_modal_category(categories) if value is not None else None,
+            aggregation_method=(
+                "median_distinct_valid_sites; category=modal_site_category"
+            ),
             coverage={"n_sites": n_sites},
         )
         observations.append(obs)
@@ -165,7 +203,8 @@ async def fetch_series(
         # No rows returned — check if this is a known no-coverage jurisdiction
         if jurisdiction.code == "PR":
             notes.append(
-                "No wastewater surveillance sites in Puerto Rico."
+                "No wastewater rows returned for Puerto Rico in the requested "
+                "window; coverage cannot be inferred."
             )
 
     provenance = Provenance(
@@ -174,7 +213,9 @@ async def fetch_series(
         url=DATASET_URL,  # type: ignore[arg-type]
         latest_week_ending=latest_week,
         retrieved_at=retrieved_at,
-        geography_level="site_aggregate",
+        geography_level="national"
+        if jurisdiction.type == "national"
+        else "site_aggregate",
         notes=notes,
     )
 

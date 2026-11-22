@@ -261,10 +261,14 @@ def test_season_output_round_trip():
         current_season="2026-27",
         current_week_of_season=19,
         current_value=2.5,
-        prior=[SeasonPoint(
-            season="2025-26", week_ending=date(2025, 11, 15),
-            week_of_season=19, value=3.1,
-        )],
+        prior=[
+            SeasonPoint(
+                season="2025-26",
+                week_ending=date(2025, 11, 15),
+                week_of_season=19,
+                value=3.1,
+            )
+        ],
         rank_vs_prior=2,
         pct_of_prior_peak=80.6,
         method="week_of_season_aligned",
@@ -335,12 +339,19 @@ def test_trend_summary_pct_change_none_allowed():
 # ── Schema files exist and are valid JSON ─────────────────────────────────────
 
 
-@pytest.mark.parametrize("name", [
-    "snapshot_input", "snapshot_output",
-    "trend_input", "trend_output",
-    "season_input", "season_output",
-    "scan_input", "scan_output",
-])
+@pytest.mark.parametrize(
+    "name",
+    [
+        "snapshot_input",
+        "snapshot_output",
+        "trend_input",
+        "trend_output",
+        "season_input",
+        "season_output",
+        "scan_input",
+        "scan_output",
+    ],
+)
 def test_schema_file_exists_and_is_valid_json(name: str):
     path = SCHEMA_DIR / f"{name}.json"
     assert path.exists(), f"Schema file not found: {path}"

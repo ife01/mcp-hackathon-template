@@ -74,10 +74,13 @@ def _result_text(result) -> dict:
 
 @pytest.mark.asyncio
 async def test_unknown_jurisdiction_returns_error_with_suggestions():
-    result = await mcp.call_tool("get_respiratory_snapshot", {
-        "jurisdiction": "Georgai",
-        "pathogens": ["influenza"],
-    })
+    result = await mcp.call_tool(
+        "get_respiratory_snapshot",
+        {
+            "jurisdiction": "Georgai",
+            "pathogens": ["influenza"],
+        },
+    )
     data = _result_text(result)
     assert data.get("error") == "unknown_jurisdiction"
     assert "suggestions" in data
@@ -86,11 +89,14 @@ async def test_unknown_jurisdiction_returns_error_with_suggestions():
 
 @pytest.mark.asyncio
 async def test_unknown_jurisdiction_in_trend_tool():
-    result = await mcp.call_tool("assess_trend", {
-        "jurisdiction": "Georgai",
-        "pathogen": "influenza",
-        "signal": "hospital_admissions",
-    })
+    result = await mcp.call_tool(
+        "assess_trend",
+        {
+            "jurisdiction": "Georgai",
+            "pathogen": "influenza",
+            "signal": "hospital_admissions",
+        },
+    )
     data = _result_text(result)
     assert data.get("error") == "unknown_jurisdiction"
 
@@ -100,15 +106,10 @@ async def test_unknown_jurisdiction_in_trend_tool():
 
 @pytest.mark.asyncio
 async def test_jurisdiction_over_64_chars_returns_error():
-    long_input = "A" * 65
-    result = await mcp.call_tool("get_respiratory_snapshot", {
-        "jurisdiction": long_input,
-        "pathogens": ["influenza"],
-    })
-    data = _result_text(result)
-    # SnapshotInput.jurisdiction has max_length=64, so pydantic raises ValidationError
-    # which propagates as ValueError-like — mapped to "invalid_input"
-    assert "error" in data
+    from fastmcp.exceptions import ValidationError
+
+    with pytest.raises(ValidationError, match="at most 64"):
+        await mcp.call_tool("get_respiratory_snapshot", {"jurisdiction": "A" * 65})
 
 
 # ── Invalid enum ("flu B") ─────────────────────────────────────────────────────
@@ -116,11 +117,14 @@ async def test_jurisdiction_over_64_chars_returns_error():
 
 @pytest.mark.asyncio
 async def test_invalid_pathogen_returns_error_with_allowed():
-    result = await mcp.call_tool("assess_trend", {
-        "jurisdiction": "GA",
-        "pathogen": "flu B",
-        "signal": "hospital_admissions",
-    })
+    result = await mcp.call_tool(
+        "assess_trend",
+        {
+            "jurisdiction": "GA",
+            "pathogen": "flu B",
+            "signal": "hospital_admissions",
+        },
+    )
     data = _result_text(result)
     assert data.get("error") == "invalid_input"
     msg = data["message"].lower()
@@ -129,11 +133,14 @@ async def test_invalid_pathogen_returns_error_with_allowed():
 
 @pytest.mark.asyncio
 async def test_invalid_signal_returns_error():
-    result = await mcp.call_tool("assess_trend", {
-        "jurisdiction": "GA",
-        "pathogen": "influenza",
-        "signal": "mystery_signal",
-    })
+    result = await mcp.call_tool(
+        "assess_trend",
+        {
+            "jurisdiction": "GA",
+            "pathogen": "influenza",
+            "signal": "mystery_signal",
+        },
+    )
     data = _result_text(result)
     assert data.get("error") == "invalid_input"
     assert "hospital_admissions" in data["message"]
@@ -147,13 +154,19 @@ async def test_covid_alias_resolves_correctly():
     obs = _obs_rising(date(2026, 11, 14), Signal.hospital_admissions)
     prov = _prov("vdzy-6i9v", "state", date(2026, 11, 14))
 
-    with patch("resp_mcp.sources.nhsn.fetch_series", new_callable=AsyncMock,
-               return_value=(obs, prov)):
-        result = await mcp.call_tool("assess_trend", {
-            "jurisdiction": "GA",
-            "pathogen": "covid",
-            "signal": "hospital_admissions",
-        })
+    with patch(
+        "resp_mcp.sources.nhsn.fetch_series",
+        new_callable=AsyncMock,
+        return_value=(obs, prov),
+    ):
+        result = await mcp.call_tool(
+            "assess_trend",
+            {
+                "jurisdiction": "GA",
+                "pathogen": "covid",
+                "signal": "hospital_admissions",
+            },
+        )
     data = _result_text(result)
     assert data.get("pathogen") == "covid19"
 
@@ -163,13 +176,19 @@ async def test_sars_cov_2_alias_resolves_correctly():
     obs = _obs_rising(date(2026, 11, 14), Signal.hospital_admissions)
     prov = _prov("vdzy-6i9v", "state", date(2026, 11, 14))
 
-    with patch("resp_mcp.sources.nhsn.fetch_series", new_callable=AsyncMock,
-               return_value=(obs, prov)):
-        result = await mcp.call_tool("assess_trend", {
-            "jurisdiction": "GA",
-            "pathogen": "sars-cov-2",
-            "signal": "hospital_admissions",
-        })
+    with patch(
+        "resp_mcp.sources.nhsn.fetch_series",
+        new_callable=AsyncMock,
+        return_value=(obs, prov),
+    ):
+        result = await mcp.call_tool(
+            "assess_trend",
+            {
+                "jurisdiction": "GA",
+                "pathogen": "sars-cov-2",
+                "signal": "hospital_admissions",
+            },
+        )
     data = _result_text(result)
     assert data.get("pathogen") == "covid19"
 
@@ -194,12 +213,15 @@ def test_parse_as_of_bad_format_raises():
 
 @pytest.mark.asyncio
 async def test_as_of_out_of_range_returns_error():
-    result = await mcp.call_tool("assess_trend", {
-        "jurisdiction": "GA",
-        "pathogen": "influenza",
-        "signal": "hospital_admissions",
-        "as_of": "2015-01-01",
-    })
+    result = await mcp.call_tool(
+        "assess_trend",
+        {
+            "jurisdiction": "GA",
+            "pathogen": "influenza",
+            "signal": "hospital_admissions",
+            "as_of": "2015-01-01",
+        },
+    )
     data = _result_text(result)
     assert data.get("error") == "invalid_input"
     assert "2020" in data["message"]
@@ -239,11 +261,14 @@ async def test_rate_limited_returns_structured_error():
 
     failing = AsyncMock(side_effect=UpstreamRateLimited("429"))
     with patch.dict(_trend_mod._ADAPTERS, {_Signal.hospital_admissions: failing}):
-        result = await mcp.call_tool("assess_trend", {
-            "jurisdiction": "GA",
-            "pathogen": "influenza",
-            "signal": "hospital_admissions",
-        })
+        result = await mcp.call_tool(
+            "assess_trend",
+            {
+                "jurisdiction": "GA",
+                "pathogen": "influenza",
+                "signal": "hospital_admissions",
+            },
+        )
     data = _result_text(result)
     assert data.get("error") == "rate_limited"
 
@@ -255,11 +280,14 @@ async def test_upstream_unavailable_returns_structured_error():
 
     failing = AsyncMock(side_effect=UpstreamUnavailable("503"))
     with patch.dict(_trend_mod._ADAPTERS, {_Signal.hospital_admissions: failing}):
-        result = await mcp.call_tool("assess_trend", {
-            "jurisdiction": "GA",
-            "pathogen": "influenza",
-            "signal": "hospital_admissions",
-        })
+        result = await mcp.call_tool(
+            "assess_trend",
+            {
+                "jurisdiction": "GA",
+                "pathogen": "influenza",
+                "signal": "hospital_admissions",
+            },
+        )
     data = _result_text(result)
     assert data.get("error") == "upstream_unavailable"
 
@@ -277,16 +305,20 @@ async def test_no_stdout_during_tool_call():
     original_stdout = sys.stdout
     sys.stdout = captured
     try:
-        with patch("resp_mcp.sources.nhsn.fetch_series", new_callable=AsyncMock,
-                   return_value=(obs, prov)):
-            await mcp.call_tool("assess_trend", {
-                "jurisdiction": "GA",
-                "pathogen": "influenza",
-                "signal": "hospital_admissions",
-            })
+        with patch(
+            "resp_mcp.sources.nhsn.fetch_series",
+            new_callable=AsyncMock,
+            return_value=(obs, prov),
+        ):
+            await mcp.call_tool(
+                "assess_trend",
+                {
+                    "jurisdiction": "GA",
+                    "pathogen": "influenza",
+                    "signal": "hospital_admissions",
+                },
+            )
     finally:
         sys.stdout = original_stdout
 
-    assert captured.getvalue() == "", (
-        f"Tool wrote to stdout: {captured.getvalue()!r}"
-    )
+    assert captured.getvalue() == "", f"Tool wrote to stdout: {captured.getvalue()!r}"

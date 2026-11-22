@@ -1,0 +1,179 @@
+{
+  "id": "B5",
+  "category": "trend",
+  "prompt": "Assess the recent influenza test_positivity trend for USA, through October 31, 2026.",
+  "passed": true,
+  "replay_seconds": 0.02015640000172425,
+  "checks": [
+    {
+      "check": "trend direction",
+      "passed": true,
+      "actual": "increasing",
+      "expected": "increasing"
+    },
+    {
+      "check": "trend window",
+      "passed": true,
+      "actual": 4,
+      "expected": 4
+    },
+    {
+      "check": "units",
+      "passed": true,
+      "actual": "percent_positive",
+      "expected": "percent_positive"
+    },
+    {
+      "check": "latest value",
+      "passed": true,
+      "actual": 10.1,
+      "expected": 10.1
+    },
+    {
+      "check": "actual observation geography",
+      "passed": true,
+      "actual": "USA",
+      "expected": "USA"
+    },
+    {
+      "check": "latest date",
+      "passed": true,
+      "actual": "2026-10-31",
+      "expected": "2026-10-31"
+    }
+  ],
+  "calls": [
+    {
+      "tool": "assess_trend",
+      "arguments": {
+        "jurisdiction": "USA",
+        "pathogen": "influenza",
+        "signal": "test_positivity",
+        "as_of": "2026-10-31"
+      },
+      "output": {
+        "jurisdiction": "USA",
+        "pathogen": "influenza",
+        "signal": "test_positivity",
+        "series": [
+          {
+            "jurisdiction": "USA",
+            "week_ending": "2026-09-12",
+            "value": 1.7,
+            "unit": "percent_positive",
+            "official_level": null,
+            "derived_level": null,
+            "aggregation_method": null,
+            "raw_count": null,
+            "coverage": null
+          },
+          {
+            "jurisdiction": "USA",
+            "week_ending": "2026-09-19",
+            "value": 2.5,
+            "unit": "percent_positive",
+            "official_level": null,
+            "derived_level": null,
+            "aggregation_method": null,
+            "raw_count": null,
+            "coverage": null
+          },
+          {
+            "jurisdiction": "USA",
+            "week_ending": "2026-09-26",
+            "value": 3.1,
+            "unit": "percent_positive",
+            "official_level": null,
+            "derived_level": null,
+            "aggregation_method": null,
+            "raw_count": null,
+            "coverage": null
+          },
+          {
+            "jurisdiction": "USA",
+            "week_ending": "2026-10-03",
+            "value": 3.9,
+            "unit": "percent_positive",
+            "official_level": null,
+            "derived_level": null,
+            "aggregation_method": null,
+            "raw_count": null,
+            "coverage": null
+          },
+          {
+            "jurisdiction": "USA",
+            "week_ending": "2026-10-10",
+            "value": 4.8,
+            "unit": "percent_positive",
+            "official_level": null,
+            "derived_level": null,
+            "aggregation_method": null,
+            "raw_count": null,
+            "coverage": null
+          },
+          {
+            "jurisdiction": "USA",
+            "week_ending": "2026-10-17",
+            "value": 5.9,
+            "unit": "percent_positive",
+            "official_level": null,
+            "derived_level": null,
+            "aggregation_method": null,
+            "raw_count": null,
+            "coverage": null
+          },
+          {
+            "jurisdiction": "USA",
+            "week_ending": "2026-10-24",
+            "value": 7.6,
+            "unit": "percent_positive",
+            "official_level": null,
+            "derived_level": null,
+            "aggregation_method": null,
+            "raw_count": null,
+            "coverage": null
+          },
+          {
+            "jurisdiction": "USA",
+            "week_ending": "2026-10-31",
+            "value": 10.1,
+            "unit": "percent_positive",
+            "official_level": null,
+            "derived_level": null,
+            "aggregation_method": null,
+            "raw_count": null,
+            "coverage": null
+          }
+        ],
+        "trend": {
+          "notes": [],
+          "direction": "increasing",
+          "pct_change": 0.6542056074766356,
+          "abs_change": 3.5,
+          "window_weeks": 4,
+          "method": "2w_vs_prior_2w",
+          "basis": "server_heuristic"
+        },
+        "provenance": {
+          "dataset_id": "seuz-s2cv",
+          "dataset_name": "Percent of Tests Positive for Viral Respiratory Pathogens",
+          "url": "https://data.cdc.gov/resource/seuz-s2cv.json",
+          "latest_week_ending": "2026-10-31",
+          "retrieved_at": "2026-11-22T22:11:33.069776Z",
+          "source_last_updated": null,
+          "geography_level": "national",
+          "notes": [
+            "Recent weeks may be incomplete or revised; a two-week lag does not guarantee finalization.",
+            "Influenza test positivity includes both influenza A and B."
+          ]
+        },
+        "summary": "Influenza test_positivity in USA is increasing. Latest value: 10.1 percent_positive. Trend is a server heuristic; see official_level for authoritative CDC classification.",
+        "caveats": [
+          "Recent weeks may be incomplete or revised; a two-week lag does not guarantee finalization.",
+          "Influenza test positivity includes both influenza A and B.",
+          "as_of filters observation weeks in data retrieved now; it does not reconstruct what was published at that historical time."
+        ]
+      }
+    }
+  ]
+}

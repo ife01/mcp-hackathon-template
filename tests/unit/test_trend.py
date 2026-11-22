@@ -59,14 +59,9 @@ def test_trailing_nones_stripped_to_insufficient():
     assert result.direction == TrendDirection.insufficient_data
 
 
-def test_trailing_nones_stripped_still_classifies():
-    # 4 real values then trailing Nones → classify from first 4
-    result = classify_trend(
-        _obs_dates([1.0, 1.0, 2.0, 2.0, None, None]),
-        _HOSP,
-    )
-    # prior=[1,1] mean=1.0, recent=[2,2] mean=2.0 → +100% ≥10% and +1.0 ≥0.1
-    assert result.direction == TrendDirection.increasing
+def test_missing_latest_values_are_not_backdated():
+    result = classify_trend(_obs_dates([1.0, 1.0, 2.0, 2.0, None, None]), _HOSP)
+    assert result.direction == TrendDirection.insufficient_data
 
 
 # ── Hospital admissions ───────────────────────────────────────────────────────
@@ -193,7 +188,7 @@ def test_small_number_guard_not_applied_to_positivity():
 def test_window_weeks_reflects_non_null_count():
     obs = _obs_dates([1.0, 1.0, 2.0, 2.0, 2.5, 2.5])  # 6 values
     result = classify_trend(obs, _WVAL)
-    assert result.window_weeks == 6
+    assert result.window_weeks == 4
 
 
 def test_window_weeks_after_trailing_none_strip():
@@ -217,10 +212,7 @@ def test_result_basis_is_server_heuristic():
     assert result.basis == "server_heuristic"
 
 
-def test_zero_denominator_does_not_crash():
-    # prior_mean = 0 → pct_change stays None, should still classify
-    obs = _obs_dates([0.0, 0.0, 0.5, 0.5], "wval")
-    result = classify_trend(obs, _WVAL)
+def test_zero_denominator_does_not_imply_stable_wastewater():
+    result = classify_trend(_obs_dates([0.0, 0.0, 0.5, 0.5], "wval"), _WVAL)
     assert result.pct_change is None
-    # abs_change = 0.5 but no pct → stable (threshold needs pct for wastewater)
-    assert result.direction == TrendDirection.stable
+    assert result.direction == TrendDirection.insufficient_data

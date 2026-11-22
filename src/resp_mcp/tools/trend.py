@@ -14,10 +14,19 @@ from fastmcp import FastMCP
 
 from resp_mcp.analytics.trend import classify_trend
 from resp_mcp.models.common import Signal
-from resp_mcp.models.tool_io import TrendInput, TrendOutput
+from resp_mcp.models.tool_io import (
+    AsOfArg,
+    JurisdictionArg,
+    LookbackArg,
+    PathogenArg,
+    SignalArg,
+    TrendInput,
+    TrendOutput,
+)
 from resp_mcp.reference.jurisdictions import resolve_jurisdiction
 from resp_mcp.sources import nhsn, nrevss, nwss
 from resp_mcp.tools._helpers import (
+    AS_OF_CAVEAT,
     classify_tool_error,
     date_window,
     parse_as_of,
@@ -29,9 +38,9 @@ from resp_mcp.tools._helpers import (
 logger = logging.getLogger(__name__)
 
 _ADAPTERS = {
-    Signal.hospital_admissions: nhsn.fetch_series,
-    Signal.wastewater: nwss.fetch_series,
-    Signal.test_positivity: nrevss.fetch_series,
+    Signal.hospital_admissions: lambda *args: nhsn.fetch_series(*args),
+    Signal.wastewater: lambda *args: nwss.fetch_series(*args),
+    Signal.test_positivity: lambda *args: nrevss.fetch_series(*args),
 }
 
 
@@ -46,11 +55,11 @@ def register(mcp: FastMCP) -> None:
         },
     )
     async def assess_trend(
-        jurisdiction: str,
-        pathogen: str,
-        signal: str,
-        lookback_weeks: int = 8,
-        as_of: str | None = None,
+        jurisdiction: JurisdictionArg,
+        pathogen: PathogenArg,
+        signal: SignalArg,
+        lookback_weeks: LookbackArg = 8,
+        as_of: AsOfArg = None,
     ) -> dict:
         """Assess the recent trend for one respiratory signal in a jurisdiction.
 
@@ -74,11 +83,11 @@ def register(mcp: FastMCP) -> None:
             return classify_tool_error(exc)
 
     async def _assess_trend_impl(
-        jurisdiction: str,
-        pathogen: str,
-        signal: str,
-        lookback_weeks: int,
-        as_of: str | None,
+        jurisdiction: JurisdictionArg,
+        pathogen: PathogenArg,
+        signal: SignalArg,
+        lookback_weeks: LookbackArg,
+        as_of: AsOfArg,
     ) -> dict:
         inp = TrendInput(
             jurisdiction=jurisdiction,
@@ -96,10 +105,15 @@ def register(mcp: FastMCP) -> None:
         obs, prov = await fetch_fn(jur, inp.pathogen, start, end)
 
         # Apply as_of filter
-        if as_of_date:
-            obs = [o for o in obs if o.week_ending <= as_of_date]
+        obs = sorted(
+            (o for o in obs if start <= o.week_ending <= end),
+            key=lambda o: o.week_ending,
+        )
+        prov = prov.model_copy(
+            update={"latest_week_ending": obs[-1].week_ending if obs else None}
+        )
 
-        trend_result = classify_trend(obs, inp.signal)
+        trend_result = classify_trend(obs, inp.signal, reference_date=end)
         trend_summary = trend_to_summary(trend_result)
 
         # Build plain-English summary
@@ -108,7 +122,7 @@ def register(mcp: FastMCP) -> None:
         latest_val = obs[-1].value if obs else None
         summary = (
             f"{inp.pathogen.value.capitalize()} {inp.signal.value} "
-            f"in {jur.code} is {direction}."
+            f"in {obs[-1].jurisdiction if obs else jur.code} is {direction}."
         )
         if latest_val is not None:
             summary += f" Latest value: {round(latest_val, 1)} {unit}."
@@ -125,6 +139,12 @@ def register(mcp: FastMCP) -> None:
             trend=trend_summary,
             provenance=prov,
             summary=summary,
-            caveats=prov.notes,
+            caveats=list(
+                dict.fromkeys(
+                    prov.notes
+                    + trend_result.notes
+                    + ([AS_OF_CAVEAT] if as_of_date else [])
+                )
+            ),
         )
         return out.model_dump(mode="json")

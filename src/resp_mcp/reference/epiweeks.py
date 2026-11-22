@@ -11,7 +11,7 @@ Week-ending convention: MMWR weeks end on Saturday.
 
 from __future__ import annotations
 
-from datetime import date
+from datetime import date, timedelta
 
 from epiweeks import Week
 
@@ -106,16 +106,10 @@ def same_week_prior_seasons(d: date, n: int) -> list[date]:
     results: list[date] = []
     for i in range(1, n + 1):
         prior_start = season_start_year - i
-        prior_year_weeks = _weeks_in_mmwr_year(prior_start)
-        # Week 27 = wos 1; find the target week number in prior season
-        target_wk = target_wos + 26
-        if target_wk <= prior_year_weeks:
-            # target week falls in start year
-            results.append(week_ending(prior_start, target_wk))
-        else:
-            # Wraps into next year: subtract the weeks in the start year
-            overflow = target_wk - prior_year_weeks
-            results.append(week_ending(prior_start + 1, overflow))
+        first = week_ending(prior_start, 27)
+        last = week_ending(prior_start + 1, 26)
+        length = (last - first).days // 7 + 1
+        results.append(first + timedelta(weeks=min(target_wos, length) - 1))
 
     return results
 

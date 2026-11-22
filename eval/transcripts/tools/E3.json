@@ -1,0 +1,30 @@
+{
+  "id": "E3",
+  "category": "robustness",
+  "prompt": "Assess Georgia flu B admission trends.",
+  "passed": true,
+  "replay_seconds": 0.00820440000097733,
+  "checks": [
+    {
+      "check": "expected error",
+      "passed": true,
+      "actual": "invalid_input",
+      "expected": "invalid_input"
+    }
+  ],
+  "calls": [
+    {
+      "tool": "assess_trend",
+      "arguments": {
+        "jurisdiction": "GA",
+        "pathogen": "flu B",
+        "signal": "hospital_admissions",
+        "as_of": "2026-10-31"
+      },
+      "output": {
+        "error": "invalid_input",
+        "message": "Unknown pathogen 'flu B'. Allowed: influenza, covid19, rsv"
+      }
+    }
+  ]
+}

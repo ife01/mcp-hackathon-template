@@ -155,9 +155,19 @@
           "enum": [
             "ok",
             "unavailable",
-            "insufficient_coverage"
+            "insufficient_coverage",
+            "insufficient_data"
           ],
           "title": "Status",
+          "type": "string"
+        },
+        "role": {
+          "default": "local",
+          "enum": [
+            "local",
+            "national_context"
+          ],
+          "title": "Role",
           "type": "string"
         },
         "latest": {
@@ -216,6 +226,13 @@
     "TrendSummary": {
       "description": "Serialisable version of TrendResult for tool outputs.",
       "properties": {
+        "notes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Notes",
+          "type": "array"
+        },
         "direction": {
           "description": "increasing | stable | decreasing | insufficient_data",
           "title": "Direction",
@@ -248,7 +265,7 @@
           "title": "Abs Change"
         },
         "window_weeks": {
-          "description": "Number of non-null weeks used in the calculation.",
+          "description": "Number of recent observation slots inspected (at most four).",
           "title": "Window Weeks",
           "type": "integer"
         },
@@ -316,6 +333,42 @@
           ],
           "default": null,
           "title": "Official Level"
+        },
+        "derived_level": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Derived Level"
+        },
+        "aggregation_method": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Aggregation Method"
+        },
+        "raw_count": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Raw Count"
         },
         "coverage": {
           "anyOf": [

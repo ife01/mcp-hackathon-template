@@ -6,7 +6,7 @@
 #   - cloud.gov (docker image path) and any other container host
 #
 # The server serves MCP over streamable-HTTP at :8080/mcp with a health check
-# at :8080/health. app.py auto-selects HTTP because PORT is set below.
+# at :8080/health. server.py auto-selects HTTP because PORT is set below.
 
 FROM python:3.11-slim
 
@@ -21,9 +21,11 @@ WORKDIR /app
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
 # Install dependencies first for better layer caching.
-COPY pyproject.toml README.md ./
+COPY pyproject.toml uv.lock README.md ./
 COPY src ./src
-RUN uv pip install --system --no-cache .
+COPY main.py ./main.py
+RUN uv sync --frozen --no-dev --no-editable
+ENV PATH="/app/.venv/bin:${PATH}"
 
 EXPOSE 8080
 

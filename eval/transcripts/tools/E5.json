@@ -1,0 +1,42 @@
+{
+  "id": "E5",
+  "category": "robustness",
+  "prompt": "Give a Georgia flu briefing while every upstream CDC source is unavailable.",
+  "passed": true,
+  "replay_seconds": 0.04823220000253059,
+  "checks": [
+    {
+      "check": "expected error",
+      "passed": true,
+      "actual": "upstream_unavailable",
+      "expected": "upstream_unavailable"
+    }
+  ],
+  "calls": [
+    {
+      "tool": "get_respiratory_snapshot",
+      "arguments": {
+        "jurisdiction": "GA",
+        "pathogens": [
+          "flu"
+        ],
+        "as_of": "2026-10-31"
+      },
+      "output": {
+        "error": "upstream_unavailable",
+        "message": "All requested CDC sources are unavailable; no assessment was made.",
+        "dataset_ids": [
+          "atcp-73re",
+          "seuz-s2cv",
+          "vdzy-6i9v"
+        ],
+        "caveats": [
+          "as_of filters observation weeks in data retrieved now; it does not reconstruct what was published at that historical time.",
+          "hospital_admissions: source vdzy-6i9v unavailable.",
+          "wastewater: source atcp-73re unavailable.",
+          "test_positivity: source seuz-s2cv unavailable."
+        ]
+      }
+    }
+  ]
+}

@@ -16,6 +16,7 @@ Key columns (verified Build 0.3):
 from __future__ import annotations
 
 import logging
+import math
 from datetime import date, datetime, timezone
 
 from resp_mcp.clients.socrata import query, soql_and, soql_eq, soql_gte, soql_lte
@@ -31,7 +32,7 @@ DATASET_NAME = (
 )
 DATASET_URL = f"https://data.cdc.gov/resource/{DATASET_ID}.json"
 
-# Column mapping: Pathogen → (rate_col, count_col, level_col)
+# Column mapping: Pathogen â†’ (rate_col, count_col, level_col)
 _COLS: dict[Pathogen, tuple[str, str, str]] = {
     Pathogen.influenza: (
         "totalconfflunewadmper100k",
@@ -50,18 +51,14 @@ _COLS: dict[Pathogen, tuple[str, str, str]] = {
     ),
 }
 
-_COVERAGE_COLS = (
-    "totalconfflunewadmhosprep",
-    "totalconfflunewadmperchosprep",
-)
-
 
 def _parse_float(val: str | None) -> float | None:
     """Parse a Socrata numeric string to float, returning None on failure."""
     if val is None or val == "":
         return None
     try:
-        return float(val)
+        parsed = float(val)
+        return parsed if math.isfinite(parsed) and parsed >= 0 else None
     except (ValueError, TypeError):
         return None
 
@@ -97,7 +94,8 @@ async def fetch_series(
         rate_col,
         count_col,
         level_col,
-        *_COVERAGE_COLS,
+        count_col + "hosprep",
+        count_col + "perchosprep",
     ]
 
     rows = await query(
@@ -108,6 +106,14 @@ async def fetch_series(
         limit=200,
     )
 
+    return parse_rows(rows, jurisdiction, pathogen)
+
+
+def parse_rows(
+    rows: list[dict], jurisdiction: Jurisdiction, pathogen: Pathogen
+) -> tuple[list[WeeklyObservation], Provenance]:
+    """Parse one jurisdiction's rows without network access."""
+    rate_col, count_col, level_col = _COLS[pathogen]
     retrieved_at = datetime.now(timezone.utc)
     observations: list[WeeklyObservation] = []
     latest_week: date | None = None
@@ -117,14 +123,14 @@ async def fetch_series(
         try:
             week_dt = date.fromisoformat(raw_date[:10])
         except (ValueError, TypeError):
-            logger.warning("NHSN: could not parse weekendingdate %r", raw_date)
+            logger.warning("NHSN: invalid source week date")
             continue
 
         value = _parse_float(row.get(rate_col))
 
-        # Coverage: hospitals reporting this week (same for all 3 pathogens)
-        n_reporting = _parse_float(row.get("totalconfflunewadmhosprep"))
-        pct_reporting = _parse_float(row.get("totalconfflunewadmperchosprep"))
+        # Preserve the requested pathogen's own reporting coverage.
+        n_reporting = _parse_float(row.get(count_col + "hosprep"))
+        pct_reporting = _parse_float(row.get(count_col + "perchosprep"))
         coverage: dict[str, float | int] | None = None
         if n_reporting is not None:
             coverage = {"n_hospitals": int(n_reporting)}
@@ -135,6 +141,7 @@ async def fetch_series(
             jurisdiction=jurisdiction.code,
             week_ending=week_dt,
             value=value,
+            raw_count=_parse_float(row.get(count_col)),
             unit="admissions_per_100k",
             official_level=row.get(level_col) or None,
             coverage=coverage,

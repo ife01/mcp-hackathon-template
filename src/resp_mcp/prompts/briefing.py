@@ -21,7 +21,7 @@ and week-ending date from the tool's provenance field \
 (e.g., "NHSN, week ending 2026-11-14").
 
 3. **Use official CDC levels.** Report the official_level field \
-(Very Low / Low / Medium / High / Very High) from NHSN hospital admissions \
+(Very Low / Low / Moderate / High / Very High) from NHSN hospital admissions \
 as the authoritative characterization of severity. \
 Trend direction (increasing/stable/decreasing) is a server heuristic — \
 always label it as such.
@@ -82,8 +82,8 @@ def register(mcp: FastMCP) -> None:
             "Write for an epidemiologist audience: include rates, percentages, "
             "MMWR week references, and technical caveats."
             if audience.lower() == "epi"
-            else
-            "Write for a general public audience: use plain language, avoid jargon, "
+            else "Write for a general public audience: use plain language, avoid "
+            "jargon, "
             "and explain what the data means in practical terms."
         )
 

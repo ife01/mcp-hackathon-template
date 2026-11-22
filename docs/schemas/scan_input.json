@@ -49,7 +49,13 @@
     "min_level": {
       "anyOf": [
         {
-          "maxLength": 16,
+          "enum": [
+            "Very Low",
+            "Low",
+            "Moderate",
+            "High",
+            "Very High"
+          ],
           "type": "string"
         },
         {
@@ -57,7 +63,7 @@
         }
       ],
       "default": null,
-      "description": "Minimum CDC official level to include (Very Low | Low | Medium | High | Very High). Applies only to hospital_admissions signal.",
+      "description": "Minimum CDC official level to include (Very Low | Low | Moderate | High | Very High). Applies only to hospital_admissions signal.",
       "title": "Min Level"
     },
     "limit": {
@@ -79,7 +85,7 @@
         }
       ],
       "default": null,
-      "description": "ISO date string (YYYY-MM-DD) to restrict analysis to data on or before this date. Omit to use the most recent available data. Useful for reproducible demos and evaluation.",
+      "description": "ISO date string (YYYY-MM-DD) to restrict analysis to data on or before this date. Omit to use the most recent available data. Applied to data retrieved now, not an as-published historical vintage. Use frozen snapshots for reproducible replay.",
       "title": "As Of"
     }
   },

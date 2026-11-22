@@ -1,0 +1,7 @@
+datasets:
+  respiratory-eval-0:
+    csv_path: datasets/respiratory-eval-0/examples/respiratory-eval-0.csv
+    xml_path: datasets/respiratory-eval-0/evaluation.xml
+    input_keys: [query, case_id]
+    output_keys: [responses, reference]
+    description: Ten multi-call frozen-data questions plus five public health robustness/scope cases.

@@ -1,0 +1,171 @@
+{
+  "id": "D5",
+  "category": "synthesis",
+  "prompt": "Which HHS Region 4 states had rising flu admissions through October 31, 2026? Report missing data and the total before limiting.",
+  "passed": true,
+  "replay_seconds": 0.038509100006194785,
+  "checks": [
+    {
+      "check": "total rising before limit",
+      "passed": true,
+      "actual": 8,
+      "expected": 8
+    },
+    {
+      "check": "ranked rising states",
+      "passed": true,
+      "actual": [
+        "FL",
+        "AL",
+        "MS",
+        "KY",
+        "TN"
+      ],
+      "expected": [
+        "FL",
+        "AL",
+        "MS",
+        "KY",
+        "TN"
+      ]
+    },
+    {
+      "check": "assessed count",
+      "passed": true,
+      "actual": 8,
+      "expected": 8
+    }
+  ],
+  "calls": [
+    {
+      "tool": "find_jurisdictions_with_rising_activity",
+      "arguments": {
+        "pathogen": "influenza",
+        "signal": "hospital_admissions",
+        "hhs_region": 4,
+        "limit": 5,
+        "as_of": "2026-10-31"
+      },
+      "output": {
+        "pathogen": "influenza",
+        "signal": "hospital_admissions",
+        "as_of_week_ending": "2026-10-31",
+        "rising": [
+          {
+            "jurisdiction": "FL",
+            "trend_direction": "increasing",
+            "latest_value": 5.53,
+            "latest_week_ending": "2026-10-31",
+            "official_level": "Moderate",
+            "pct_change": 0.5171898355754859,
+            "provenance": {
+              "dataset_id": "vdzy-6i9v",
+              "dataset_name": "Weekly Hospital Respiratory Admission Levels and Rates by Jurisdiction, National Healthcare Safety Network (NHSN)",
+              "url": "https://data.cdc.gov/resource/vdzy-6i9v.json",
+              "latest_week_ending": "2026-10-31",
+              "retrieved_at": "2026-11-22T22:11:34.194674Z",
+              "source_last_updated": null,
+              "geography_level": "state",
+              "notes": []
+            }
+          },
+          {
+            "jurisdiction": "AL",
+            "trend_direction": "increasing",
+            "latest_value": 3.14,
+            "latest_week_ending": "2026-10-31",
+            "official_level": "Moderate",
+            "pct_change": 0.9716599190283404,
+            "provenance": {
+              "dataset_id": "vdzy-6i9v",
+              "dataset_name": "Weekly Hospital Respiratory Admission Levels and Rates by Jurisdiction, National Healthcare Safety Network (NHSN)",
+              "url": "https://data.cdc.gov/resource/vdzy-6i9v.json",
+              "latest_week_ending": "2026-10-31",
+              "retrieved_at": "2026-11-22T22:11:34.194674Z",
+              "source_last_updated": null,
+              "geography_level": "state",
+              "notes": []
+            }
+          },
+          {
+            "jurisdiction": "MS",
+            "trend_direction": "increasing",
+            "latest_value": 3.01,
+            "latest_week_ending": "2026-10-31",
+            "official_level": "Moderate",
+            "pct_change": 0.6184210526315789,
+            "provenance": {
+              "dataset_id": "vdzy-6i9v",
+              "dataset_name": "Weekly Hospital Respiratory Admission Levels and Rates by Jurisdiction, National Healthcare Safety Network (NHSN)",
+              "url": "https://data.cdc.gov/resource/vdzy-6i9v.json",
+              "latest_week_ending": "2026-10-31",
+              "retrieved_at": "2026-11-22T22:11:34.194674Z",
+              "source_last_updated": null,
+              "geography_level": "state",
+              "notes": []
+            }
+          },
+          {
+            "jurisdiction": "KY",
+            "trend_direction": "increasing",
+            "latest_value": 2.99,
+            "latest_week_ending": "2026-10-31",
+            "official_level": "Moderate",
+            "pct_change": 0.7636363636363638,
+            "provenance": {
+              "dataset_id": "vdzy-6i9v",
+              "dataset_name": "Weekly Hospital Respiratory Admission Levels and Rates by Jurisdiction, National Healthcare Safety Network (NHSN)",
+              "url": "https://data.cdc.gov/resource/vdzy-6i9v.json",
+              "latest_week_ending": "2026-10-31",
+              "retrieved_at": "2026-11-22T22:11:34.194674Z",
+              "source_last_updated": null,
+              "geography_level": "state",
+              "notes": []
+            }
+          },
+          {
+            "jurisdiction": "TN",
+            "trend_direction": "increasing",
+            "latest_value": 2.72,
+            "latest_week_ending": "2026-10-31",
+            "official_level": "Low",
+            "pct_change": 0.9416666666666668,
+            "provenance": {
+              "dataset_id": "vdzy-6i9v",
+              "dataset_name": "Weekly Hospital Respiratory Admission Levels and Rates by Jurisdiction, National Healthcare Safety Network (NHSN)",
+              "url": "https://data.cdc.gov/resource/vdzy-6i9v.json",
+              "latest_week_ending": "2026-10-31",
+              "retrieved_at": "2026-11-22T22:11:34.194674Z",
+              "source_last_updated": null,
+              "geography_level": "state",
+              "notes": []
+            }
+          }
+        ],
+        "provenance": {
+          "dataset_id": "vdzy-6i9v",
+          "dataset_name": "Weekly Hospital Respiratory Admission Levels and Rates by Jurisdiction, National Healthcare Safety Network (NHSN)",
+          "url": "https://data.cdc.gov/resource/vdzy-6i9v.json",
+          "latest_week_ending": "2026-10-31",
+          "retrieved_at": "2026-11-22T22:11:34.194674Z",
+          "source_last_updated": null,
+          "geography_level": "state",
+          "notes": [
+            "Scan-level provenance; each returned row has jurisdiction-specific provenance."
+          ]
+        },
+        "n_jurisdictions_scanned": 8,
+        "status": "ok",
+        "n_assessed": 8,
+        "n_unavailable": 0,
+        "n_rising_total": 8,
+        "unavailable_jurisdictions": [],
+        "n_insufficient_data": 0,
+        "summary": "8 rising jurisdiction(s) among 8 assessed of 8 requested. Returning 5; missing jurisdictions are not evidence of stable activity.",
+        "caveats": [
+          "as_of filters observation weeks in data retrieved now; it does not reconstruct what was published at that historical time."
+        ]
+      }
+    }
+  ]
+}

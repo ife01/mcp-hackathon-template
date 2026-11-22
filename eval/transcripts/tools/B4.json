@@ -1,0 +1,197 @@
+{
+  "id": "B4",
+  "category": "trend",
+  "prompt": "Assess the recent influenza wastewater trend for TX, through October 31, 2026.",
+  "passed": true,
+  "replay_seconds": 0.10896259998844471,
+  "checks": [
+    {
+      "check": "trend direction",
+      "passed": true,
+      "actual": "increasing",
+      "expected": "increasing"
+    },
+    {
+      "check": "trend window",
+      "passed": true,
+      "actual": 4,
+      "expected": 4
+    },
+    {
+      "check": "units",
+      "passed": true,
+      "actual": "wval",
+      "expected": "wval"
+    },
+    {
+      "check": "latest value",
+      "passed": true,
+      "actual": 7.055,
+      "expected": 7.055
+    },
+    {
+      "check": "actual observation geography",
+      "passed": true,
+      "actual": "TX",
+      "expected": "TX"
+    },
+    {
+      "check": "latest date",
+      "passed": true,
+      "actual": "2026-10-31",
+      "expected": "2026-10-31"
+    }
+  ],
+  "calls": [
+    {
+      "tool": "assess_trend",
+      "arguments": {
+        "jurisdiction": "TX",
+        "pathogen": "influenza",
+        "signal": "wastewater",
+        "as_of": "2026-10-31"
+      },
+      "output": {
+        "jurisdiction": "TX",
+        "pathogen": "influenza",
+        "signal": "wastewater",
+        "series": [
+          {
+            "jurisdiction": "TX",
+            "week_ending": "2026-09-12",
+            "value": 1.83,
+            "unit": "wval",
+            "official_level": null,
+            "derived_level": "Very Low",
+            "aggregation_method": "median_distinct_valid_sites; category=modal_site_category",
+            "raw_count": null,
+            "coverage": {
+              "n_sites": 43
+            }
+          },
+          {
+            "jurisdiction": "TX",
+            "week_ending": "2026-09-19",
+            "value": 1.895,
+            "unit": "wval",
+            "official_level": null,
+            "derived_level": "Very Low",
+            "aggregation_method": "median_distinct_valid_sites; category=modal_site_category",
+            "raw_count": null,
+            "coverage": {
+              "n_sites": 38
+            }
+          },
+          {
+            "jurisdiction": "TX",
+            "week_ending": "2026-09-26",
+            "value": 1.93,
+            "unit": "wval",
+            "official_level": null,
+            "derived_level": "Very Low",
+            "aggregation_method": "median_distinct_valid_sites; category=modal_site_category",
+            "raw_count": null,
+            "coverage": {
+              "n_sites": 37
+            }
+          },
+          {
+            "jurisdiction": "TX",
+            "week_ending": "2026-10-03",
+            "value": 1.93,
+            "unit": "wval",
+            "official_level": null,
+            "derived_level": "Very Low",
+            "aggregation_method": "median_distinct_valid_sites; category=modal_site_category",
+            "raw_count": null,
+            "coverage": {
+              "n_sites": 37
+            }
+          },
+          {
+            "jurisdiction": "TX",
+            "week_ending": "2026-10-10",
+            "value": 1.93,
+            "unit": "wval",
+            "official_level": null,
+            "derived_level": "Very Low",
+            "aggregation_method": "median_distinct_valid_sites; category=modal_site_category",
+            "raw_count": null,
+            "coverage": {
+              "n_sites": 38
+            }
+          },
+          {
+            "jurisdiction": "TX",
+            "week_ending": "2026-10-17",
+            "value": 6.89,
+            "unit": "wval",
+            "official_level": null,
+            "derived_level": "Moderate",
+            "aggregation_method": "median_distinct_valid_sites; category=modal_site_category",
+            "raw_count": null,
+            "coverage": {
+              "n_sites": 39
+            }
+          },
+          {
+            "jurisdiction": "TX",
+            "week_ending": "2026-10-24",
+            "value": 6.77,
+            "unit": "wval",
+            "official_level": null,
+            "derived_level": "Moderate",
+            "aggregation_method": "median_distinct_valid_sites; category=modal_site_category",
+            "raw_count": null,
+            "coverage": {
+              "n_sites": 42
+            }
+          },
+          {
+            "jurisdiction": "TX",
+            "week_ending": "2026-10-31",
+            "value": 7.055,
+            "unit": "wval",
+            "official_level": null,
+            "derived_level": "Moderate",
+            "aggregation_method": "median_distinct_valid_sites; category=modal_site_category",
+            "raw_count": null,
+            "coverage": {
+              "n_sites": 42
+            }
+          }
+        ],
+        "trend": {
+          "notes": [],
+          "direction": "increasing",
+          "pct_change": 0.5674603174603173,
+          "abs_change": 2.5024999999999995,
+          "window_weeks": 4,
+          "method": "2w_vs_prior_2w",
+          "basis": "server_heuristic"
+        },
+        "provenance": {
+          "dataset_id": "atcp-73re",
+          "dataset_name": "CDC Wastewater Viral Activity Level for SARS-CoV-2, Influenza A and RSV",
+          "url": "https://data.cdc.gov/resource/atcp-73re.json",
+          "latest_week_ending": "2026-10-31",
+          "retrieved_at": "2026-11-22T22:11:32.995019Z",
+          "source_last_updated": null,
+          "geography_level": "site_aggregate",
+          "notes": [
+            "Site aggregate is server-derived, not an official CDC jurisdiction classification.",
+            "Population coverage fraction is unknown; two valid sites do not establish representativeness.",
+            "Wastewater measures influenza A (Influenza A virus) only."
+          ]
+        },
+        "summary": "Influenza wastewater in TX is increasing. Latest value: 7.1 wval. Trend is a server heuristic; see official_level for authoritative CDC classification.",
+        "caveats": [
+          "Site aggregate is server-derived, not an official CDC jurisdiction classification.",
+          "Population coverage fraction is unknown; two valid sites do not establish representativeness.",
+          "Wastewater measures influenza A (Influenza A virus) only.",
+          "as_of filters observation weeks in data retrieved now; it does not reconstruct what was published at that historical time."
+        ]
+      }
+    }
+  ]
+}

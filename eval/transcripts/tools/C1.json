@@ -1,0 +1,107 @@
+{
+  "id": "C1",
+  "category": "season",
+  "prompt": "Compare GA flu hospital_admissions with three prior seasons through October 31, 2026; state when historical evidence is missing.",
+  "passed": true,
+  "replay_seconds": 0.018906500001321547,
+  "checks": [
+    {
+      "check": "historical rank",
+      "passed": true,
+      "actual": null,
+      "expected": null
+    },
+    {
+      "check": "usable prior-week count",
+      "passed": true,
+      "actual": 0,
+      "expected": 0
+    },
+    {
+      "check": "complete-season peak set",
+      "passed": true,
+      "actual": {},
+      "expected": {}
+    },
+    {
+      "check": "percent of complete prior peak",
+      "passed": true,
+      "actual": null,
+      "expected": null
+    },
+    {
+      "check": "current historical value",
+      "passed": true,
+      "actual": 1.76,
+      "expected": 1.76
+    },
+    {
+      "check": "no unsupported highest claim",
+      "passed": true,
+      "actual": false,
+      "expected": false
+    }
+  ],
+  "calls": [
+    {
+      "tool": "compare_to_prior_seasons",
+      "arguments": {
+        "jurisdiction": "GA",
+        "pathogen": "influenza",
+        "signal": "hospital_admissions",
+        "prior_seasons": 3,
+        "as_of": "2026-10-31"
+      },
+      "output": {
+        "jurisdiction": "GA",
+        "pathogen": "influenza",
+        "signal": "hospital_admissions",
+        "comparison": {
+          "current_season": "2026-27",
+          "current_week_of_season": 17,
+          "current_value": 1.76,
+          "prior": [
+            {
+              "season": "2025-26",
+              "week_ending": "2025-10-25",
+              "week_of_season": 17,
+              "value": null,
+              "alignment_note": null
+            }
+          ],
+          "rank_vs_prior": null,
+          "pct_of_prior_peak": null,
+          "n_prior_compared": 0,
+          "prior_season_peaks": {},
+          "method": "week_of_season_aligned",
+          "notes": [
+            "2024-25: aligned week predates first full mandatory-reporting week; comparison withheld.",
+            "Season(s) 2023-24 excluded: pre-2024 NHSN mandatory-reporting transition may affect comparability.",
+            "2025-26: incomplete weekly coverage; peak withheld.",
+            "Some requested prior-week comparisons are unavailable.",
+            "No usable prior-week values; rank withheld."
+          ]
+        },
+        "provenance": {
+          "dataset_id": "vdzy-6i9v",
+          "dataset_name": "Weekly Hospital Respiratory Admission Levels and Rates by Jurisdiction, National Healthcare Safety Network (NHSN)",
+          "url": "https://data.cdc.gov/resource/vdzy-6i9v.json",
+          "latest_week_ending": "2026-10-31",
+          "retrieved_at": "2026-11-22T22:11:33.093884Z",
+          "source_last_updated": null,
+          "geography_level": "state",
+          "notes": []
+        },
+        "summary": "Influenza hospital_admissions in GA, week 17 of the 2026-27 season. No usable historical rank is available.",
+        "caveats": [
+          "2024-25: aligned week predates first full mandatory-reporting week; comparison withheld.",
+          "Season(s) 2023-24 excluded: pre-2024 NHSN mandatory-reporting transition may affect comparability.",
+          "2025-26: incomplete weekly coverage; peak withheld.",
+          "Some requested prior-week comparisons are unavailable.",
+          "No usable prior-week values; rank withheld.",
+          "as_of filters observation weeks in data retrieved now; it does not reconstruct what was published at that historical time."
+        ]
+      }
+    }
+  ]
+}

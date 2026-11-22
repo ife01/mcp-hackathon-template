@@ -1,0 +1,227 @@
+{
+  "get_respiratory_snapshot": {
+    "description": "Get the current respiratory activity snapshot for a jurisdiction.\n\nReturns the latest week's levels for influenza, COVID-19, and/or RSV\nacross three signals: hospital admissions (NHSN), wastewater (NWSS),\nand test positivity (NREVSS).\n\nUSE WHEN you want a quick overview of all pathogens and signals for one\nlocation. Each signal includes the latest value, CDC official level (if\navailable), and a heuristic trend direction.\n\nDO NOT use this tool for detailed weekly series or multi-season comparison\n\u2014 use assess_trend or compare_to_prior_seasons instead.\n\nReturns: jurisdiction, latest week-ending date, per-pathogen signal\nreadings, cross-signal concordance pattern, and caveats.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "jurisdiction": {
+          "description": "US state code (e.g. 'GA'), territory (e.g. 'PR'), or 'USA'/'national'. Case-insensitive; common aliases accepted.",
+          "maxLength": 64,
+          "minLength": 1,
+          "type": "string"
+        },
+        "pathogens": {
+          "anyOf": [
+            {
+              "items": {
+                "description": "Respiratory pathogen: 'influenza', 'covid19', or 'rsv'. Aliases: 'flu' \u2192 influenza, 'covid'/'sars-cov-2' \u2192 covid19.",
+                "maxLength": 32,
+                "type": "string"
+              },
+              "maxItems": 3,
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Up to three unique pathogens; omit for all. Aliases flu and covid accepted."
+        },
+        "as_of": {
+          "anyOf": [
+            {
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO date string (YYYY-MM-DD) to restrict analysis to data on or before this date. Omit to use the most recent available data. Applied to data retrieved now, not an as-published historical vintage. Use frozen snapshots for reproducible replay."
+        }
+      },
+      "required": [
+        "jurisdiction"
+      ],
+      "type": "object"
+    }
+  },
+  "assess_trend": {
+    "description": "Assess the recent trend for one respiratory signal in a jurisdiction.\n\nReturns a weekly time series and a heuristic trend classification\n(increasing / stable / decreasing / insufficient_data) for one\ncombination of jurisdiction, pathogen, and signal.\n\nUSE WHEN you want to characterise the direction of change for a specific\nsignal over recent weeks. Includes the weekly series so values can be cited.\n\nDO NOT use for multi-pathogen overviews \u2014 use get_respiratory_snapshot.\nDO NOT use for prior-season comparison \u2014 use compare_to_prior_seasons.\n\nReturns: weekly series, trend direction, % change, provenance, and caveats.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "jurisdiction": {
+          "description": "US state code (e.g. 'GA'), territory (e.g. 'PR'), or 'USA'/'national'. Case-insensitive; common aliases accepted.",
+          "maxLength": 64,
+          "minLength": 1,
+          "type": "string"
+        },
+        "pathogen": {
+          "description": "Respiratory pathogen: 'influenza', 'covid19', or 'rsv'. Aliases: 'flu' \u2192 influenza, 'covid'/'sars-cov-2' \u2192 covid19.",
+          "maxLength": 32,
+          "type": "string"
+        },
+        "signal": {
+          "description": "Surveillance signal: 'hospital_admissions' (NHSN), 'wastewater' (NWSS), or 'test_positivity' (NREVSS).",
+          "maxLength": 32,
+          "type": "string"
+        },
+        "lookback_weeks": {
+          "default": 8,
+          "description": "History to display; trend uses four consecutive weeks.",
+          "maximum": 52,
+          "minimum": 4,
+          "type": "integer"
+        },
+        "as_of": {
+          "anyOf": [
+            {
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO date string (YYYY-MM-DD) to restrict analysis to data on or before this date. Omit to use the most recent available data. Applied to data retrieved now, not an as-published historical vintage. Use frozen snapshots for reproducible replay."
+        }
+      },
+      "required": [
+        "jurisdiction",
+        "pathogen",
+        "signal"
+      ],
+      "type": "object"
+    }
+  },
+  "compare_to_prior_seasons": {
+    "description": "Compare current-season activity to prior seasons at the equivalent week.\n\nAligns the current week-of-season to the same week in up to 5 prior\nseasons. Returns rank among available prior-week comparisons and percentage of\nthe prior peak.\n\nUSE WHEN you need historical context: Is this week worse than typical?\nHow does this week compare with available prior weeks and complete-season peaks?\n\nDO NOT use for current-week levels or trend direction \u2014 use\nget_respiratory_snapshot or assess_trend instead.\n\nReturns: season comparison with prior-season data points, rank, % of\nprior peak, provenance, and caveats.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "jurisdiction": {
+          "description": "US state code (e.g. 'GA'), territory (e.g. 'PR'), or 'USA'/'national'. Case-insensitive; common aliases accepted.",
+          "maxLength": 64,
+          "minLength": 1,
+          "type": "string"
+        },
+        "pathogen": {
+          "description": "Respiratory pathogen: 'influenza', 'covid19', or 'rsv'. Aliases: 'flu' \u2192 influenza, 'covid'/'sars-cov-2' \u2192 covid19.",
+          "maxLength": 32,
+          "type": "string"
+        },
+        "signal": {
+          "description": "Surveillance signal: 'hospital_admissions' (NHSN), 'wastewater' (NWSS), or 'test_positivity' (NREVSS).",
+          "maxLength": 32,
+          "type": "string"
+        },
+        "prior_seasons": {
+          "default": 3,
+          "description": "Number of prior seasons requested (1\u20135).",
+          "maximum": 5,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "as_of": {
+          "anyOf": [
+            {
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO date string (YYYY-MM-DD) to restrict analysis to data on or before this date. Omit to use the most recent available data. Applied to data retrieved now, not an as-published historical vintage. Use frozen snapshots for reproducible replay."
+        }
+      },
+      "required": [
+        "jurisdiction",
+        "pathogen",
+        "signal"
+      ],
+      "type": "object"
+    }
+  },
+  "find_jurisdictions_with_rising_activity": {
+    "description": "Find rising states/DC for hospital admissions or wastewater.\n\nUSE WHEN comparing jurisdictions; use assess_trend for one location.\nNational-only test positivity cannot support a state scan. Fetches one\npaginated query and reports assessed/missing counts, per-row provenance,\nand caveats. min_level applies only to hospital admissions.\nResults are descriptive heuristics, not validated outbreak predictions.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "pathogen": {
+          "description": "Respiratory pathogen: 'influenza', 'covid19', or 'rsv'. Aliases: 'flu' \u2192 influenza, 'covid'/'sars-cov-2' \u2192 covid19.",
+          "maxLength": 32,
+          "type": "string"
+        },
+        "signal": {
+          "description": "Surveillance signal: 'hospital_admissions' (NHSN), 'wastewater' (NWSS), or 'test_positivity' (NREVSS).",
+          "maxLength": 32,
+          "type": "string"
+        },
+        "hhs_region": {
+          "anyOf": [
+            {
+              "maximum": 10,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HHS region, or omit for 50 states and DC."
+        },
+        "min_level": {
+          "anyOf": [
+            {
+              "enum": [
+                "Very Low",
+                "Low",
+                "Moderate",
+                "High",
+                "Very High"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "limit": {
+          "default": 10,
+          "description": "Maximum results returned (1\u201356).",
+          "maximum": 56,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "as_of": {
+          "anyOf": [
+            {
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO date string (YYYY-MM-DD) to restrict analysis to data on or before this date. Omit to use the most recent available data. Applied to data retrieved now, not an as-published historical vintage. Use frozen snapshots for reproducible replay."
+        }
+      },
+      "required": [
+        "pathogen",
+        "signal"
+      ],
+      "type": "object"
+    }
+  }
+}

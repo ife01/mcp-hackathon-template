@@ -8,7 +8,7 @@ Key columns (verified Build 0.3):
 
 Decisions (from docs/DECISIONS.md):
 - National only — no state or HHS region breakdown in this dataset.
-- For any non-national jurisdiction, returns observations with the national
+- For any non-national jurisdiction, returns USA observations with the national
   value and provenance note: "Test positivity data is only available at the
   national level from this source"
 - Pathogen values: "Influenza" (A+B combined), "COVID-19", "RSV"
@@ -18,6 +18,7 @@ Decisions (from docs/DECISIONS.md):
 from __future__ import annotations
 
 import logging
+import math
 from datetime import date, datetime, timezone
 
 from resp_mcp.clients.socrata import query, soql_and, soql_eq, soql_gte, soql_lte
@@ -41,7 +42,8 @@ def _parse_float(val) -> float | None:
     if val is None or val == "":
         return None
     try:
-        return float(val)
+        parsed = float(val)
+        return parsed if math.isfinite(parsed) and 0 <= parsed <= 100 else None
     except (ValueError, TypeError):
         return None
 
@@ -93,13 +95,13 @@ async def fetch_series(
         try:
             wk = date.fromisoformat(raw[:10])
         except (ValueError, TypeError):
-            logger.warning("NREVSS: could not parse week_end %r", raw)
+            logger.warning("NREVSS: invalid source week date")
             continue
 
         value = _parse_float(row.get("percent_test_positivity"))
 
         obs = WeeklyObservation(
-            jurisdiction=jurisdiction.code,
+            jurisdiction="USA",
             week_ending=wk,
             value=value,
             unit="percent_positive",
@@ -111,12 +113,14 @@ async def fetch_series(
             latest_week = wk
 
     notes: list[str] = [
-        "most recent week may be less complete; >= 90% complete two weeks back"
+        "Recent weeks may be incomplete or revised; "
+        "a two-week lag does not guarantee finalization."
     ]
     if jurisdiction.type != "national":
         notes.append(
             "Test positivity data is only available at the national level "
-            f"from this source; national value applied to {jurisdiction.code}."
+            f"from this source; shown as national context for "
+            f"{jurisdiction.code}, not a state estimate."
         )
     if pathogen == Pathogen.influenza:
         notes.append("Influenza test positivity includes both influenza A and B.")

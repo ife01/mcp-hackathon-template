@@ -10,19 +10,19 @@
 #   https://<app-url>/health
 #
 # Databricks automatically injects at runtime:
-#   DATABRICKS_APP_PORT      (defaults to 8000) — app.py serves HTTP on this
+#   DATABRICKS_APP_PORT      (defaults to 8000) — server.py serves HTTP on this
 #   DATABRICKS_HOST          workspace URL
 #   DATABRICKS_CLIENT_ID     service principal client ID
 #   DATABRICKS_CLIENT_SECRET OAuth secret
 #
 # The `command` runs the server from the synced source. We put the package's
-# src/ on PYTHONPATH and launch it as a module; app.py sees DATABRICKS_APP_PORT
+# src/ on PYTHONPATH and launch it as a module; server.py sees DATABRICKS_APP_PORT
 # and automatically serves streamable-HTTP on that port with /mcp and /health.
 #
-# If you renamed the `example_server` package, update the module path below.
+# If you renamed the `resp_mcp` package, update the module path below.
 command:
   [
     "/bin/sh",
     "-c",
-    "export PYTHONPATH=/app/python/source_code/src:$PYTHONPATH && python -m example_server.app",
+    "export PYTHONPATH=/app/python/source_code/src:$PYTHONPATH && python -m resp_mcp.server",
   ]

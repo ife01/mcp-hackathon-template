@@ -1,59 +1,99 @@
-# Evaluations
+# Evaluation
 
-This directory contains the evaluation harness, frozen data snapshot, and results
-for the Respiratory Season Situational Awareness MCP Server.
+## Evaluation layers
 
-## Frozen eval snapshot
+1. Offline tool baseline: deterministic calls against frozen HTTP replay, scored
+   using independent raw-data calculations in ground_truth.py. It exercises input
+   validation, adapters, pagination, analytics, and output contracts. No live
+   fallback or wxO/model credentials are used.
+2. Phoenix + LangChain agent evaluation: implemented in [phoenix/README.md](phoenix/README.md)
+   following the repository mcp-eval skill. It uses a real agent over frozen stdio
+   MCP, independent hidden references, semantic judges, and public health gates.
+   Its 10 multi-call benchmark questions plus five supplemental cases are separate
+   from the original 25-case tool suite. Model access is not yet configured.
+3. Optional wxO platform evaluation: test the actual wxO-hosted agent separately;
+   its credentials and service behavior differ from the local Phoenix workflow.
 
-**as_of date: `2026-10-31`**
+The baseline is deliberately not reported as an agent success rate. The recorded
+replay timings are not live cold/warm latency measurements.
 
-This is the fixed reference date for all deterministic evaluation cases. It was
-chosen as 2 weeks prior to the minimum latest-available date across all three data
-sources (all sources had data through `2026-11-14` as of Build 0.3 on 2026-11-20).
-Two weeks back ensures data has finalized across all reporting systems.
+## Run the baseline
 
-Frozen data slices in `eval/snapshot/`:
+From the repository root after `uv sync --frozen --group dev`:
 
-| File | Source | Jurisdiction |
-|---|---|---|
-| `nhsn_ga.json` | NHSN `vdzy-6i9v` | Georgia (GA) — 160 weeks up to 2026-10-31 |
-| `nhsn_ca.json` | NHSN `vdzy-6i9v` | California (CA) — 160 weeks |
-| `nhsn_oh.json` | NHSN `vdzy-6i9v` | Ohio (OH) — 160 weeks |
-| `nhsn_tx.json` | NHSN `vdzy-6i9v` | Texas (TX) — 160 weeks |
-| `nhsn_usa.json` | NHSN `vdzy-6i9v` | USA (national) — 160 weeks |
-| `nhsn_scan_national.json` | NHSN `vdzy-6i9v` | All jurisdictions — 13 weeks up to 2026-10-31 |
-| `nwss_georgia.json` | NWSS `atcp-73re` | Georgia sites — up to 2026-10-31 |
-| `nwss_california.json` | NWSS `atcp-73re` | California sites |
-| `nwss_ohio.json` | NWSS `atcp-73re` | Ohio sites |
-| `nwss_texas.json` | NWSS `atcp-73re` | Texas sites |
-| `nrevss_national.json` | NREVSS `seuz-s2cv` | National positivity — up to 2026-10-31 |
-
-## Expected layout once built (Phase 4)
-
-```
-eval/
-  cases.yaml              ← 25 pinned evaluation cases (5 per category)
-  ground_truth.py         ← independent ground truth from eval/snapshot/
-  run_eval.py             ← runs cases against wxO agent, saves transcripts
-  RESULTS.md              ← scored results (before/after improvement pass)
-  README.md               ← this file
-  snapshot/               ← frozen data slice (above)
-  transcripts/            ← per-case JSON transcripts from run_eval.py
+```shell
+uv run python eval/run_eval.py
 ```
 
-## Evaluation categories (25 cases)
+The runner verifies snapshot hashes first, replays recorded data at the HTTP
+boundary (including real SoQL construction and pagination), clears client cache
+between cases, and writes JSON traces under eval/transcripts/tools. Failures
+produce a nonzero exit. Expected-error cases must match their error category.
+A-E contain five cases each: lookup, trend, season comparison, synthesis, and
+robustness. Numeric comparisons use 1e-8 absolute/relative tolerance.
 
-- **A. Direct lookup (5)** — single jurisdiction, single pathogen, current week
-- **B. Trend (5)** — is it increasing/decreasing? over what window?
-- **C. Season comparison (5)** — how does current compare to prior seasons?
-- **D. Multi-step/synthesis (5)** — multi-turn, cross-signal questions
-- **E. Robustness (5)** — bad input, missing data, edge cases
+`ground_truth.py` imports no production code. It independently parses the raw
+snapshot, calculates trends and available prior-week ranks, and checks actual
+observation geography and dates. Complete-season peak behavior, missing data,
+site deduplication, outages, and date boundaries also have explicit regression
+examples in tests/unit/test_public_health_regressions.py. An epidemiologist should
+review the method choices and reference outputs before final agent scoring.
 
-## Scoring metrics
+## Frozen data
 
-- Tool selection % (correct tool chosen)
-- Argument % (correct parameters passed)
-- Answer correctness % (matches ground truth within tolerance)
-- Grounding % (every number in final answer appears in tool output)
-- Error handling % (structured error returned for bad inputs)
-- Latency (median / p95 seconds)
+The current baseline uses **snapshot_v2**, cutoff **2026-10-31**, captured on
+2026-11-22 from public CDC endpoints. capture_manifest.json records metadata,
+requested dates, actual coverage, and SHA-256 hashes. Raw JSON is losslessly gzip
+compressed, with each compressed file below 2 MB.
+
+| Source | Actual captured coverage |
+| --- | --- |
+| NHSN states/USA/PR | 29 weeks, 2026-04-18 through 2026-10-31 |
+| NHSN national scan | 9 weeks, 2026-09-05 through 2026-10-31 |
+| NWSS GA/CA/OH/TX | 175 distinct weeks per pathogen, 2023-07-01 through 2026-10-31 |
+| National NREVSS | 175 distinct weeks per pathogen, same interval |
+
+Coverage counts do not prove every value or site is available. NHSN cannot support
+prior-season comparisons in this snapshot; abstention is a required correct
+outcome. The source was queried for history from 2023-07-01, so 29 weeks is the
+history returned by this endpoint, not a fabricated 160-week history.
+
+The original snapshot directory is retained as legacy evidence, with its actual
+coverage recorded in snapshot/coverage_manifest.json. Its earlier 160-week and
+13-week descriptions were inaccurate. It is not used by the current runner.
+
+A cutoff on observation dates is not an as-published vintage. Later revisions can
+appear in captured history. Waiting two weeks does not establish finalization.
+
+## Audit or capture a new version
+
+```shell
+uv run python scripts/audit_snapshot.py eval/snapshot_v2
+uv run python scripts/capture_snapshot.py --as-of 2026-10-31 --output eval/snapshot_v3
+```
+
+Capture requires live CDC access, uses full pagination and bounded date chunks,
+checks required metadata fields, and refuses to overwrite an existing directory.
+A failed capture leaves complete=false. Reaching a row cap fails rather than
+silently accepting partial data. Change cases.yaml only after inspecting a new
+manifest and rechecking the expected values. No captured dataset is assumed final.
+
+## Optional wxO platform prerequisites and scoring
+
+Use docs/WXO_AGENT_SETUP.md. The remaining inputs are the sandbox service URL,
+agent ID, authentication type, and a key placed in a local ignored .env or the
+credential mechanism provided by the service. Never put a key in cases or traces.
+A sandbox MCP connection reachable by wxO must already be registered.
+
+Run each prompt in a new conversation, preserving the fixed cutoff. Prefer three
+runs per case; report the denominator if constrained to one. Record agent/model
+version, instructions, server commit, snapshot manifest hash, expected versus
+observed calls, answer text, and cold/warm median/p95 latency. For deterministic
+agent scoring, connect the agent to a sandbox server backed by the same frozen
+snapshot. Live-data scoring is a separate freshness test.
+
+Hard failure examples: national data labeled as state data; derived wastewater
+levels attributed to CDC; a record claim without historical data; an outage
+summarized as no rising activity; or an unsupported forecast. Do not use a number
+appearing somewhere in a tool response as sufficient grounding: it must match the
+claimed geography, unit, date, and signal.

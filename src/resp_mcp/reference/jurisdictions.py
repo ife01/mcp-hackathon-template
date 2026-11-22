@@ -30,9 +30,9 @@ _CONTROL_CHAR_RE = re.compile(r"[\x00-\x1f\x7f-\x9f]")
 class Jurisdiction:
     """A single geographic jurisdiction supported by the server."""
 
-    code: str           # 2-letter code (e.g. "GA", "USA", "PR")
-    name: str           # Full display name (e.g. "Georgia")
-    fips: str | None    # 2-digit FIPS code for states (None for USA/territories)
+    code: str  # 2-letter code (e.g. "GA", "USA", "PR")
+    name: str  # Full display name (e.g. "Georgia")
+    fips: str | None  # 2-digit FIPS code for states (None for USA/territories)
     hhs_region: int | None  # HHS region 1–10 (None for national)
     type: JurisdictionType
 
@@ -61,63 +61,63 @@ _JURISDICTIONS: list[Jurisdiction] = [
     # National
     Jurisdiction("USA", "United States", None, None, "national"),
     # States
-    Jurisdiction("AL", "Alabama",        "01", 4,  "state"),
-    Jurisdiction("AK", "Alaska",         "02", 10, "state"),
-    Jurisdiction("AZ", "Arizona",        "04", 9,  "state"),
-    Jurisdiction("AR", "Arkansas",       "05", 6,  "state"),
-    Jurisdiction("CA", "California",     "06", 9,  "state"),
-    Jurisdiction("CO", "Colorado",       "08", 8,  "state"),
-    Jurisdiction("CT", "Connecticut",    "09", 1,  "state"),
-    Jurisdiction("DE", "Delaware",       "10", 3,  "state"),
-    Jurisdiction("FL", "Florida",        "12", 4,  "state"),
-    Jurisdiction("GA", "Georgia",        "13", 4,  "state"),
-    Jurisdiction("HI", "Hawaii",         "15", 9,  "state"),
-    Jurisdiction("ID", "Idaho",          "16", 10, "state"),
-    Jurisdiction("IL", "Illinois",       "17", 5,  "state"),
-    Jurisdiction("IN", "Indiana",        "18", 5,  "state"),
-    Jurisdiction("IA", "Iowa",           "19", 7,  "state"),
-    Jurisdiction("KS", "Kansas",         "20", 7,  "state"),
-    Jurisdiction("KY", "Kentucky",       "21", 4,  "state"),
-    Jurisdiction("LA", "Louisiana",      "22", 6,  "state"),
-    Jurisdiction("ME", "Maine",          "23", 1,  "state"),
-    Jurisdiction("MD", "Maryland",       "24", 3,  "state"),
-    Jurisdiction("MA", "Massachusetts",  "25", 1,  "state"),
-    Jurisdiction("MI", "Michigan",       "26", 5,  "state"),
-    Jurisdiction("MN", "Minnesota",      "27", 5,  "state"),
-    Jurisdiction("MS", "Mississippi",    "28", 4,  "state"),
-    Jurisdiction("MO", "Missouri",       "29", 7,  "state"),
-    Jurisdiction("MT", "Montana",        "30", 8,  "state"),
-    Jurisdiction("NE", "Nebraska",       "31", 7,  "state"),
-    Jurisdiction("NV", "Nevada",         "32", 9,  "state"),
-    Jurisdiction("NH", "New Hampshire",  "33", 1,  "state"),
-    Jurisdiction("NJ", "New Jersey",     "34", 2,  "state"),
-    Jurisdiction("NM", "New Mexico",     "35", 6,  "state"),
-    Jurisdiction("NY", "New York",       "36", 2,  "state"),
-    Jurisdiction("NC", "North Carolina", "37", 4,  "state"),
-    Jurisdiction("ND", "North Dakota",   "38", 8,  "state"),
-    Jurisdiction("OH", "Ohio",           "39", 5,  "state"),
-    Jurisdiction("OK", "Oklahoma",       "40", 6,  "state"),
-    Jurisdiction("OR", "Oregon",         "41", 10, "state"),
-    Jurisdiction("PA", "Pennsylvania",   "42", 3,  "state"),
-    Jurisdiction("RI", "Rhode Island",   "44", 1,  "state"),
-    Jurisdiction("SC", "South Carolina", "45", 4,  "state"),
-    Jurisdiction("SD", "South Dakota",   "46", 8,  "state"),
-    Jurisdiction("TN", "Tennessee",      "47", 4,  "state"),
-    Jurisdiction("TX", "Texas",          "48", 6,  "state"),
-    Jurisdiction("UT", "Utah",           "49", 8,  "state"),
-    Jurisdiction("VT", "Vermont",        "50", 1,  "state"),
-    Jurisdiction("VA", "Virginia",       "51", 3,  "state"),
-    Jurisdiction("WA", "Washington",     "53", 10, "state"),
-    Jurisdiction("WV", "West Virginia",  "54", 3,  "state"),
-    Jurisdiction("WI", "Wisconsin",      "55", 5,  "state"),
-    Jurisdiction("WY", "Wyoming",        "56", 8,  "state"),
+    Jurisdiction("AL", "Alabama", "01", 4, "state"),
+    Jurisdiction("AK", "Alaska", "02", 10, "state"),
+    Jurisdiction("AZ", "Arizona", "04", 9, "state"),
+    Jurisdiction("AR", "Arkansas", "05", 6, "state"),
+    Jurisdiction("CA", "California", "06", 9, "state"),
+    Jurisdiction("CO", "Colorado", "08", 8, "state"),
+    Jurisdiction("CT", "Connecticut", "09", 1, "state"),
+    Jurisdiction("DE", "Delaware", "10", 3, "state"),
+    Jurisdiction("FL", "Florida", "12", 4, "state"),
+    Jurisdiction("GA", "Georgia", "13", 4, "state"),
+    Jurisdiction("HI", "Hawaii", "15", 9, "state"),
+    Jurisdiction("ID", "Idaho", "16", 10, "state"),
+    Jurisdiction("IL", "Illinois", "17", 5, "state"),
+    Jurisdiction("IN", "Indiana", "18", 5, "state"),
+    Jurisdiction("IA", "Iowa", "19", 7, "state"),
+    Jurisdiction("KS", "Kansas", "20", 7, "state"),
+    Jurisdiction("KY", "Kentucky", "21", 4, "state"),
+    Jurisdiction("LA", "Louisiana", "22", 6, "state"),
+    Jurisdiction("ME", "Maine", "23", 1, "state"),
+    Jurisdiction("MD", "Maryland", "24", 3, "state"),
+    Jurisdiction("MA", "Massachusetts", "25", 1, "state"),
+    Jurisdiction("MI", "Michigan", "26", 5, "state"),
+    Jurisdiction("MN", "Minnesota", "27", 5, "state"),
+    Jurisdiction("MS", "Mississippi", "28", 4, "state"),
+    Jurisdiction("MO", "Missouri", "29", 7, "state"),
+    Jurisdiction("MT", "Montana", "30", 8, "state"),
+    Jurisdiction("NE", "Nebraska", "31", 7, "state"),
+    Jurisdiction("NV", "Nevada", "32", 9, "state"),
+    Jurisdiction("NH", "New Hampshire", "33", 1, "state"),
+    Jurisdiction("NJ", "New Jersey", "34", 2, "state"),
+    Jurisdiction("NM", "New Mexico", "35", 6, "state"),
+    Jurisdiction("NY", "New York", "36", 2, "state"),
+    Jurisdiction("NC", "North Carolina", "37", 4, "state"),
+    Jurisdiction("ND", "North Dakota", "38", 8, "state"),
+    Jurisdiction("OH", "Ohio", "39", 5, "state"),
+    Jurisdiction("OK", "Oklahoma", "40", 6, "state"),
+    Jurisdiction("OR", "Oregon", "41", 10, "state"),
+    Jurisdiction("PA", "Pennsylvania", "42", 3, "state"),
+    Jurisdiction("RI", "Rhode Island", "44", 1, "state"),
+    Jurisdiction("SC", "South Carolina", "45", 4, "state"),
+    Jurisdiction("SD", "South Dakota", "46", 8, "state"),
+    Jurisdiction("TN", "Tennessee", "47", 4, "state"),
+    Jurisdiction("TX", "Texas", "48", 6, "state"),
+    Jurisdiction("UT", "Utah", "49", 8, "state"),
+    Jurisdiction("VT", "Vermont", "50", 1, "state"),
+    Jurisdiction("VA", "Virginia", "51", 3, "state"),
+    Jurisdiction("WA", "Washington", "53", 10, "state"),
+    Jurisdiction("WV", "West Virginia", "54", 3, "state"),
+    Jurisdiction("WI", "Wisconsin", "55", 5, "state"),
+    Jurisdiction("WY", "Wyoming", "56", 8, "state"),
     # District
     Jurisdiction("DC", "District of Columbia", "11", 3, "district"),
     # Territories
-    Jurisdiction("PR", "Puerto Rico",          "72", 2, "territory"),
-    Jurisdiction("VI", "U.S. Virgin Islands",  "78", 2, "territory"),
-    Jurisdiction("GU", "Guam",                 "66", 9, "territory"),
-    Jurisdiction("AS", "American Samoa",       "60", 9, "territory"),
+    Jurisdiction("PR", "Puerto Rico", "72", 2, "territory"),
+    Jurisdiction("VI", "U.S. Virgin Islands", "78", 2, "territory"),
+    Jurisdiction("GU", "Guam", "66", 9, "territory"),
+    Jurisdiction("AS", "American Samoa", "60", 9, "territory"),
     Jurisdiction("MP", "Northern Mariana Islands", "69", 9, "territory"),
 ]
 
@@ -127,23 +127,23 @@ _BY_CODE: dict[str, Jurisdiction] = {j.code.upper(): j for j in _JURISDICTIONS}
 # Alias map → canonical code (case-insensitive keys stored lowercase)
 _ALIASES: dict[str, str] = {
     # National aliases
-    "us":           "USA",
-    "usa":          "USA",
-    "national":     "USA",
+    "us": "USA",
+    "usa": "USA",
+    "national": "USA",
     "united states": "USA",
-    "u.s.":         "USA",
-    "u.s.a.":       "USA",
+    "u.s.": "USA",
+    "u.s.a.": "USA",
     # DC aliases
-    "dc":           "DC",
+    "dc": "DC",
     "washington dc": "DC",
     "washington d.c.": "DC",
-    "d.c.":         "DC",
+    "d.c.": "DC",
     # Territory aliases
-    "puerto rico":  "PR",
+    "puerto rico": "PR",
     "virgin islands": "VI",
     "us virgin islands": "VI",
     "u.s. virgin islands": "VI",
-    "guam":         "GU",
+    "guam": "GU",
     "american samoa": "AS",
     "northern mariana islands": "MP",
     "mariana islands": "MP",
@@ -217,11 +217,7 @@ def resolve_jurisdiction(text: str) -> Jurisdiction:
     seen: set[str] = set()
     suggestions: list[str] = []
     for c in close:
-        code = (
-            _ALIASES.get(c)
-            or _CODE_TO_CODE.get(c)
-            or _NAME_TO_CODE.get(c)
-        )
+        code = _ALIASES.get(c) or _CODE_TO_CODE.get(c) or _NAME_TO_CODE.get(c)
         if code and code not in seen:
             seen.add(code)
             suggestions.append(f"{code} ({_BY_CODE[code].name})")

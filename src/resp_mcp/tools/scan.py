@@ -1,216 +1,209 @@
-"""Tool 4: find_jurisdictions_with_rising_activity
-
-Scans all state/district jurisdictions for a pathogen/signal and returns those
-with an increasing trend. Optionally filtered to an HHS region.
-
-Design: Fetches all jurisdictions concurrently, groups in memory, runs trend
-classification — no per-jurisdiction serial queries.
-"""
+"""Find rising jurisdictions without treating missing data as stable activity."""
 
 from __future__ import annotations
-
-import asyncio
-import logging
 
 from fastmcp import FastMCP
 
 from resp_mcp.analytics.trend import TrendDirection, classify_trend
 from resp_mcp.models.common import Signal
-from resp_mcp.models.tool_io import ScanInput, ScanOutput, ScanRow
-from resp_mcp.reference.jurisdictions import (
-    get_all_jurisdictions,
-    get_by_hhs_region,
+from resp_mcp.models.tool_io import (
+    AsOfArg,
+    LevelArg,
+    LimitArg,
+    PathogenArg,
+    RegionArg,
+    ScanInput,
+    ScanOutput,
+    ScanRow,
+    SignalArg,
 )
-from resp_mcp.sources import nhsn, nrevss, nwss
+from resp_mcp.reference.jurisdictions import get_all_jurisdictions, get_by_hhs_region
+from resp_mcp.sources.bulk import fetch_many
 from resp_mcp.tools._helpers import (
+    AS_OF_CAVEAT,
     classify_tool_error,
     date_window,
     parse_as_of,
     resolve_pathogen,
     resolve_signal,
+    structured_error,
 )
 
-logger = logging.getLogger(__name__)
-
-_SCAN_LOOKBACK = 8  # weeks
-
-_ADAPTERS = {
-    Signal.hospital_admissions: nhsn.fetch_series,
-    Signal.wastewater: nwss.fetch_series,
-    Signal.test_positivity: nrevss.fetch_series,
-}
-
-# CDC NHSN level ordering (ascending severity)
 _LEVEL_ORDER = {
-    "Very Low": 0, "Low": 1, "Medium": 2, "High": 3, "Very High": 4,
+    name: i
+    for i, name in enumerate(["Very Low", "Low", "Moderate", "High", "Very High"])
 }
 
 
 def register(mcp: FastMCP) -> None:
-    """Register find_jurisdictions_with_rising_activity with the MCP server."""
-
     @mcp.tool(
         annotations={
             "readOnlyHint": True,
             "openWorldHint": True,
             "idempotentHint": True,
-        },
+        }
     )
     async def find_jurisdictions_with_rising_activity(
-        pathogen: str,
-        signal: str,
-        hhs_region: int | None = None,
-        min_level: str | None = None,
-        limit: int = 10,
-        as_of: str | None = None,
+        pathogen: PathogenArg,
+        signal: SignalArg,
+        hhs_region: RegionArg = None,
+        min_level: LevelArg = None,
+        limit: LimitArg = 10,
+        as_of: AsOfArg = None,
     ) -> dict:
-        """Find US jurisdictions with currently rising respiratory activity.
+        """Find rising states/DC for hospital admissions or wastewater.
 
-        Scans all 50 states + DC (or a single HHS region) for a given pathogen
-        and signal, returning those with an increasing trend, ranked by latest
-        value (highest first).
-
-        USE WHEN you need a regional hotspot view — which states are rising right
-        now? Useful for weekly situation reports covering multiple jurisdictions.
-
-        DO NOT use this tool for a single-jurisdiction question; use
-        get_respiratory_snapshot or assess_trend instead.
-
-        Returns: list of rising jurisdictions with trend direction, latest value,
-        and CDC level, plus scan provenance and caveats.
+        USE WHEN comparing jurisdictions; use assess_trend for one location.
+        National-only test positivity cannot support a state scan. Fetches one
+        paginated query and reports assessed/missing counts, per-row provenance,
+        and caveats. min_level applies only to hospital admissions.
+        Results are descriptive heuristics, not validated outbreak predictions.
         """
         try:
-            return await _find_jurisdictions_impl(
-                pathogen, signal, hhs_region, min_level, limit, as_of
+            inp = ScanInput(
+                pathogen=resolve_pathogen(pathogen),
+                signal=resolve_signal(signal),
+                hhs_region=hhs_region,
+                min_level=min_level,
+                limit=limit,
+                as_of=as_of,
             )
-        except Exception as exc:  # noqa: BLE001
+            if inp.signal == Signal.test_positivity:
+                return structured_error(
+                    "unsupported_geography",
+                    "Test positivity is national-only. Use assess_trend with "
+                    "jurisdiction='USA'; state hotspots cannot be inferred.",
+                )
+            if min_level and inp.signal != Signal.hospital_admissions:
+                return structured_error(
+                    "invalid_input", "min_level applies only to hospital_admissions."
+                )
+            start, end = date_window(8, parse_as_of(inp.as_of))
+            jurisdictions = (
+                get_by_hhs_region(hhs_region) if hhs_region else get_all_jurisdictions()
+            )
+            jurisdictions = [
+                j for j in jurisdictions if j.type in ("state", "district")
+            ]
+            results = await fetch_many(
+                jurisdictions, inp.pathogen, inp.signal, start, end
+            )
+            return _summarize(inp, jurisdictions, results, start, end)
+        except Exception as exc:
             return classify_tool_error(exc)
 
-    async def _find_jurisdictions_impl(
-        pathogen: str,
-        signal: str,
-        hhs_region: int | None,
-        min_level: str | None,
-        limit: int,
-        as_of: str | None,
-    ) -> dict:
-        inp = ScanInput(
-            pathogen=resolve_pathogen(pathogen),
-            signal=resolve_signal(signal),
-            hhs_region=hhs_region,
-            min_level=min_level,
-            limit=limit,
-            as_of=as_of,
+
+def _summarize(inp, jurisdictions, results, start, end) -> dict:
+    rows, caveats, unavailable = [], [AS_OF_CAVEAT] if inp.as_of else [], []
+    insufficient = assessed = 0
+    provenances = []
+    for jur in jurisdictions:
+        result = results.get(jur.code)
+        if result is None:
+            unavailable.append(jur.code)
+            continue
+        obs, prov = result
+        obs = sorted(
+            (o for o in obs if start <= o.week_ending <= end),
+            key=lambda o: o.week_ending,
         )
-
-        as_of_date = parse_as_of(inp.as_of)
-        start, end = date_window(_SCAN_LOOKBACK, as_of_date)
-
-        # Determine which jurisdictions to scan
-        all_jurs = get_all_jurisdictions()
-        if inp.hhs_region is not None:
-            scan_jurs = get_by_hhs_region(inp.hhs_region)
-        else:
-            # Only states + DC (not national, not territories — NHSN covers 50+DC+PR+VI)
-            scan_jurs = [
-                j for j in all_jurs
-                if j.type in ("state", "district")
-            ]
-
-        fetch_fn = _ADAPTERS[inp.signal]
-
-        # Fetch all jurisdictions concurrently, absorbing failures
-        async def _safe_fetch(jur):
-            try:
-                obs, prov = await fetch_fn(jur, inp.pathogen, start, end)
-                return jur, obs, prov
-            except Exception as exc:  # noqa: BLE001
-                logger.warning("Scan fetch failed for %s: %s", jur.code, exc)
-                return jur, [], None
-
-        fetch_tasks = [_safe_fetch(j) for j in scan_jurs]
-        raw_results = await asyncio.gather(*fetch_tasks)
-
-        rows: list[ScanRow] = []
-        n_insufficient = 0
-        all_prov = None
-        all_caveats: list[str] = []
-
-        for jur, obs, prov in raw_results:
-            if prov is not None and all_prov is None:
-                all_prov = prov  # use first successful provenance as representative
-            if prov is not None:
-                all_caveats.extend(prov.notes)
-
-            # Apply as_of filter
-            if as_of_date:
-                obs = [o for o in obs if o.week_ending <= as_of_date]
-
-            if not obs:
-                n_insufficient += 1
-                continue
-
-            trend = classify_trend(obs, inp.signal)
-            if trend.direction == TrendDirection.insufficient_data:
-                n_insufficient += 1
-                continue
-
-            latest = max(obs, key=lambda o: o.week_ending)
-
-            # min_level filter (hospital admissions only)
-            if inp.min_level and inp.signal == Signal.hospital_admissions:
-                level_rank = _LEVEL_ORDER.get(latest.official_level or "", -1)
-                min_rank = _LEVEL_ORDER.get(inp.min_level, 0)
-                if level_rank < min_rank:
-                    continue
-
-            if trend.direction == TrendDirection.increasing:
-                rows.append(ScanRow(
+        prov = prov.model_copy(
+            update={"latest_week_ending": obs[-1].week_ending if obs else None}
+        )
+        provenances.append(prov)
+        caveats.extend(prov.notes)
+        if prov.geography_level == "national" or any(
+            o.jurisdiction != jur.code for o in obs
+        ):
+            insufficient += 1
+            caveats.append(f"{jur.code}: incompatible source geography; excluded.")
+            continue
+        trend = classify_trend(obs, inp.signal, reference_date=end)
+        caveats.extend(trend.notes)
+        if (
+            trend.direction == TrendDirection.insufficient_data
+            or not obs
+            or (end - obs[-1].week_ending).days > 21
+        ):
+            insufficient += 1
+            continue
+        assessed += 1
+        latest = obs[-1]
+        if (
+            inp.min_level
+            and _LEVEL_ORDER.get(latest.official_level or "", -1)
+            < _LEVEL_ORDER[inp.min_level]
+        ):
+            continue
+        if trend.direction == TrendDirection.increasing:
+            rows.append(
+                ScanRow(
                     jurisdiction=jur.code,
                     trend_direction=trend.direction.value,
                     latest_value=latest.value,
                     latest_week_ending=latest.week_ending,
                     official_level=latest.official_level,
                     pct_change=trend.pct_change,
-                ))
-
-        # Sort by latest_value descending (None last)
-        rows.sort(
-            key=lambda r: r.latest_value if r.latest_value is not None else -1,
-            reverse=True,
-        )
-        rows = rows[: inp.limit]
-
-        # Build provenance fallback if all fetches failed
-        if all_prov is None:
-            from datetime import datetime, timezone
-
-            from resp_mcp.models.common import Provenance
-            from resp_mcp.sources import nhsn as _nhsn
-            all_prov = Provenance(
-                dataset_id=_nhsn.DATASET_ID,
-                dataset_name=_nhsn.DATASET_NAME,
-                url=_nhsn.DATASET_URL,  # type: ignore[arg-type]
-                latest_week_ending=None,
-                retrieved_at=datetime.now(timezone.utc),
-                geography_level="state",
+                    provenance=prov,
+                )
             )
-
+    if len(unavailable) == len(jurisdictions):
+        return structured_error(
+            "upstream_unavailable",
+            "No jurisdictions could be retrieved; no assessment was made.",
+            unavailable_jurisdictions=unavailable,
+        )
+    total = len(rows)
+    rows.sort(key=lambda r: (-(r.latest_value or 0), r.jurisdiction))
+    status = (
+        "insufficient_data"
+        if not assessed
+        else "partial"
+        if insufficient or unavailable
+        else "ok"
+    )
+    if insufficient:
+        caveats.append(
+            f"{insufficient} jurisdictions lack usable, current, consecutive "
+            f"weekly data; no trend inference was made for them."
+        )
+    if unavailable:
+        caveats.append(f"Source unavailable for: {', '.join(unavailable)}.")
+    summary = (
+        f"{total} rising jurisdiction(s) among {assessed} assessed of "
+        f"{len(jurisdictions)} requested. "
+        f"Returning {min(total, inp.limit)}; missing jurisdictions are not "
+        f"evidence of stable activity."
+    )
+    if not assessed:
         summary = (
-            f"Found {len(rows)} jurisdiction(s) with rising "
-            f"{inp.pathogen.value} {inp.signal.value} "
-            f"out of {len(scan_jurs)} scanned."
+            "Insufficient data to assess rising activity in any requested jurisdiction."
         )
-
-        out = ScanOutput(
-            pathogen=inp.pathogen,
-            signal=inp.signal,
-            as_of_week_ending=as_of_date or end,
-            rising=rows,
-            provenance=all_prov,
-            n_jurisdictions_scanned=len(scan_jurs),
-            n_insufficient_data=n_insufficient,
-            summary=summary,
-            caveats=list(dict.fromkeys(all_caveats)),
-        )
-        return out.model_dump(mode="json")
+    prov = provenances[0].model_copy(
+        update={
+            "latest_week_ending": max(
+                (p.latest_week_ending for p in provenances if p.latest_week_ending),
+                default=None,
+            ),
+            "notes": [
+                "Scan-level provenance; each returned row has "
+                "jurisdiction-specific provenance."
+            ],
+        }
+    )
+    return ScanOutput(
+        pathogen=inp.pathogen,
+        signal=inp.signal,
+        as_of_week_ending=prov.latest_week_ending,
+        rising=rows[: inp.limit],
+        provenance=prov,
+        n_jurisdictions_scanned=len(jurisdictions),
+        n_assessed=assessed,
+        n_insufficient_data=insufficient,
+        n_unavailable=len(unavailable),
+        unavailable_jurisdictions=unavailable,
+        n_rising_total=total,
+        status=status,
+        summary=summary,
+        caveats=list(dict.fromkeys(caveats)),
+    ).model_dump(mode="json")

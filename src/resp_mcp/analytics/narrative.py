@@ -48,10 +48,17 @@ def build_snapshot_narrative(
     parts: list[str] = []
 
     # Sentence 1: current level
-    parts.append(_current_level_sentence(
-        jurisdiction, pathogen, signal, latest_value, latest_week_ending,
-        unit, official_level,
-    ))
+    parts.append(
+        _current_level_sentence(
+            jurisdiction,
+            pathogen,
+            signal,
+            latest_value,
+            latest_week_ending,
+            unit,
+            official_level,
+        )
+    )
 
     # Sentence 2: trend
     if trend is not None:
@@ -137,18 +144,21 @@ def _season_sentence(comparison: SeasonComparison) -> str:
 
     season = comparison.current_season
     wos = comparison.current_week_of_season
+    if not comparison.n_prior_compared:
+        return "Historical comparison is unavailable: no usable prior-week values."
 
     if comparison.rank_vs_prior == 1:
         return (
             f"At week {wos} of the {season} season, this is the highest "
-            f"level compared to the same week in prior seasons."
+            f"level among {comparison.n_prior_compared} available prior-week "
+            f"comparisons."
         )
 
     if comparison.pct_of_prior_peak is not None:
         pct = round(comparison.pct_of_prior_peak, 1)
         return (
             f"At week {wos} of the {season} season, the current level "
-            f"is {pct}% of the highest prior-season value at this week."
+            f"is {pct}% of the highest complete prior-season peak."
         )
 
     return (

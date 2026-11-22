@@ -1,0 +1,198 @@
+{
+  "id": "A1",
+  "category": "lookup",
+  "prompt": "What was the latest flu admission rate in GA through October 31, 2026?",
+  "passed": true,
+  "replay_seconds": 0.22175879999122117,
+  "checks": [
+    {
+      "check": "trend direction",
+      "passed": true,
+      "actual": "increasing",
+      "expected": "increasing"
+    },
+    {
+      "check": "trend window",
+      "passed": true,
+      "actual": 4,
+      "expected": 4
+    },
+    {
+      "check": "units",
+      "passed": true,
+      "actual": "admissions_per_100k",
+      "expected": "admissions_per_100k"
+    },
+    {
+      "check": "latest value",
+      "passed": true,
+      "actual": 1.76,
+      "expected": 1.76
+    },
+    {
+      "check": "actual observation geography",
+      "passed": true,
+      "actual": "GA",
+      "expected": "GA"
+    },
+    {
+      "check": "latest date",
+      "passed": true,
+      "actual": "2026-10-31",
+      "expected": "2026-10-31"
+    }
+  ],
+  "calls": [
+    {
+      "tool": "assess_trend",
+      "arguments": {
+        "jurisdiction": "GA",
+        "pathogen": "influenza",
+        "signal": "hospital_admissions",
+        "as_of": "2026-10-31"
+      },
+      "output": {
+        "jurisdiction": "GA",
+        "pathogen": "influenza",
+        "signal": "hospital_admissions",
+        "series": [
+          {
+            "jurisdiction": "GA",
+            "week_ending": "2026-09-12",
+            "value": 0.25,
+            "unit": "admissions_per_100k",
+            "official_level": "Very Low",
+            "derived_level": null,
+            "aggregation_method": null,
+            "raw_count": 27.0,
+            "coverage": {
+              "n_hospitals": 92,
+              "pct_hospitals": 57.5
+            }
+          },
+          {
+            "jurisdiction": "GA",
+            "week_ending": "2026-09-19",
+            "value": 0.33,
+            "unit": "admissions_per_100k",
+            "official_level": "Very Low",
+            "derived_level": null,
+            "aggregation_method": null,
+            "raw_count": 36.0,
+            "coverage": {
+              "n_hospitals": 108,
+              "pct_hospitals": 67.5
+            }
+          },
+          {
+            "jurisdiction": "GA",
+            "week_ending": "2026-09-26",
+            "value": 0.26,
+            "unit": "admissions_per_100k",
+            "official_level": "Very Low",
+            "derived_level": null,
+            "aggregation_method": null,
+            "raw_count": 29.0,
+            "coverage": {
+              "n_hospitals": 107,
+              "pct_hospitals": 66.88
+            }
+          },
+          {
+            "jurisdiction": "GA",
+            "week_ending": "2026-10-03",
+            "value": 0.47,
+            "unit": "admissions_per_100k",
+            "official_level": "Very Low",
+            "derived_level": null,
+            "aggregation_method": null,
+            "raw_count": 52.0,
+            "coverage": {
+              "n_hospitals": 113,
+              "pct_hospitals": 70.63
+            }
+          },
+          {
+            "jurisdiction": "GA",
+            "week_ending": "2026-10-10",
+            "value": 0.73,
+            "unit": "admissions_per_100k",
+            "official_level": "Very Low",
+            "derived_level": null,
+            "aggregation_method": null,
+            "raw_count": 80.0,
+            "coverage": {
+              "n_hospitals": 113,
+              "pct_hospitals": 70.63
+            }
+          },
+          {
+            "jurisdiction": "GA",
+            "week_ending": "2026-10-17",
+            "value": 0.7,
+            "unit": "admissions_per_100k",
+            "official_level": "Very Low",
+            "derived_level": null,
+            "aggregation_method": null,
+            "raw_count": 77.0,
+            "coverage": {
+              "n_hospitals": 107,
+              "pct_hospitals": 66.88
+            }
+          },
+          {
+            "jurisdiction": "GA",
+            "week_ending": "2026-10-24",
+            "value": 0.94,
+            "unit": "admissions_per_100k",
+            "official_level": "Very Low",
+            "derived_level": null,
+            "aggregation_method": null,
+            "raw_count": 103.0,
+            "coverage": {
+              "n_hospitals": 105,
+              "pct_hospitals": 65.63
+            }
+          },
+          {
+            "jurisdiction": "GA",
+            "week_ending": "2026-10-31",
+            "value": 1.76,
+            "unit": "admissions_per_100k",
+            "official_level": "Low",
+            "derived_level": null,
+            "aggregation_method": null,
+            "raw_count": 193.0,
+            "coverage": {
+              "n_hospitals": 105,
+              "pct_hospitals": 65.63
+            }
+          }
+        ],
+        "trend": {
+          "notes": [],
+          "direction": "increasing",
+          "pct_change": 0.8881118881118883,
+          "abs_change": 0.6350000000000001,
+          "window_weeks": 4,
+          "method": "2w_vs_prior_2w",
+          "basis": "server_heuristic"
+        },
+        "provenance": {
+          "dataset_id": "vdzy-6i9v",
+          "dataset_name": "Weekly Hospital Respiratory Admission Levels and Rates by Jurisdiction, National Healthcare Safety Network (NHSN)",
+          "url": "https://data.cdc.gov/resource/vdzy-6i9v.json",
+          "latest_week_ending": "2026-10-31",
+          "retrieved_at": "2026-11-22T22:11:32.782390Z",
+          "source_last_updated": null,
+          "geography_level": "state",
+          "notes": []
+        },
+        "summary": "Influenza hospital_admissions in GA is increasing. Latest value: 1.8 admissions_per_100k. Trend is a server heuristic; see official_level for authoritative CDC classification.",
+        "caveats": [
+          "as_of filters observation weeks in data retrieved now; it does not reconstruct what was published at that historical time."
+        ]
+      }
+    }
+  ]
+}

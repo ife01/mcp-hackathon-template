@@ -219,13 +219,13 @@ def test_lag_note_appears_in_explanation():
 def test_single_increasing_signal_returns_concordant_increase():
     inputs = [_sti(Signal.hospital_admissions, TrendDirection.increasing)]
     result = assess_concordance(inputs)
-    assert result.pattern == "concordant_increase"
+    assert result.pattern == "insufficient_data"
 
 
 def test_single_stable_signal_returns_stable():
     inputs = [_sti(Signal.hospital_admissions, TrendDirection.stable)]
     result = assess_concordance(inputs)
-    assert result.pattern == "stable"
+    assert result.pattern == "insufficient_data"
 
 
 # ── Insufficient signals excluded from usable ─────────────────────────────────
@@ -238,9 +238,9 @@ def test_one_usable_one_insufficient_uses_usable():
     ]
     result = assess_concordance(inputs)
     # Only hospital_admissions usable → concordant_increase
-    assert result.pattern == "concordant_increase"
+    assert result.pattern == "insufficient_data"
     # Explanation notes the excluded signal
-    assert "insufficient" in result.explanation.lower()
+    assert "two distinct" in result.explanation.lower()
 
 
 # ── Explanation content ───────────────────────────────────────────────────────
@@ -343,6 +343,7 @@ def test_narrative_includes_season_sentence():
         current_value=5.0,
         prior=[],
         rank_vs_prior=1,
+        n_prior_compared=2,
         pct_of_prior_peak=None,
         method="week_of_season_aligned",
     )

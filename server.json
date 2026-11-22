@@ -1,16 +1,10 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
   "name": "io.github.ife01/respiratory-mcp-server",
-  "description": "Respiratory Season Situational Awareness MCP Server — real-time flu, COVID-19, and RSV situational awareness using public CDC data (NHSN, NWSS, NREVSS).",
+  "description": "Sandbox prototype for respiratory situational awareness using public CDC data with provenance and explicit uncertainty.",
   "repository": {
     "url": "https://github.com/ife01/mcp-hackathon-template",
     "source": "github"
   },
-  "version": "0.1.0",
-  "remotes": [
-    {
-      "type": "streamable-http",
-      "url": "https://respiratory-mcp-server.app.cloud.gov/mcp"
-    }
-  ]
+  "version": "0.1.0"
 }

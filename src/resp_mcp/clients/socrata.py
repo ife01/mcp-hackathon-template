@@ -56,6 +56,7 @@ class UpstreamRateLimited(RuntimeError):
 
 # ── Cache ─────────────────────────────────────────────────────────────────────
 
+
 class _CacheEntry:
     __slots__ = ("data", "expires_at")
 
@@ -99,6 +100,7 @@ _cache = _Cache()
 
 # ── Domain allowlist ──────────────────────────────────────────────────────────
 
+
 def _check_domain(url: str) -> None:
     """Raise SecurityError if the URL host is not in the configured allowlist."""
     host = urlsplit(url).hostname or ""
@@ -111,6 +113,7 @@ def _check_domain(url: str) -> None:
 
 
 # ── SoQL quoting helper ───────────────────────────────────────────────────────
+
 
 def quote_soql_string(value: str) -> str:
     """Escape a string for safe use inside a SoQL single-quoted literal.
@@ -143,6 +146,7 @@ def soql_and(*clauses: str) -> str:
 
 
 # ── HTTP client helpers ───────────────────────────────────────────────────────
+
 
 def _build_client() -> httpx.AsyncClient:
     token = settings.socrata_app_token
@@ -180,6 +184,7 @@ def _cache_key(dataset_id: str, params: dict[str, Any]) -> str:
 
 # ── Core query function ───────────────────────────────────────────────────────
 
+
 async def _fetch_page(
     client: httpx.AsyncClient,
     dataset_id: str,
@@ -198,7 +203,9 @@ async def _fetch_page(
                     wait = _backoff(attempt)
                     logger.warning(
                         "Socrata rate-limited (429) on %s, retry %d in %.1fs",
-                        dataset_id, attempt + 1, wait,
+                        dataset_id,
+                        attempt + 1,
+                        wait,
                     )
                     await asyncio.sleep(wait)
                     last_exc = UpstreamRateLimited(
@@ -215,7 +222,10 @@ async def _fetch_page(
                     wait = _backoff(attempt)
                     logger.warning(
                         "Socrata %d on %s, retry %d in %.1fs",
-                        resp.status_code, dataset_id, attempt + 1, wait,
+                        resp.status_code,
+                        dataset_id,
+                        attempt + 1,
+                        wait,
                     )
                     await asyncio.sleep(wait)
                     last_exc = UpstreamUnavailable(
@@ -241,7 +251,9 @@ async def _fetch_page(
                 wait = _backoff(attempt)
                 logger.warning(
                     "Socrata timeout on %s, retry %d in %.1fs",
-                    dataset_id, attempt + 1, wait,
+                    dataset_id,
+                    attempt + 1,
+                    wait,
                 )
                 await asyncio.sleep(wait)
                 last_exc = UpstreamUnavailable(
@@ -265,6 +277,26 @@ async def _fetch_page(
 
 
 async def query(
+    dataset_id: str,
+    *,
+    select: list[str] | None = None,
+    where: str | None = None,
+    order: str | None = None,
+    limit: int = _PAGE_SIZE,
+) -> list[dict]:
+    """Query with a total deadline covering locking, retries, and all pages."""
+    try:
+        async with asyncio.timeout(settings.http_total_timeout_seconds):
+            return await _query_impl(
+                dataset_id, select=select, where=where, order=order, limit=limit
+            )
+    except TimeoutError:
+        raise UpstreamUnavailable(
+            f"Dataset {dataset_id}: total request deadline exceeded; retry later."
+        ) from None
+
+
+async def _query_impl(
     dataset_id: str,
     *,
     select: list[str] | None = None,
@@ -320,14 +352,23 @@ async def query(
                 params = {**base_params, "$limit": page_limit, "$offset": offset}
                 page = await _fetch_page(client, dataset_id, params)
                 rows.extend(page)
-                if len(page) < page_limit or len(rows) >= _MAX_ROWS:
+                if len(rows) >= _MAX_ROWS:
+                    raise UpstreamUnavailable(
+                        f"Dataset {dataset_id}: row safety cap reached; "
+                        "narrow the date "
+                        f"window. "
+                        "Partial data were not returned."
+                    )
+                if len(page) < page_limit:
                     break
                 offset += page_limit
 
         _cache.set(cache_key, rows, settings.cache_ttl_seconds)
         logger.debug(
             "Fetched %d rows from dataset %s (cached for %ds)",
-            len(rows), dataset_id, settings.cache_ttl_seconds,
+            len(rows),
+            dataset_id,
+            settings.cache_ttl_seconds,
         )
         return rows
 
@@ -385,8 +426,7 @@ async def metadata(dataset_id: str) -> dict:
                     )
                 if resp.status_code >= 400:
                     raise UpstreamBadRequest(
-                        f"HTTP {resp.status_code} fetching metadata for "
-                        f"{dataset_id!r}."
+                        f"HTTP {resp.status_code} fetching metadata for {dataset_id!r}."
                     )
                 meta: dict = resp.json()
                 _cache.set(cache_key, meta, settings.cache_ttl_seconds)

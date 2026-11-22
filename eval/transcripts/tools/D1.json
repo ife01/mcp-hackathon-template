@@ -1,0 +1,407 @@
+{
+  "id": "D1",
+  "category": "synthesis",
+  "prompt": "Brief me on flu in GA through October 31, 2026, with local signals, national context, and hospital trend caveats.",
+  "passed": true,
+  "replay_seconds": 0.10676549999334384,
+  "checks": [
+    {
+      "check": "hospital_admissions latest value",
+      "passed": true,
+      "actual": 1.76,
+      "expected": 1.76
+    },
+    {
+      "check": "hospital_admissions date",
+      "passed": true,
+      "actual": "2026-10-31",
+      "expected": "2026-10-31"
+    },
+    {
+      "check": "wastewater latest value",
+      "passed": true,
+      "actual": 1.695,
+      "expected": 1.695
+    },
+    {
+      "check": "wastewater date",
+      "passed": true,
+      "actual": "2026-10-31",
+      "expected": "2026-10-31"
+    },
+    {
+      "check": "no invented CDC aggregate level",
+      "passed": true,
+      "actual": null,
+      "expected": null
+    },
+    {
+      "check": "test_positivity latest value",
+      "passed": true,
+      "actual": 10.1,
+      "expected": 10.1
+    },
+    {
+      "check": "test_positivity date",
+      "passed": true,
+      "actual": "2026-10-31",
+      "expected": "2026-10-31"
+    },
+    {
+      "check": "national context label",
+      "passed": true,
+      "actual": "national_context",
+      "expected": "national_context"
+    },
+    {
+      "check": "national context geography",
+      "passed": true,
+      "actual": "USA",
+      "expected": "USA"
+    },
+    {
+      "check": "trend direction",
+      "passed": true,
+      "actual": "increasing",
+      "expected": "increasing"
+    },
+    {
+      "check": "trend window",
+      "passed": true,
+      "actual": 4,
+      "expected": 4
+    },
+    {
+      "check": "units",
+      "passed": true,
+      "actual": "admissions_per_100k",
+      "expected": "admissions_per_100k"
+    },
+    {
+      "check": "latest value",
+      "passed": true,
+      "actual": 1.76,
+      "expected": 1.76
+    },
+    {
+      "check": "actual observation geography",
+      "passed": true,
+      "actual": "GA",
+      "expected": "GA"
+    },
+    {
+      "check": "latest date",
+      "passed": true,
+      "actual": "2026-10-31",
+      "expected": "2026-10-31"
+    }
+  ],
+  "calls": [
+    {
+      "tool": "get_respiratory_snapshot",
+      "arguments": {
+        "jurisdiction": "GA",
+        "pathogens": [
+          "influenza"
+        ],
+        "as_of": "2026-10-31"
+      },
+      "output": {
+        "jurisdiction": "GA",
+        "as_of_week_ending": "2026-10-31",
+        "pathogens": [
+          {
+            "pathogen": "influenza",
+            "signals": [
+              {
+                "signal": "hospital_admissions",
+                "status": "ok",
+                "role": "local",
+                "latest": {
+                  "jurisdiction": "GA",
+                  "week_ending": "2026-10-31",
+                  "value": 1.76,
+                  "unit": "admissions_per_100k",
+                  "official_level": "Low",
+                  "derived_level": null,
+                  "aggregation_method": null,
+                  "raw_count": 193.0,
+                  "coverage": {
+                    "n_hospitals": 105,
+                    "pct_hospitals": 65.63
+                  }
+                },
+                "trend": {
+                  "notes": [],
+                  "direction": "increasing",
+                  "pct_change": 0.8881118881118883,
+                  "abs_change": 0.6350000000000001,
+                  "window_weeks": 4,
+                  "method": "2w_vs_prior_2w",
+                  "basis": "server_heuristic"
+                },
+                "provenance": {
+                  "dataset_id": "vdzy-6i9v",
+                  "dataset_name": "Weekly Hospital Respiratory Admission Levels and Rates by Jurisdiction, National Healthcare Safety Network (NHSN)",
+                  "url": "https://data.cdc.gov/resource/vdzy-6i9v.json",
+                  "latest_week_ending": "2026-10-31",
+                  "retrieved_at": "2026-11-22T22:11:33.675298Z",
+                  "source_last_updated": null,
+                  "geography_level": "state",
+                  "notes": []
+                },
+                "message": null
+              },
+              {
+                "signal": "wastewater",
+                "status": "ok",
+                "role": "local",
+                "latest": {
+                  "jurisdiction": "GA",
+                  "week_ending": "2026-10-31",
+                  "value": 1.695,
+                  "unit": "wval",
+                  "official_level": null,
+                  "derived_level": "Very Low",
+                  "aggregation_method": "median_distinct_valid_sites; category=modal_site_category",
+                  "raw_count": null,
+                  "coverage": {
+                    "n_sites": 20
+                  }
+                },
+                "trend": {
+                  "notes": [],
+                  "direction": "stable",
+                  "pct_change": -0.09866220735785951,
+                  "abs_change": -0.14749999999999996,
+                  "window_weeks": 4,
+                  "method": "2w_vs_prior_2w",
+                  "basis": "server_heuristic"
+                },
+                "provenance": {
+                  "dataset_id": "atcp-73re",
+                  "dataset_name": "CDC Wastewater Viral Activity Level for SARS-CoV-2, Influenza A and RSV",
+                  "url": "https://data.cdc.gov/resource/atcp-73re.json",
+                  "latest_week_ending": "2026-10-31",
+                  "retrieved_at": "2026-11-22T22:11:33.720822Z",
+                  "source_last_updated": null,
+                  "geography_level": "site_aggregate",
+                  "notes": [
+                    "Site aggregate is server-derived, not an official CDC jurisdiction classification.",
+                    "Population coverage fraction is unknown; two valid sites do not establish representativeness.",
+                    "Wastewater measures influenza A (Influenza A virus) only."
+                  ]
+                },
+                "message": null
+              },
+              {
+                "signal": "test_positivity",
+                "status": "ok",
+                "role": "national_context",
+                "latest": {
+                  "jurisdiction": "USA",
+                  "week_ending": "2026-10-31",
+                  "value": 10.1,
+                  "unit": "percent_positive",
+                  "official_level": null,
+                  "derived_level": null,
+                  "aggregation_method": null,
+                  "raw_count": null,
+                  "coverage": null
+                },
+                "trend": {
+                  "notes": [],
+                  "direction": "increasing",
+                  "pct_change": 0.6542056074766356,
+                  "abs_change": 3.5,
+                  "window_weeks": 4,
+                  "method": "2w_vs_prior_2w",
+                  "basis": "server_heuristic"
+                },
+                "provenance": {
+                  "dataset_id": "seuz-s2cv",
+                  "dataset_name": "Percent of Tests Positive for Viral Respiratory Pathogens",
+                  "url": "https://data.cdc.gov/resource/seuz-s2cv.json",
+                  "latest_week_ending": "2026-10-31",
+                  "retrieved_at": "2026-11-22T22:11:33.729680Z",
+                  "source_last_updated": null,
+                  "geography_level": "national",
+                  "notes": [
+                    "Recent weeks may be incomplete or revised; a two-week lag does not guarantee finalization.",
+                    "Test positivity data is only available at the national level from this source; shown as national context for GA, not a state estimate.",
+                    "Influenza test positivity includes both influenza A and B."
+                  ]
+                },
+                "message": null
+              }
+            ],
+            "concordance_pattern": "early_warning",
+            "concordance_note": "hospital_admissions show(s) an increasing trend while other signal(s) remain stable; this may be an early-warning pattern."
+          }
+        ],
+        "summary": "Respiratory snapshot for Georgia (GA). Data through 2026-10-31. Trends and site aggregates are server heuristics; use official_level for authoritative CDC levels.",
+        "caveats": [
+          "as_of filters observation weeks in data retrieved now; it does not reconstruct what was published at that historical time.",
+          "Site aggregate is server-derived, not an official CDC jurisdiction classification.",
+          "Population coverage fraction is unknown; two valid sites do not establish representativeness.",
+          "Wastewater measures influenza A (Influenza A virus) only.",
+          "National test positivity is context only and excluded from local concordance.",
+          "Recent weeks may be incomplete or revised; a two-week lag does not guarantee finalization.",
+          "Test positivity data is only available at the national level from this source; shown as national context for GA, not a state estimate.",
+          "Influenza test positivity includes both influenza A and B."
+        ]
+      }
+    },
+    {
+      "tool": "assess_trend",
+      "arguments": {
+        "jurisdiction": "GA",
+        "pathogen": "influenza",
+        "signal": "hospital_admissions",
+        "as_of": "2026-10-31"
+      },
+      "output": {
+        "jurisdiction": "GA",
+        "pathogen": "influenza",
+        "signal": "hospital_admissions",
+        "series": [
+          {
+            "jurisdiction": "GA",
+            "week_ending": "2026-09-12",
+            "value": 0.25,
+            "unit": "admissions_per_100k",
+            "official_level": "Very Low",
+            "derived_level": null,
+            "aggregation_method": null,
+            "raw_count": 27.0,
+            "coverage": {
+              "n_hospitals": 92,
+              "pct_hospitals": 57.5
+            }
+          },
+          {
+            "jurisdiction": "GA",
+            "week_ending": "2026-09-19",
+            "value": 0.33,
+            "unit": "admissions_per_100k",
+            "official_level": "Very Low",
+            "derived_level": null,
+            "aggregation_method": null,
+            "raw_count": 36.0,
+            "coverage": {
+              "n_hospitals": 108,
+              "pct_hospitals": 67.5
+            }
+          },
+          {
+            "jurisdiction": "GA",
+            "week_ending": "2026-09-26",
+            "value": 0.26,
+            "unit": "admissions_per_100k",
+            "official_level": "Very Low",
+            "derived_level": null,
+            "aggregation_method": null,
+            "raw_count": 29.0,
+            "coverage": {
+              "n_hospitals": 107,
+              "pct_hospitals": 66.88
+            }
+          },
+          {
+            "jurisdiction": "GA",
+            "week_ending": "2026-10-03",
+            "value": 0.47,
+            "unit": "admissions_per_100k",
+            "official_level": "Very Low",
+            "derived_level": null,
+            "aggregation_method": null,
+            "raw_count": 52.0,
+            "coverage": {
+              "n_hospitals": 113,
+              "pct_hospitals": 70.63
+            }
+          },
+          {
+            "jurisdiction": "GA",
+            "week_ending": "2026-10-10",
+            "value": 0.73,
+            "unit": "admissions_per_100k",
+            "official_level": "Very Low",
+            "derived_level": null,
+            "aggregation_method": null,
+            "raw_count": 80.0,
+            "coverage": {
+              "n_hospitals": 113,
+              "pct_hospitals": 70.63
+            }
+          },
+          {
+            "jurisdiction": "GA",
+            "week_ending": "2026-10-17",
+            "value": 0.7,
+            "unit": "admissions_per_100k",
+            "official_level": "Very Low",
+            "derived_level": null,
+            "aggregation_method": null,
+            "raw_count": 77.0,
+            "coverage": {
+              "n_hospitals": 107,
+              "pct_hospitals": 66.88
+            }
+          },
+          {
+            "jurisdiction": "GA",
+            "week_ending": "2026-10-24",
+            "value": 0.94,
+            "unit": "admissions_per_100k",
+            "official_level": "Very Low",
+            "derived_level": null,
+            "aggregation_method": null,
+            "raw_count": 103.0,
+            "coverage": {
+              "n_hospitals": 105,
+              "pct_hospitals": 65.63
+            }
+          },
+          {
+            "jurisdiction": "GA",
+            "week_ending": "2026-10-31",
+            "value": 1.76,
+            "unit": "admissions_per_100k",
+            "official_level": "Low",
+            "derived_level": null,
+            "aggregation_method": null,
+            "raw_count": 193.0,
+            "coverage": {
+              "n_hospitals": 105,
+              "pct_hospitals": 65.63
+            }
+          }
+        ],
+        "trend": {
+          "notes": [],
+          "direction": "increasing",
+          "pct_change": 0.8881118881118883,
+          "abs_change": 0.6350000000000001,
+          "window_weeks": 4,
+          "method": "2w_vs_prior_2w",
+          "basis": "server_heuristic"
+        },
+        "provenance": {
+          "dataset_id": "vdzy-6i9v",
+          "dataset_name": "Weekly Hospital Respiratory Admission Levels and Rates by Jurisdiction, National Healthcare Safety Network (NHSN)",
+          "url": "https://data.cdc.gov/resource/vdzy-6i9v.json",
+          "latest_week_ending": "2026-10-31",
+          "retrieved_at": "2026-11-22T22:11:33.749624Z",
+          "source_last_updated": null,
+          "geography_level": "state",
+          "notes": []
+        },
+        "summary": "Influenza hospital_admissions in GA is increasing. Latest value: 1.8 admissions_per_100k. Trend is a server heuristic; see official_level for authoritative CDC classification.",
+        "caveats": [
+          "as_of filters observation weeks in data retrieved now; it does not reconstruct what was published at that historical time."
+        ]
+      }
+    }
+  ]
+}

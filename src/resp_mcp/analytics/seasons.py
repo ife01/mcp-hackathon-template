@@ -9,12 +9,13 @@ THIS IS A SERVER HEURISTIC, NOT AN OFFICIAL CDC CLASSIFICATION.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import date
+from datetime import date, timedelta
 
 from resp_mcp.models.common import WeeklyObservation
 from resp_mcp.reference.epiweeks import (
     same_week_prior_seasons,
     season_of,
+    week_ending,
     week_of_season,
 )
 
@@ -27,9 +28,9 @@ _NHSN_TRANSITION_YEAR = 2024
 class PriorSeasonPoint:
     """A single data-point from a prior season at the equivalent week."""
 
-    season: str         # e.g. "2023-24"
-    week_ending: date   # week-ending date of the aligned week
-    week_of_season: int # 1-based season week index
+    season: str  # e.g. "2023-24"
+    week_ending: date  # week-ending date of the aligned week
+    week_of_season: int  # 1-based season week index
     value: float | None
     alignment_note: str | None = None  # set when nearest-week fallback used
 
@@ -59,6 +60,8 @@ class SeasonComparison:
     pct_of_prior_peak: float | None
     method: str
     notes: list[str] = field(default_factory=list)
+    n_prior_compared: int = 0
+    prior_season_peaks: dict[str, float] = field(default_factory=dict)
 
 
 def compare_to_prior_seasons(
@@ -106,16 +109,31 @@ def compare_to_prior_seasons(
             excluded_seasons.append(ps)
             continue
 
+        if exclude_pre_transition_nhsn and pd < date(2024, 11, 9):
+            notes.append(
+                f"{ps}: aligned week predates first full mandatory-reporting week; "
+                f"comparison withheld."
+            )
+            continue
         # Try exact match first, then ±1 week fallback
         value = obs_by_date.get(pd)
         alignment_note: str | None = None
+        actual_date = pd
 
         if value is None:
             # Try neighbours (±1 week = ±7 days)
             for delta in (-7, 7):
                 neighbour = date.fromordinal(pd.toordinal() + delta)
-                if neighbour in obs_by_date:
+                if (
+                    obs_by_date.get(neighbour) is not None
+                    and season_of(neighbour) == ps
+                    and (
+                        not exclude_pre_transition_nhsn
+                        or neighbour >= date(2024, 11, 9)
+                    )
+                ):
                     value = obs_by_date[neighbour]
+                    actual_date = neighbour
                     alignment_note = (
                         f"Aligned to nearest available week "
                         f"({neighbour.isoformat()}, ±1 week fallback)."
@@ -125,8 +143,8 @@ def compare_to_prior_seasons(
         prior_points.append(
             PriorSeasonPoint(
                 season=ps,
-                week_ending=pd,
-                week_of_season=week_of_season(pd),
+                week_ending=actual_date,
+                week_of_season=week_of_season(actual_date),
                 value=value,
                 alignment_note=alignment_note,
             )
@@ -142,7 +160,26 @@ def compare_to_prior_seasons(
     rank: int | None = None
     pct_of_prior_peak: float | None = None
 
-    if current_value is not None:
+    prior_values = [p.value for p in prior_points if p.value is not None]
+    peaks: dict[str, float] = {}
+    for point in prior_points:
+        year = int(point.season.split("-")[0])
+        first, last = week_ending(year, 27), week_ending(year + 1, 26)
+        expected = [
+            first + timedelta(weeks=i) for i in range((last - first).days // 7 + 1)
+        ]
+        # Partial observed maxima are not complete-season peaks.
+        if (not exclude_pre_transition_nhsn or first >= date(2024, 11, 9)) and all(
+            obs_by_date.get(day) is not None for day in expected
+        ):
+            peaks[point.season] = max(obs_by_date[day] for day in expected)
+        else:
+            notes.append(f"{point.season}: incomplete weekly coverage; peak withheld.")
+    if len(prior_values) < len(prior_points):
+        notes.append("Some requested prior-week comparisons are unavailable.")
+    if not prior_values:
+        notes.append("No usable prior-week values; rank withheld.")
+    if current_value is not None and prior_values:
         # Collect only non-None prior values
         prior_values = [p.value for p in prior_points if p.value is not None]
 
@@ -151,8 +188,8 @@ def compare_to_prior_seasons(
 
         # pct_of_prior_peak: only full prior seasons contribute to peaks
         # (use all available prior data since we're at a specific week)
-        if prior_values:
-            prior_peak = max(prior_values)
+        if peaks:
+            prior_peak = max(peaks.values())
             if prior_peak > 0:
                 pct_of_prior_peak = current_value / prior_peak * 100
 
@@ -165,4 +202,6 @@ def compare_to_prior_seasons(
         pct_of_prior_peak=pct_of_prior_peak,
         method="week_of_season_aligned",
         notes=notes,
+        n_prior_compared=len(prior_values),
+        prior_season_peaks=peaks,
     )

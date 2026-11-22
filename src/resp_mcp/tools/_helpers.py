@@ -27,6 +27,11 @@ logger = logging.getLogger(__name__)
 
 # ── Structured error response ─────────────────────────────────────────────────
 
+AS_OF_CAVEAT = (
+    "as_of filters observation weeks in data retrieved now; it does not reconstruct "
+    "what was published at that historical time."
+)
+
 _AS_OF_MIN = date(2020, 1, 1)
 _AS_OF_MAX_FUTURE_DAYS = 7  # allow at most 1 week into the future
 
@@ -59,12 +64,12 @@ def classify_tool_error(exc: Exception) -> dict:
     if isinstance(exc, UpstreamUnavailable):
         return structured_error(
             "upstream_unavailable",
-            f"CDC data source temporarily unavailable: {exc}. "
-            "Please retry shortly.",
+            f"CDC data source temporarily unavailable: {exc}. Please retry shortly.",
         )
     # Unexpected — log and return generic
-    logger.exception("Unexpected tool error: %s", exc)
-    return structured_error("internal_error", f"Unexpected error: {exc}")
+    logger.error("Unexpected tool error (%s)", type(exc).__name__)
+    return structured_error("internal_error", "Unexpected server error. Please retry.")
+
 
 # ── Pathogen / signal alias resolution ───────────────────────────────────────
 
@@ -136,9 +141,7 @@ def parse_as_of(as_of: str | None) -> date | None:
     try:
         parsed = date.fromisoformat(as_of)
     except ValueError as exc:
-        raise ValueError(
-            f"Invalid as_of date {as_of!r}. Expected YYYY-MM-DD."
-        ) from exc
+        raise ValueError(f"Invalid as_of date {as_of!r}. Expected YYYY-MM-DD.") from exc
     if parsed < _AS_OF_MIN:
         raise ValueError(
             f"as_of date {as_of!r} is before the earliest supported date "
@@ -168,6 +171,7 @@ def trend_to_summary(trend: TrendResult) -> TrendSummary:
         window_weeks=trend.window_weeks,
         method=trend.method,
         basis=trend.basis,
+        notes=trend.notes,
     )
 
 
@@ -194,6 +198,8 @@ def season_to_summary(cmp: SeasonComparison) -> SeasonSummary:
         pct_of_prior_peak=cmp.pct_of_prior_peak,
         method=cmp.method,
         notes=cmp.notes,
+        n_prior_compared=cmp.n_prior_compared,
+        prior_season_peaks=cmp.prior_season_peaks,
     )
 
 

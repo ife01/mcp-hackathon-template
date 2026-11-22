@@ -21,6 +21,7 @@ WEEK = date(2026, 11, 14)
 
 # ── Enums ─────────────────────────────────────────────────────────────────────
 
+
 def test_pathogen_values():
     assert Pathogen.influenza == "influenza"
     assert Pathogen.covid19 == "covid19"
@@ -42,6 +43,7 @@ def test_signal_from_string():
 
 
 # ── Provenance ────────────────────────────────────────────────────────────────
+
 
 def _make_provenance(**kwargs) -> Provenance:
     defaults = dict(
@@ -97,6 +99,7 @@ def test_provenance_source_last_updated_optional():
 
 # ── WeeklyObservation ─────────────────────────────────────────────────────────
 
+
 def _make_obs(**kwargs) -> WeeklyObservation:
     defaults = dict(
         jurisdiction="GA",
@@ -132,8 +135,7 @@ def test_observation_coverage_optional():
 
 
 def test_observation_all_valid_units():
-    for unit in ("admissions_per_100k", "admissions_count",
-                 "percent_positive", "wval"):
+    for unit in ("admissions_per_100k", "admissions_count", "percent_positive", "wval"):
         obs = _make_obs(unit=unit)
         assert obs.unit == unit
 

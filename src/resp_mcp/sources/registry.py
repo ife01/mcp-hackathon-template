@@ -86,14 +86,17 @@ async def fetch_all(
         except Exception as exc:  # noqa: BLE001
             logger.warning(
                 "Source adapter failed for %s/%s/%s: %s",
-                signal.value, pathogen.value, jurisdiction.code,
-                exc,
+                signal.value,
+                pathogen.value,
+                jurisdiction.code,
+                type(exc).__name__,
             )
             # Try to get dataset_id from the adapter module
             try:
                 from resp_mcp.sources import nhsn as _nhsn
                 from resp_mcp.sources import nrevss as _nrevss
                 from resp_mcp.sources import nwss as _nwss
+
                 _map = {
                     Signal.hospital_admissions: _nhsn.DATASET_ID,
                     Signal.wastewater: _nwss.DATASET_ID,
@@ -105,7 +108,7 @@ async def fetch_all(
             return SignalUnavailable(
                 signal=signal,
                 pathogen=pathogen,
-                error=str(exc),
+                error=f"{signal.value} source unavailable ({type(exc).__name__}).",
                 dataset_id=did,
             )
 

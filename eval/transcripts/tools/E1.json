@@ -1,0 +1,34 @@
+{
+  "id": "E1",
+  "category": "robustness",
+  "prompt": "Give a flu snapshot for Georgai.",
+  "passed": true,
+  "replay_seconds": 0.008298200002172962,
+  "checks": [
+    {
+      "check": "expected error",
+      "passed": true,
+      "actual": "unknown_jurisdiction",
+      "expected": "unknown_jurisdiction"
+    }
+  ],
+  "calls": [
+    {
+      "tool": "get_respiratory_snapshot",
+      "arguments": {
+        "jurisdiction": "Georgai",
+        "pathogens": [
+          "flu"
+        ],
+        "as_of": "2026-10-31"
+      },
+      "output": {
+        "error": "unknown_jurisdiction",
+        "message": "Unknown jurisdiction 'Georgai'. Did you mean: GA (Georgia)? Use a 2-letter state code (e.g. 'GA'), 'USA' for national, or a full state name.",
+        "suggestions": [
+          "GA (Georgia)"
+        ]
+      }
+    }
+  ]
+}

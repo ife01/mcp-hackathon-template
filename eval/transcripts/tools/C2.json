@@ -1,0 +1,123 @@
+{
+  "id": "C2",
+  "category": "season",
+  "prompt": "Compare CA flu wastewater with three prior seasons through October 31, 2026; state when historical evidence is missing.",
+  "passed": true,
+  "replay_seconds": 0.29101380000065546,
+  "checks": [
+    {
+      "check": "historical rank",
+      "passed": true,
+      "actual": 1,
+      "expected": 1
+    },
+    {
+      "check": "usable prior-week count",
+      "passed": true,
+      "actual": 3,
+      "expected": 3
+    },
+    {
+      "check": "complete-season peak set",
+      "passed": true,
+      "actual": {
+        "2025-26": 11.09,
+        "2024-25": 17.505000000000003,
+        "2023-24": 15.96
+      },
+      "expected": {
+        "2025-26": 11.09,
+        "2024-25": 17.505000000000003,
+        "2023-24": 15.96
+      }
+    },
+    {
+      "check": "percent of complete prior peak",
+      "passed": true,
+      "actual": 37.417880605541264,
+      "expected": 37.417880605541264
+    },
+    {
+      "check": "current historical value",
+      "passed": true,
+      "actual": 6.55,
+      "expected": 6.55
+    }
+  ],
+  "calls": [
+    {
+      "tool": "compare_to_prior_seasons",
+      "arguments": {
+        "jurisdiction": "CA",
+        "pathogen": "influenza",
+        "signal": "wastewater",
+        "prior_seasons": 3,
+        "as_of": "2026-10-31"
+      },
+      "output": {
+        "jurisdiction": "CA",
+        "pathogen": "influenza",
+        "signal": "wastewater",
+        "comparison": {
+          "current_season": "2026-27",
+          "current_week_of_season": 17,
+          "current_value": 6.55,
+          "prior": [
+            {
+              "season": "2025-26",
+              "week_ending": "2025-10-25",
+              "week_of_season": 17,
+              "value": 1.0,
+              "alignment_note": null
+            },
+            {
+              "season": "2024-25",
+              "week_ending": "2024-10-26",
+              "week_of_season": 17,
+              "value": 1.42,
+              "alignment_note": null
+            },
+            {
+              "season": "2023-24",
+              "week_ending": "2023-10-28",
+              "week_of_season": 17,
+              "value": 1.62,
+              "alignment_note": null
+            }
+          ],
+          "rank_vs_prior": 1,
+          "pct_of_prior_peak": 37.417880605541264,
+          "n_prior_compared": 3,
+          "prior_season_peaks": {
+            "2025-26": 11.09,
+            "2024-25": 17.505000000000003,
+            "2023-24": 15.96
+          },
+          "method": "week_of_season_aligned",
+          "notes": []
+        },
+        "provenance": {
+          "dataset_id": "atcp-73re",
+          "dataset_name": "CDC Wastewater Viral Activity Level for SARS-CoV-2, Influenza A and RSV",
+          "url": "https://data.cdc.gov/resource/atcp-73re.json",
+          "latest_week_ending": "2026-10-31",
+          "retrieved_at": "2026-11-22T22:11:33.269460Z",
+          "source_last_updated": null,
+          "geography_level": "site_aggregate",
+          "notes": [
+            "Site aggregate is server-derived, not an official CDC jurisdiction classification.",
+            "Population coverage fraction is unknown; two valid sites do not establish representativeness.",
+            "Wastewater measures influenza A (Influenza A virus) only."
+          ]
+        },
+        "summary": "Influenza wastewater in CA, week 17 of the 2026-27 season. Highest among 3 available prior-week comparisons.",
+        "caveats": [
+          "Site aggregate is server-derived, not an official CDC jurisdiction classification.",
+          "Population coverage fraction is unknown; two valid sites do not establish representativeness.",
+          "Wastewater measures influenza A (Influenza A virus) only.",
+          "as_of filters observation weeks in data retrieved now; it does not reconstruct what was published at that historical time."
+        ]
+      }
+    }
+  ]
+}
