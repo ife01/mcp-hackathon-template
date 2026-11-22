@@ -3,7 +3,7 @@
   "category": "robustness",
   "prompt": "Give a Georgia flu briefing while every upstream CDC source is unavailable.",
   "passed": true,
-  "replay_seconds": 0.04823220000253059,
+  "replay_seconds": 0.10307513177394867,
   "checks": [
     {
       "check": "expected error",

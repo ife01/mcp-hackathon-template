@@ -3,7 +3,7 @@
   "category": "robustness",
   "prompt": "Rank states by rising flu test positivity.",
   "passed": true,
-  "replay_seconds": 0.009512999997241423,
+  "replay_seconds": 0.02129028970375657,
   "checks": [
     {
       "check": "expected error",

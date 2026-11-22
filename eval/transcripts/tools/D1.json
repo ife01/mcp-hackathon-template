@@ -3,7 +3,7 @@
   "category": "synthesis",
   "prompt": "Brief me on flu in GA through October 31, 2026, with local signals, national context, and hospital trend caveats.",
   "passed": true,
-  "replay_seconds": 0.10676549999334384,
+  "replay_seconds": 0.23301054583862424,
   "checks": [
     {
       "check": "hospital_admissions latest value",
@@ -145,7 +145,7 @@
                   "dataset_name": "Weekly Hospital Respiratory Admission Levels and Rates by Jurisdiction, National Healthcare Safety Network (NHSN)",
                   "url": "https://data.cdc.gov/resource/vdzy-6i9v.json",
                   "latest_week_ending": "2026-10-31",
-                  "retrieved_at": "2026-11-22T22:11:33.675298Z",
+                  "retrieved_at": "2026-11-22T23:37:33.490804Z",
                   "source_last_updated": null,
                   "geography_level": "state",
                   "notes": []
@@ -183,7 +183,7 @@
                   "dataset_name": "CDC Wastewater Viral Activity Level for SARS-CoV-2, Influenza A and RSV",
                   "url": "https://data.cdc.gov/resource/atcp-73re.json",
                   "latest_week_ending": "2026-10-31",
-                  "retrieved_at": "2026-11-22T22:11:33.720822Z",
+                  "retrieved_at": "2026-11-22T23:37:33.607954Z",
                   "source_last_updated": null,
                   "geography_level": "site_aggregate",
                   "notes": [
@@ -223,7 +223,7 @@
                   "dataset_name": "Percent of Tests Positive for Viral Respiratory Pathogens",
                   "url": "https://data.cdc.gov/resource/seuz-s2cv.json",
                   "latest_week_ending": "2026-10-31",
-                  "retrieved_at": "2026-11-22T22:11:33.729680Z",
+                  "retrieved_at": "2026-11-22T23:37:33.617288Z",
                   "source_last_updated": null,
                   "geography_level": "national",
                   "notes": [
@@ -392,7 +392,7 @@
           "dataset_name": "Weekly Hospital Respiratory Admission Levels and Rates by Jurisdiction, National Healthcare Safety Network (NHSN)",
           "url": "https://data.cdc.gov/resource/vdzy-6i9v.json",
           "latest_week_ending": "2026-10-31",
-          "retrieved_at": "2026-11-22T22:11:33.749624Z",
+          "retrieved_at": "2026-11-22T23:37:33.694681Z",
           "source_last_updated": null,
           "geography_level": "state",
           "notes": []

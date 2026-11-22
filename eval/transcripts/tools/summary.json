@@ -7,159 +7,159 @@
   "agent_evaluation": "not run",
   "snapshot": "snapshot_v2",
   "snapshot_manifest_sha256": "806ca24b42709a745858cec8684021d7a2cbf0a25ce732c75731801deb20c05a",
-  "server_source_sha256": "26ba4484170c76a62efad6160c6d824879669b0d5550d0a7f6af45caafb73175",
-  "reference_sha256": "15e48aed5e1bf3ff94c2b9b95daea82d5beac7c727d9f767c8b6b8701b662088",
-  "cases_sha256": "302980e92d157fb05474ed647c889fd3c7a691192b83d2848037f3645b2e7ebf",
+  "server_source_sha256": "9de945b07adaa222577d57fe02b6b0dee102b199b5b66c80d864d6c0a3023012",
+  "reference_sha256": "9e99fedce1804a104679b2ef2a16e85e6fe7667c7ee42a73dae2fb29987fbb51",
+  "cases_sha256": "64063da7f7bf06742f55169bbb84c2588870208c5df299330a0becf832367614",
   "cases": [
     {
       "id": "A1",
       "category": "lookup",
       "passed": true,
-      "replay_seconds": 0.22175879999122117
+      "replay_seconds": 0.5512118600308895
     },
     {
       "id": "A2",
       "category": "lookup",
       "passed": true,
-      "replay_seconds": 0.02248610000242479
+      "replay_seconds": 0.03766369912773371
     },
     {
       "id": "A3",
       "category": "lookup",
       "passed": true,
-      "replay_seconds": 0.01823649999278132
+      "replay_seconds": 0.030525596346706152
     },
     {
       "id": "A4",
       "category": "lookup",
       "passed": true,
-      "replay_seconds": 0.018708300005528145
+      "replay_seconds": 0.03521587606519461
     },
     {
       "id": "A5",
       "category": "lookup",
       "passed": true,
-      "replay_seconds": 0.028095200003008358
+      "replay_seconds": 0.05672276020050049
     },
     {
       "id": "B1",
       "category": "trend",
       "passed": true,
-      "replay_seconds": 0.019040500003029592
+      "replay_seconds": 0.036701819859445095
     },
     {
       "id": "B2",
       "category": "trend",
       "passed": true,
-      "replay_seconds": 0.018285199999809265
+      "replay_seconds": 0.03114062687382102
     },
     {
       "id": "B3",
       "category": "trend",
       "passed": true,
-      "replay_seconds": 0.019659999990835786
+      "replay_seconds": 0.03320010378956795
     },
     {
       "id": "B4",
       "category": "trend",
       "passed": true,
-      "replay_seconds": 0.10896259998844471
+      "replay_seconds": 0.3179059471003711
     },
     {
       "id": "B5",
       "category": "trend",
       "passed": true,
-      "replay_seconds": 0.02015640000172425
+      "replay_seconds": 0.04801039583981037
     },
     {
       "id": "C1",
       "category": "season",
       "passed": true,
-      "replay_seconds": 0.018906500001321547
+      "replay_seconds": 0.059055446181446314
     },
     {
       "id": "C2",
       "category": "season",
       "passed": true,
-      "replay_seconds": 0.29101380000065546
+      "replay_seconds": 1.2909145941957831
     },
     {
       "id": "C3",
       "category": "season",
       "passed": true,
-      "replay_seconds": 0.019013799988897517
+      "replay_seconds": 0.04068891517817974
     },
     {
       "id": "C4",
       "category": "season",
       "passed": true,
-      "replay_seconds": 0.20049180000205524
+      "replay_seconds": 0.5008182181045413
     },
     {
       "id": "C5",
       "category": "season",
       "passed": true,
-      "replay_seconds": 0.03268959998968057
+      "replay_seconds": 0.03938218392431736
     },
     {
       "id": "D1",
       "category": "synthesis",
       "passed": true,
-      "replay_seconds": 0.10676549999334384
+      "replay_seconds": 0.23301054583862424
     },
     {
       "id": "D2",
       "category": "synthesis",
       "passed": true,
-      "replay_seconds": 0.163932700001169
+      "replay_seconds": 0.409513424616307
     },
     {
       "id": "D3",
       "category": "synthesis",
       "passed": true,
-      "replay_seconds": 0.13564979999500792
+      "replay_seconds": 0.3669750280678272
     },
     {
       "id": "D4",
       "category": "synthesis",
       "passed": true,
-      "replay_seconds": 0.1172563000000082
+      "replay_seconds": 0.30975332809612155
     },
     {
       "id": "D5",
       "category": "synthesis",
       "passed": true,
-      "replay_seconds": 0.038509100006194785
+      "replay_seconds": 0.07632625801488757
     },
     {
       "id": "E1",
       "category": "robustness",
       "passed": true,
-      "replay_seconds": 0.008298200002172962
+      "replay_seconds": 0.022511462680995464
     },
     {
       "id": "E2",
       "category": "robustness",
       "passed": true,
-      "replay_seconds": 0.009512999997241423
+      "replay_seconds": 0.02129028970375657
     },
     {
       "id": "E3",
       "category": "robustness",
       "passed": true,
-      "replay_seconds": 0.00820440000097733
+      "replay_seconds": 0.02124371938407421
     },
     {
       "id": "E4",
       "category": "robustness",
       "passed": true,
-      "replay_seconds": 0.006958700003451668
+      "replay_seconds": 0.022816697135567665
     },
     {
       "id": "E5",
       "category": "robustness",
       "passed": true,
-      "replay_seconds": 0.04823220000253059
+      "replay_seconds": 0.10307513177394867
     }
   ]
 }

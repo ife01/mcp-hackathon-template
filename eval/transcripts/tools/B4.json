@@ -3,7 +3,7 @@
   "category": "trend",
   "prompt": "Assess the recent influenza wastewater trend for TX, through October 31, 2026.",
   "passed": true,
-  "replay_seconds": 0.10896259998844471,
+  "replay_seconds": 0.3179059471003711,
   "checks": [
     {
       "check": "trend direction",
@@ -175,7 +175,7 @@
           "dataset_name": "CDC Wastewater Viral Activity Level for SARS-CoV-2, Influenza A and RSV",
           "url": "https://data.cdc.gov/resource/atcp-73re.json",
           "latest_week_ending": "2026-10-31",
-          "retrieved_at": "2026-11-22T22:11:32.995019Z",
+          "retrieved_at": "2026-11-22T23:37:31.316310Z",
           "source_last_updated": null,
           "geography_level": "site_aggregate",
           "notes": [

@@ -3,7 +3,7 @@
   "category": "season",
   "prompt": "Compare GA flu hospital_admissions with three prior seasons through October 31, 2026; state when historical evidence is missing.",
   "passed": true,
-  "replay_seconds": 0.018906500001321547,
+  "replay_seconds": 0.059055446181446314,
   "checks": [
     {
       "check": "historical rank",
@@ -87,7 +87,7 @@
           "dataset_name": "Weekly Hospital Respiratory Admission Levels and Rates by Jurisdiction, National Healthcare Safety Network (NHSN)",
           "url": "https://data.cdc.gov/resource/vdzy-6i9v.json",
           "latest_week_ending": "2026-10-31",
-          "retrieved_at": "2026-11-22T22:11:33.093884Z",
+          "retrieved_at": "2026-11-22T23:37:31.579945Z",
           "source_last_updated": null,
           "geography_level": "state",
           "notes": []

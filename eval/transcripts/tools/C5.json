@@ -3,7 +3,7 @@
   "category": "season",
   "prompt": "Compare USA flu test_positivity with three prior seasons through October 31, 2026; state when historical evidence is missing.",
   "passed": true,
-  "replay_seconds": 0.03268959998968057,
+  "replay_seconds": 0.03938218392431736,
   "checks": [
     {
       "check": "historical rank",
@@ -101,7 +101,7 @@
           "dataset_name": "Percent of Tests Positive for Viral Respiratory Pathogens",
           "url": "https://data.cdc.gov/resource/seuz-s2cv.json",
           "latest_week_ending": "2026-10-31",
-          "retrieved_at": "2026-11-22T22:11:33.630121Z",
+          "retrieved_at": "2026-11-22T23:37:33.451099Z",
           "source_last_updated": null,
           "geography_level": "national",
           "notes": [

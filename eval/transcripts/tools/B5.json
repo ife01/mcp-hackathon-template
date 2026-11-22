@@ -3,7 +3,7 @@
   "category": "trend",
   "prompt": "Assess the recent influenza test_positivity trend for USA, through October 31, 2026.",
   "passed": true,
-  "replay_seconds": 0.02015640000172425,
+  "replay_seconds": 0.04801039583981037,
   "checks": [
     {
       "check": "trend direction",
@@ -159,7 +159,7 @@
           "dataset_name": "Percent of Tests Positive for Viral Respiratory Pathogens",
           "url": "https://data.cdc.gov/resource/seuz-s2cv.json",
           "latest_week_ending": "2026-10-31",
-          "retrieved_at": "2026-11-22T22:11:33.069776Z",
+          "retrieved_at": "2026-11-22T23:37:31.505818Z",
           "source_last_updated": null,
           "geography_level": "national",
           "notes": [

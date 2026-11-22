@@ -3,7 +3,7 @@
   "category": "robustness",
   "prompt": "Give a flu snapshot for Georgai.",
   "passed": true,
-  "replay_seconds": 0.008298200002172962,
+  "replay_seconds": 0.022511462680995464,
   "checks": [
     {
       "check": "expected error",

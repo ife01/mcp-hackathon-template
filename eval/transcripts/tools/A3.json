@@ -3,7 +3,7 @@
   "category": "lookup",
   "prompt": "What was the latest flu admission rate in OH through October 31, 2026?",
   "passed": true,
-  "replay_seconds": 0.01823649999278132,
+  "replay_seconds": 0.030525596346706152,
   "checks": [
     {
       "check": "trend direction",
@@ -183,7 +183,7 @@
           "dataset_name": "Weekly Hospital Respiratory Admission Levels and Rates by Jurisdiction, National Healthcare Safety Network (NHSN)",
           "url": "https://data.cdc.gov/resource/vdzy-6i9v.json",
           "latest_week_ending": "2026-10-31",
-          "retrieved_at": "2026-11-22T22:11:32.826634Z",
+          "retrieved_at": "2026-11-22T23:37:30.957659Z",
           "source_last_updated": null,
           "geography_level": "state",
           "notes": []

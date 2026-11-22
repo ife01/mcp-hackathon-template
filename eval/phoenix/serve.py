@@ -1,33 +1,43 @@
-"""Start a local Phoenix server for the respiratory eval harness.
+"""Start a loopback-only Phoenix UI/collector with repository-local storage."""
 
-Run from repo root:
-    uv run python eval/phoenix/serve.py
-
-Phoenix UI:   http://localhost:6006
-OTLP traces:  http://localhost:6006/v1/traces
-"""
-
-from __future__ import annotations
-
+import argparse
+import os
 import sys
+from pathlib import Path
+
+if __package__ in (None, ""):
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+
+from dotenv import load_dotenv
+
+from eval.phoenix.config import ROOT
+
+load_dotenv()
 
 
-def main() -> None:
-    try:
-        import phoenix as px
-    except ImportError:
-        print(
-            "arize-phoenix not installed. Run: uv sync --group dev",
-            file=sys.stderr,
-        )
-        sys.exit(1)
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--port", type=int, default=6006)
+    parser.add_argument("--grpc-port", type=int, default=4317)
+    args = parser.parse_args()
+    os.environ["PHOENIX_HOST"] = "127.0.0.1"
+    os.environ.setdefault("PHOENIX_WORKING_DIR", str(ROOT / ".phoenix"))
+    os.environ.setdefault("PHOENIX_TELEMETRY_ENABLED", "false")
+    os.environ.setdefault("PHOENIX_DISABLE_AGENT_ASSISTANT", "true")
+    os.environ.setdefault("PHOENIX_LOG_MIGRATIONS", "false")
+    os.environ.setdefault("PHOENIX_DB_LOGGING_LEVEL", "WARNING")
+    from phoenix.server.main import main as phoenix_main
 
-    print("Starting Phoenix server...")
-    print("  UI:     http://localhost:6006")
-    print("  Traces: http://localhost:6006/v1/traces")
-    print("\nKeep this terminal open while running experiments.")
-    print("Press Ctrl+C to stop.\n")
-    px.launch_app()
+    sys.argv = [
+        sys.argv[0],
+        "serve",
+        "--port",
+        str(args.port),
+        "--grpc-port",
+        str(args.grpc_port),
+        "--no-internet",
+    ]
+    phoenix_main()
 
 
 if __name__ == "__main__":
