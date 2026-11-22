@@ -2,6 +2,30 @@
 
 All deviations from the build plan are recorded here with a date and rationale.
 
+
+## 2026-11-20 — Build 4.1: langchain-mcp-adapters excluded; native mcp 2.x HTTP transport used
+
+**What changed:** The build plan and mcp-eval skill both reference `langchain-mcp-adapters` for
+connecting the LangChain eval agent to the MCP server. This package was not added.
+
+**Why:** `fastmcp>=4.x` (required by this project) depends on `mcp>=2.3.0`. All published
+versions of `langchain-mcp-adapters` (up to 0.3.2 as of 2026-11-20) require `mcp<2.0.0`.
+These are mutually exclusive at the package level and cannot coexist in the same virtualenv.
+Specifically, `langchain-mcp-adapters` imports `mcp.server.fastmcp` (removed in mcp 2.x),
+`mcp.shared.context.RequestContext` (renamed to DispatchContext), and `mcp.shared.session`
+(module removed entirely). No shim can repair a missing module.
+
+**Decision:** The eval agent uses the **native mcp 2.x Python client** (`mcp.ClientSession`
+with `streamable_http_client`) to connect to a running server over streamable-HTTP, then
+wraps the tool definitions as LangChain `StructuredTool` instances manually. This is a
+functional equivalent of langchain-mcp-adapters for the HTTP transport case. The agent
+requires the MCP server to be started separately before evaluation (see eval/phoenix/README.md).
+
+**Impact:** eval/phoenix/agent.py does not import langchain-mcp-adapters. The `--check-mcp`
+flag verifies the server is reachable using the native client. Functionality is unchanged.
+
+---
+
 ---
 
 ## 2026-11-20 — Build 0.1: MCP Inspector replaced with curl-based MCP handshake

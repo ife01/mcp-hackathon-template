@@ -1,7 +1,14 @@
 datasets:
   respiratory-eval-0:
     csv_path: datasets/respiratory-eval-0/examples/respiratory-eval-0.csv
-    xml_path: datasets/respiratory-eval-0/evaluation.xml
-    input_keys: [query, case_id]
-    output_keys: [responses, reference]
-    description: Ten multi-call frozen-data questions plus five public health robustness/scope cases.
+    input_keys:
+      - query
+    output_keys:
+      - responses
+    description: >
+      15-question frozen-data benchmark for the Respiratory Season Situational
+      Awareness MCP Server. 10 multi-call questions (direct lookup, trend, season
+      comparison, multi-signal synthesis, national scan) and 5 public
+      health/robustness cases (scope boundaries, data limitations, error handling,
+      no-forecast constraint). All answers derivable from eval/snapshot/ as_of
+      2026-10-31.

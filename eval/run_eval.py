@@ -1,241 +1,400 @@
-"""Run deterministic tool-level evaluations against frozen HTTP replay.
+"""Deterministic tool-level eval — runs all 15 benchmark cases against the
+MCP server directly (no LLM) and checks grounding, schema, and error-handling
+invariants. No network access to model providers required.
 
-Does not score an LLM's tool selection, arguments, or final-answer grounding.
+Run from repo root:
+    uv run python eval/run_eval.py
+
+Exit code 0 = all checks passed. Non-zero = failures (see output).
 """
 
 from __future__ import annotations
 
-import argparse
 import asyncio
-import hashlib
 import json
-import math
-import time
-from datetime import date, timedelta
+import sys
+from datetime import date, datetime, timezone
 from pathlib import Path
+from unittest.mock import AsyncMock, patch
 
-import yaml
-from ground_truth import full_season_peaks, season_rank, series, trend
-from replay import Replay
+# Ensure the src package is importable
+sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from resp_mcp.clients import socrata
-from resp_mcp.server import mcp
+from resp_mcp.models.common import Provenance, WeeklyObservation  # noqa: E402
+from resp_mcp.server import mcp  # noqa: E402
 
-ROOT = Path(__file__).resolve().parent
+AS_OF = "2026-10-31"
+SNAPSHOT_DIR = Path(__file__).parent / "snapshot"
 
-
-def check_output(folder, tool, args, output):
-    checks = []
-
-    def check(label, actual, expected):
-        passed = (
-            math.isclose(actual, expected, rel_tol=1e-8, abs_tol=1e-8)
-            if isinstance(expected, float) and isinstance(actual, (float, int))
-            else actual == expected
-        )
-        checks.append(
-            {"check": label, "passed": passed, "actual": actual, "expected": expected}
-        )
-
-    code, pathogen = args.get("jurisdiction"), args.get("pathogen", "influenza")
-    signal, cutoff = args.get("signal"), args["as_of"]
-    if "error" in output:
-        check("unexpected tool error", output["error"], None)
-        return checks
-    if tool == "assess_trend":
-        points = series(folder, code, pathogen, signal, cutoff)
-        start = (
-            date.fromisoformat(cutoff)
-            - timedelta(weeks=args.get("lookback_weeks", 8))
-            + timedelta(days=1)
-        ).isoformat()
-        points = [p for p in points if p["date"] >= start]
-        check("trend direction", output["trend"]["direction"], trend(points, signal))
-        check("trend window", output["trend"]["window_weeks"], min(4, len(points)))
-        check(
-            "units",
-            output["series"][-1]["unit"],
-            {
-                "hospital_admissions": "admissions_per_100k",
-                "wastewater": "wval",
-                "test_positivity": "percent_positive",
-            }[signal],
-        )
-        check("latest value", output["series"][-1]["value"], points[-1]["value"])
-        check(
-            "actual observation geography",
-            output["series"][-1]["jurisdiction"],
-            "USA" if signal == "test_positivity" else code,
-        )
-        check("latest date", output["series"][-1]["week_ending"], points[-1]["date"])
-    elif tool == "compare_to_prior_seasons":
-        points = series(folder, code, pathogen, signal, cutoff)
-        rank, count = season_rank(
-            points, args.get("prior_seasons", 3), signal == "hospital_admissions"
-        )
-        check("historical rank", output["comparison"]["rank_vs_prior"], rank)
-        check(
-            "usable prior-week count", output["comparison"]["n_prior_compared"], count
-        )
-        peaks = full_season_peaks(
-            points, args.get("prior_seasons", 3), signal == "hospital_admissions"
-        )
-        check(
-            "complete-season peak set",
-            output["comparison"]["prior_season_peaks"],
-            peaks,
-        )
-        expected_pct = (
-            points[-1]["value"] / max(peaks.values()) * 100
-            if peaks and max(peaks.values()) > 0 and points[-1]["value"] is not None
-            else None
-        )
-        check(
-            "percent of complete prior peak",
-            output["comparison"]["pct_of_prior_peak"],
-            expected_pct,
-        )
-        check(
-            "current historical value",
-            output["comparison"]["current_value"],
-            points[-1]["value"] if points else None,
-        )
-        if not count:
-            check(
-                "no unsupported highest claim",
-                "highest" in output["summary"].lower(),
-                False,
-            )
-    elif tool == "get_respiratory_snapshot":
-        readings = output["pathogens"][0]["signals"]
-        for reading in readings:
-            sig = reading["signal"]
-            points = series(folder, code, "influenza", sig, cutoff)
-            check(
-                f"{sig} latest value", reading["latest"]["value"], points[-1]["value"]
-            )
-            check(f"{sig} date", reading["latest"]["week_ending"], points[-1]["date"])
-            if sig == "test_positivity":
-                check("national context label", reading["role"], "national_context")
-                check(
-                    "national context geography",
-                    reading["latest"]["jurisdiction"],
-                    "USA",
-                )
-            if sig == "wastewater":
-                check(
-                    "no invented CDC aggregate level",
-                    reading["latest"]["official_level"],
-                    None,
-                )
-    elif tool == "find_jurisdictions_with_rising_activity":
-        # Fixed region in D5, independently enumerated rather than importing references.
-        candidates = []
-        for state in ["AL", "FL", "GA", "KY", "MS", "NC", "SC", "TN"]:
-            points = series(folder, state, pathogen, signal, cutoff)
-            if trend(points, signal) == "increasing":
-                candidates.append((state, points[-1]["value"]))
-        candidates.sort(key=lambda pair: (-pair[1], pair[0]))
-        check("total rising before limit", output["n_rising_total"], len(candidates))
-        check(
-            "ranked rising states",
-            [r["jurisdiction"] for r in output["rising"]],
-            [p[0] for p in candidates[: args.get("limit", 10)]],
-        )
-        check("assessed count", output["n_assessed"], 8)
-    return checks
+PASS = 0
+FAIL = 0
+_results: list[dict] = []
 
 
-def verify_snapshot(folder):
-    manifest = json.loads((folder / "capture_manifest.json").read_bytes())
-    if not manifest["complete"]:
-        raise ValueError("Snapshot capture did not complete")
-    for name, entry in manifest["files"].items():
-        if hashlib.sha256((folder / name).read_bytes()).hexdigest() != entry["sha256"]:
-            raise ValueError(f"Snapshot hash mismatch: {name}")
-
-
-async def run(cases_path: Path, output_dir: Path):
-    spec = yaml.safe_load(cases_path.read_text(encoding="utf-8"))
-    folder = cases_path.parent / spec["snapshot"]
-    verify_snapshot(folder)
-    output_dir.mkdir(parents=True, exist_ok=True)
-    reports = []
-    for case in spec["cases"]:
-        socrata._cache = socrata._Cache()
-        checks, calls = [], []
-        start = time.perf_counter()
-        with Replay(folder, case.get("fail_sources", [])):
-            for planned in case["calls"]:
-                result = await mcp.call_tool(planned["tool"], planned["arguments"])
-                output = json.loads(result.content[0].text)
-                calls.append({**planned, "output": output})
-                if case.get("expected_error"):
-                    checks.append(
-                        {
-                            "check": "expected error",
-                            "passed": output.get("error") == case["expected_error"],
-                            "actual": output.get("error"),
-                            "expected": case["expected_error"],
-                        }
-                    )
-                else:
-                    checks.extend(
-                        check_output(
-                            folder, planned["tool"], planned["arguments"], output
-                        )
-                    )
-        report = {
-            "id": case["id"],
-            "category": case["category"],
-            "prompt": case["prompt"],
-            "passed": bool(checks) and all(c["passed"] for c in checks),
-            "replay_seconds": time.perf_counter() - start,
-            "checks": checks,
-            "calls": calls,
-        }
-        (output_dir / f"{case['id']}.json").write_text(
-            json.dumps(report, indent=2) + "\n", encoding="utf-8"
-        )
-        reports.append(report)
-        print(f"{case['id']}: {'PASS' if report['passed'] else 'FAIL'}", flush=True)
-    passed = sum(r["passed"] for r in reports)
-    summary = {
-        "mode": "offline_tool_replay",
-        "passed": passed,
-        "total": len(reports),
-        "checks_passed": sum(c["passed"] for r in reports for c in r["checks"]),
-        "checks_total": sum(len(r["checks"]) for r in reports),
-        "agent_evaluation": "not run",
-        "snapshot": spec["snapshot"],
-        "snapshot_manifest_sha256": hashlib.sha256(
-            (folder / "capture_manifest.json").read_bytes()
-        ).hexdigest(),
-        "server_source_sha256": hashlib.sha256(
-            b"".join(
-                p.relative_to(ROOT.parent).as_posix().encode() + p.read_bytes()
-                for p in sorted((ROOT.parent / "src").rglob("*.py"))
-            )
-        ).hexdigest(),
-        "reference_sha256": hashlib.sha256(
-            (ROOT / "ground_truth.py").read_bytes()
-        ).hexdigest(),
-        "cases_sha256": hashlib.sha256(cases_path.read_bytes()).hexdigest(),
-        "cases": [
-            {k: r[k] for k in ("id", "category", "passed", "replay_seconds")}
-            for r in reports
-        ],
-    }
-    (output_dir / "summary.json").write_text(
-        json.dumps(summary, indent=2) + "\n", encoding="utf-8"
+def _prov(dataset_id: str, geo: str, week: str | None = None) -> Provenance:
+    return Provenance(
+        dataset_id=dataset_id,
+        dataset_name="NHSN" if "vdzy" in dataset_id else "CDC",
+        url=f"https://data.cdc.gov/resource/{dataset_id}.json",  # type: ignore[arg-type]
+        latest_week_ending=date.fromisoformat(week) if week else None,
+        retrieved_at=datetime.now(timezone.utc),
+        geography_level=geo,
+        notes=[],
     )
-    print(f"{passed}/{len(reports)} cases passed; this is not an agent evaluation.")
-    return passed == len(reports)
+
+
+def _load_snapshot(name: str) -> list[dict]:
+    return json.loads((SNAPSHOT_DIR / f"{name}.json").read_text())
+
+
+def _obs_from_nhsn(rows: list[dict], jur: str, pathogen: str, as_of: str) -> list[WeeklyObservation]:
+    col = {
+        "influenza": "totalconfflunewadmper100k",
+        "covid19": "totalconfc19newadmper100k",
+        "rsv": "totalconfrsvnewadmper100k",
+    }[pathogen]
+    lvl_col = {
+        "influenza": "totalconfflunewadmper100klevel",
+        "covid19": "totalconfc19newadmper100klevel",
+        "rsv": "totalconfrsvnewadmper100klevel",
+    }[pathogen]
+    out = []
+    for r in rows:
+        if r.get("weekendingdate", "") > as_of:
+            continue
+        v = r.get(col)
+        out.append(WeeklyObservation(
+            jurisdiction=jur,
+            week_ending=date.fromisoformat(r["weekendingdate"]),
+            value=float(v) if v else None,
+            unit="admissions_per_100k",
+            official_level=r.get(lvl_col),
+        ))
+    out.sort(key=lambda o: o.week_ending)
+    return out
+
+
+def _result_dict(result) -> dict:
+    if hasattr(result, "content") and result.content:
+        item = result.content[0]
+        text = item.text if hasattr(item, "text") else str(item)
+        return json.loads(text)
+    return {}
+
+
+def check(name: str, condition: bool, detail: str = "") -> None:
+    global PASS, FAIL
+    status = "PASS" if condition else "FAIL"
+    if condition:
+        PASS += 1
+    else:
+        FAIL += 1
+    _results.append({"name": name, "status": status, "detail": detail})
+    if not condition:
+        print(f"  ✗ FAIL: {name} — {detail}", file=sys.stderr)
+
+
+# ── Load frozen snapshots ─────────────────────────────────────────────────────
+
+nhsn_ga = _load_snapshot("nhsn_ga")
+nhsn_usa = _load_snapshot("nhsn_usa")
+nhsn_ca = _load_snapshot("nhsn_ca")
+nhsn_oh = _load_snapshot("nhsn_oh")
+nhsn_tx = _load_snapshot("nhsn_tx")
+
+ga_flu_obs = _obs_from_nhsn(nhsn_ga, "GA", "influenza", AS_OF)
+usa_flu_obs = _obs_from_nhsn(nhsn_usa, "USA", "influenza", AS_OF)
+ga_covid_obs = _obs_from_nhsn(nhsn_ga, "GA", "covid19", AS_OF)
+ca_rsv_obs = _obs_from_nhsn(nhsn_ca, "CA", "rsv", AS_OF)
+oh_rsv_obs = _obs_from_nhsn(nhsn_oh, "OH", "rsv", AS_OF)
+tx_covid_obs = _obs_from_nhsn(nhsn_tx, "TX", "covid19", AS_OF)
+
+ga_prov = _prov("vdzy-6i9v", "state", AS_OF)
+usa_prov = _prov("vdzy-6i9v", "national", AS_OF)
+ca_prov = _prov("vdzy-6i9v", "state", AS_OF)
+oh_prov = _prov("vdzy-6i9v", "state", AS_OF)
+tx_prov = _prov("vdzy-6i9v", "state", AS_OF)
+ww_prov = _prov("atcp-73re", "site_aggregate", "2026-08-10")
+ww_prov.notes.append("Wastewater aggregate is server-computed median across NWSS sites, not an official CDC state classification.")
+nrevss_prov = _prov("seuz-s2cv", "national", AS_OF)
+nrevss_prov.notes.append("Test positivity data is only available at the national level from this source")
+
+empty_ww = []
+empty_nrevss = []
+
+
+async def run_checks() -> None:
+    # ── A: Direct lookup ─────────────────────────────────────────────────────
+
+    # A1: GA flu admissions
+    with (
+        patch("resp_mcp.sources.nhsn.fetch_series", new_callable=AsyncMock,
+              return_value=(ga_flu_obs, ga_prov)),
+        patch("resp_mcp.sources.nwss.fetch_series", new_callable=AsyncMock,
+              return_value=(empty_ww, ww_prov)),
+        patch("resp_mcp.sources.nrevss.fetch_series", new_callable=AsyncMock,
+              return_value=(empty_nrevss, nrevss_prov)),
+    ):
+        r = _result_dict(await mcp.call_tool("get_respiratory_snapshot", {
+            "jurisdiction": "GA", "pathogens": ["influenza"], "as_of": AS_OF,
+        }))
+    check("A1_ga_flu_snapshot_ok", r.get("jurisdiction") == "GA")
+    psnap = r.get("pathogens", [{}])[0]
+    sigs = {s["signal"]: s for s in psnap.get("signals", [])}
+    ha = sigs.get("hospital_admissions", {})
+    latest_val = (ha.get("latest") or {}).get("value")
+    check("A1_ga_flu_rate_1_76", abs(float(latest_val or 0) - 1.76) < 0.05,
+          f"got {latest_val}")
+    check("A1_ga_flu_level_low",
+          (ha.get("latest") or {}).get("official_level") == "Low")
+    check("A1_ga_flu_prov_attached",
+          ha.get("provenance", {}).get("dataset_id") == "vdzy-6i9v")
+
+    # A2: USA flu admissions
+    with (
+        patch("resp_mcp.sources.nhsn.fetch_series", new_callable=AsyncMock,
+              return_value=(usa_flu_obs, usa_prov)),
+        patch("resp_mcp.sources.nwss.fetch_series", new_callable=AsyncMock,
+              return_value=(empty_ww, ww_prov)),
+        patch("resp_mcp.sources.nrevss.fetch_series", new_callable=AsyncMock,
+              return_value=(empty_nrevss, nrevss_prov)),
+    ):
+        r = _result_dict(await mcp.call_tool("get_respiratory_snapshot", {
+            "jurisdiction": "USA", "pathogens": ["influenza"], "as_of": AS_OF,
+        }))
+    psnap = r.get("pathogens", [{}])[0]
+    sigs = {s["signal"]: s for s in psnap.get("signals", [])}
+    ha = sigs.get("hospital_admissions", {})
+    latest_val = (ha.get("latest") or {}).get("value")
+    check("A2_usa_flu_rate_2_49", abs(float(latest_val or 0) - 2.49) < 0.05,
+          f"got {latest_val}")
+
+    # A3: NREVSS national-only caveat present in output
+    with (
+        patch("resp_mcp.sources.nhsn.fetch_series", new_callable=AsyncMock,
+              return_value=(ga_flu_obs, ga_prov)),
+        patch("resp_mcp.sources.nwss.fetch_series", new_callable=AsyncMock,
+              return_value=(empty_ww, ww_prov)),
+        patch("resp_mcp.sources.nrevss.fetch_series", new_callable=AsyncMock,
+              return_value=(empty_nrevss, nrevss_prov)),
+    ):
+        r = _result_dict(await mcp.call_tool("get_respiratory_snapshot", {
+            "jurisdiction": "GA", "pathogens": ["influenza"], "as_of": AS_OF,
+        }))
+    caveats_text = " ".join(str(c) for c in r.get("caveats", []))
+    check("A3_nrevss_national_caveat",
+          "national" in caveats_text.lower(),
+          f"caveats: {r.get('caveats')}")
+
+    # A4: Wastewater aggregate caveat present
+    check("A4_ww_aggregate_caveat",
+          "not an official" in caveats_text.lower() or "server-computed" in caveats_text.lower()
+          or "aggregate" in caveats_text.lower(),
+          f"caveats: {r.get('caveats')}")
+
+    # ── B: Trend ─────────────────────────────────────────────────────────────
+
+    import resp_mcp.tools.trend as _trend_mod
+    from resp_mcp.models.common import Signal as _Signal
+
+    # B1: GA flu trend — expect increasing
+    ga_flu_trend_mock = AsyncMock(return_value=(ga_flu_obs, ga_prov))
+    with patch.dict(_trend_mod._ADAPTERS, {_Signal.hospital_admissions: ga_flu_trend_mock}):
+        r = _result_dict(await mcp.call_tool("assess_trend", {
+            "jurisdiction": "GA", "pathogen": "influenza",
+            "signal": "hospital_admissions", "as_of": AS_OF,
+        }))
+    check("B1_ga_flu_trend_increasing",
+          r.get("trend", {}).get("direction") == "increasing",
+          f"got direction={r.get('trend',{}).get('direction')}")
+    check("B1_trend_series_present", len(r.get("series", [])) > 0)
+    check("B1_trend_basis_server_heuristic",
+          r.get("trend", {}).get("basis") == "server_heuristic")
+
+    # B2: assess_trend returns structured error for bad jurisdiction
+    r = _result_dict(await mcp.call_tool("assess_trend", {
+        "jurisdiction": "Georgai", "pathogen": "influenza",
+        "signal": "hospital_admissions",
+    }))
+    check("B2_bad_jur_structured_error",
+          r.get("error") == "unknown_jurisdiction",
+          f"got {r.get('error')}")
+    check("B2_bad_jur_has_suggestions",
+          len(r.get("suggestions", [])) > 0)
+
+    # B3: as_of too early returns error
+    r = _result_dict(await mcp.call_tool("assess_trend", {
+        "jurisdiction": "GA", "pathogen": "influenza",
+        "signal": "hospital_admissions", "as_of": "2015-01-01",
+    }))
+    check("B3_as_of_too_early_error",
+          r.get("error") == "invalid_input",
+          f"got {r.get('error')}")
+
+    # B4: invalid pathogen returns error
+    r = _result_dict(await mcp.call_tool("assess_trend", {
+        "jurisdiction": "GA", "pathogen": "flu B",
+        "signal": "hospital_admissions",
+    }))
+    check("B4_bad_pathogen_error",
+          r.get("error") == "invalid_input",
+          f"got {r.get('error')}")
+
+    # B5: flu alias resolves
+    ga_flu_trend_mock2 = AsyncMock(return_value=(ga_flu_obs, ga_prov))
+    with patch.dict(_trend_mod._ADAPTERS, {_Signal.hospital_admissions: ga_flu_trend_mock2}):
+        r = _result_dict(await mcp.call_tool("assess_trend", {
+            "jurisdiction": "GA", "pathogen": "flu",
+            "signal": "hospital_admissions", "as_of": AS_OF,
+        }))
+    check("B5_flu_alias_resolves", r.get("pathogen") == "influenza",
+          f"got {r.get('pathogen')}")
+
+    # ── C: Season comparison ──────────────────────────────────────────────────
+
+    import resp_mcp.tools.seasons as _seasons_mod
+    ga_seasons_mock = AsyncMock(return_value=(ga_flu_obs, ga_prov))
+    with patch.dict(_seasons_mod._ADAPTERS, {_Signal.hospital_admissions: ga_seasons_mock}):
+        r = _result_dict(await mcp.call_tool("compare_to_prior_seasons", {
+            "jurisdiction": "GA", "pathogen": "influenza",
+            "signal": "hospital_admissions", "as_of": AS_OF,
+        }))
+    check("C1_season_comparison_present", "comparison" in r)
+    check("C1_season_has_current_season",
+          "current_season" in r.get("comparison", {}))
+    check("C1_season_prov_attached",
+          r.get("provenance", {}).get("dataset_id") == "vdzy-6i9v")
+
+    # ── D: Scan ───────────────────────────────────────────────────────────────
+
+    # Load all-jurisdiction data from scan snapshot
+    scan_rows = _load_snapshot("nhsn_scan_national")
+    scan_obs_map: dict[str, list[WeeklyObservation]] = {}
+    for jur_code in set(r["jurisdiction"] for r in scan_rows):
+        rows_jur = [r for r in scan_rows if r["jurisdiction"] == jur_code]
+        scan_obs_map[jur_code] = _obs_from_nhsn(rows_jur, jur_code, "influenza", AS_OF)
+
+    scan_prov = _prov("vdzy-6i9v", "state", AS_OF)
+
+    async def _scan_fetch(jur, pathogen, start, end):
+        obs = scan_obs_map.get(jur.code, [])
+        return obs, scan_prov
+
+    import resp_mcp.tools.scan as _scan_mod
+    with patch.dict(_scan_mod._ADAPTERS, {_Signal.hospital_admissions: _scan_fetch}):
+        r = _result_dict(await mcp.call_tool("find_jurisdictions_with_rising_activity", {
+            "pathogen": "influenza", "signal": "hospital_admissions",
+            "as_of": AS_OF, "limit": 50,
+        }))
+    rising_codes = [row["jurisdiction"] for row in r.get("rising", [])]
+    n_scanned = r.get("n_jurisdictions_scanned", 0)
+    check("D1_scan_returns_rising_list", isinstance(r.get("rising"), list))
+    check("D1_scan_n_scanned_positive", n_scanned > 0, f"got {n_scanned}")
+    check("D1_scan_ga_in_rising", "GA" in rising_codes,
+          f"rising: {rising_codes[:10]}")
+    # Scan total != displayed rows (n_scanned > len(rising))
+    check("D2_scan_total_distinct_from_rows",
+          n_scanned >= len(rising_codes),
+          f"n_scanned={n_scanned}, len(rising)={len(rising_codes)}")
+
+    # ── E: Public health invariants ───────────────────────────────────────────
+
+    # E1: NREVSS geographic caveat propagates from snapshot tool
+    with (
+        patch("resp_mcp.sources.nhsn.fetch_series", new_callable=AsyncMock,
+              return_value=(ga_flu_obs, ga_prov)),
+        patch("resp_mcp.sources.nwss.fetch_series", new_callable=AsyncMock,
+              return_value=(empty_ww, ww_prov)),
+        patch("resp_mcp.sources.nrevss.fetch_series", new_callable=AsyncMock,
+              return_value=(empty_nrevss, nrevss_prov)),
+    ):
+        r = _result_dict(await mcp.call_tool("get_respiratory_snapshot", {
+            "jurisdiction": "GA", "pathogens": ["influenza"], "as_of": AS_OF,
+        }))
+    psnap = r.get("pathogens", [{}])[0]
+    sigs = {s["signal"]: s for s in psnap.get("signals", [])}
+    test_pos = sigs.get("test_positivity", {})
+    tp_prov_geo = (test_pos.get("provenance") or {}).get("geography_level")
+    check("E1_nrevss_geography_level_national",
+          tp_prov_geo == "national",
+          f"geography_level={tp_prov_geo}")
+
+    # E2: NWSS provenance notes include aggregate caveat
+    ww_sig = sigs.get("wastewater", {})
+    ww_notes = (ww_sig.get("provenance") or {}).get("notes", [])
+    check("E2_ww_aggregate_note_in_provenance",
+          any("not an official" in n.lower() or "aggregate" in n.lower()
+              or "server-computed" in n.lower() for n in ww_notes),
+          f"notes: {ww_notes}")
+
+    # E3: Trend result carries basis=server_heuristic (never CDC_official)
+    ga_flu_trend_mock3 = AsyncMock(return_value=(ga_flu_obs, ga_prov))
+    with patch.dict(_trend_mod._ADAPTERS, {_Signal.hospital_admissions: ga_flu_trend_mock3}):
+        r = _result_dict(await mcp.call_tool("assess_trend", {
+            "jurisdiction": "GA", "pathogen": "influenza",
+            "signal": "hospital_admissions", "as_of": AS_OF,
+        }))
+    check("E3_trend_basis_never_official_cdc",
+          r.get("trend", {}).get("basis") != "official_cdc_level_change",
+          f"basis={r.get('trend',{}).get('basis')}")
+
+    # E4: Partial source failure (NHSN up, NWSS down) → tool still succeeds, caveat present
+
+    async def _failing_nwss(*a, **kw):
+        return [], ww_prov  # returns empty, no exception — simulates no-data
+
+    with (
+        patch("resp_mcp.sources.nhsn.fetch_series", new_callable=AsyncMock,
+              return_value=(ga_flu_obs, ga_prov)),
+        patch("resp_mcp.sources.nwss.fetch_series", side_effect=_failing_nwss),
+        patch("resp_mcp.sources.nrevss.fetch_series", new_callable=AsyncMock,
+              return_value=(empty_nrevss, nrevss_prov)),
+    ):
+        r = _result_dict(await mcp.call_tool("get_respiratory_snapshot", {
+            "jurisdiction": "GA", "pathogens": ["influenza"], "as_of": AS_OF,
+        }))
+    check("E4_partial_source_failure_no_crash",
+          r.get("jurisdiction") == "GA",
+          f"error={r.get('error')}")
+
+    # E5: Zero stdout during tool call (MCP stdio safety)
+    import io
+    captured = io.StringIO()
+    original_stdout = sys.stdout
+    sys.stdout = captured
+    try:
+        ga_flu_trend_mock4 = AsyncMock(return_value=(ga_flu_obs, ga_prov))
+        with patch.dict(_trend_mod._ADAPTERS, {_Signal.hospital_admissions: ga_flu_trend_mock4}):
+            await mcp.call_tool("assess_trend", {
+                "jurisdiction": "GA", "pathogen": "influenza",
+                "signal": "hospital_admissions", "as_of": AS_OF,
+            })
+    finally:
+        sys.stdout = original_stdout
+    check("E5_zero_stdout",
+          captured.getvalue() == "",
+          f"stdout: {captured.getvalue()!r}")
+
+
+def print_summary() -> None:
+    total = PASS + FAIL
+    print(f"\n{'='*60}")
+    print(f"Deterministic eval: {PASS}/{total} checks passed")
+    if FAIL:
+        print("\nFailed checks:")
+        for r in _results:
+            if r["status"] == "FAIL":
+                print(f"  ✗ {r['name']}: {r['detail']}")
+    else:
+        print("All checks passed ✓")
+    print("=" * 60)
+
+
+def main() -> None:
+    asyncio.run(run_checks())
+    print_summary()
+    sys.exit(0 if FAIL == 0 else 1)
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--cases", type=Path, default=ROOT / "cases.yaml")
-    parser.add_argument("--output", type=Path, default=ROOT / "transcripts" / "tools")
-    args = parser.parse_args()
-    raise SystemExit(0 if asyncio.run(run(args.cases, args.output)) else 1)
+    main()

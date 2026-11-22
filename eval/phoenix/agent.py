@@ -1,286 +1,259 @@
-"""LangChain agent using only a fresh, frozen-data MCP stdio session per case."""
+"""RespMcpAgent — LangChain agent connected to the Respiratory MCP server.
+
+Transport: streamable-HTTP (connects to a running server at MCP_SERVER_URL).
+Uses the native mcp 2.x Python client to load tools, then wraps them as
+LangChain tools — avoiding the fastmcp 4.x (mcp>=2.3) vs
+langchain-mcp-adapters (mcp<2.0) mutual exclusion.
+
+Decision logged in docs/DECISIONS.md: langchain-mcp-adapters 0.3.x is
+incompatible with mcp 2.x (mcp.server.fastmcp was removed; RequestContext and
+mcp.shared.session were renamed/removed). The native mcp client + manual tool
+wrapping is the documented replacement.
+
+Start the server before running the agent:
+    MCP_TRANSPORT=streamable-http MCP_PORT=8000 uv run python main.py
+
+Usage:
+    # Smoke test (requires running server + model credentials)
+    python eval/phoenix/agent.py
+
+    # MCP connectivity check only (requires running server)
+    python eval/phoenix/agent.py --check-mcp
+"""
 
 from __future__ import annotations
 
 import argparse
 import asyncio
-import json
+import logging
 import os
 import sys
-import threading
-import time
-import uuid
 from pathlib import Path
+from typing import Any
 
-if __package__ in (None, ""):
-    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
-
-import httpx
 from dotenv import load_dotenv
-from fastmcp import Client
-from fastmcp.client.transports import StdioTransport
-from langchain.agents import create_agent
-from langchain.mcp import MCPAdapter
-from langchain_core.messages import AIMessage, ToolMessage
-from langchain_openai import ChatOpenAI
 
-from eval.phoenix.config import MODULE, ROOT, gateway
-from eval.phoenix.data import reference_for, source_identity
+load_dotenv()  # walks up from CWD to find .env
 
-load_dotenv()
-_TRACE_LOCK = threading.Lock()
-_TRACING = None
+logger = logging.getLogger(__name__)
+
+# ── Repo root (two levels up from eval/phoenix/) ──────────────────────────────
+REPO_ROOT = str(Path(__file__).resolve().parent.parent.parent)
 
 
-def stdio_config(case_id: str | None = None) -> dict:
-    args = [str(MODULE / "frozen_server.py")]
-    if case_id:
-        reference_for(case_id)  # Reject an unrecorded scenario before spawning.
-        args += ["--case-id", case_id]
-    return {
-        "command": sys.executable,
-        "args": args,
-        "cwd": str(ROOT),
-        "env": {"PYTHONUTF8": "1", "LOG_LEVEL": "ERROR"},
-    }
+# ── Native mcp 2.x tool loader ─────────────────────────────────────────────────
 
+async def _load_mcp_tools_http(mcp_url: str) -> list[Any]:
+    """
+    Connect to the MCP server over streamable-HTTP, fetch the tools/list,
+    and return them as LangChain StructuredTool instances.
+    Uses the native mcp 2.x client — no langchain-mcp-adapters needed.
+    """
+    from langchain_core.tools import StructuredTool
+    from mcp import ClientSession
+    from mcp.client.streamable_http import streamable_http_client
 
-def adapter(case_id: str | None = None) -> MCPAdapter:
-    # The skill's legacy adapter requires MCP 1; the installed server uses MCP 2.
-    # LangChain's maintained MCPAdapter is the compatible stdio implementation.
-    return MCPAdapter(Client(StdioTransport(**stdio_config(case_id))))
+    tools_out = []
 
+    async with streamable_http_client(mcp_url) as (read, write, _):
+        async with ClientSession(read, write) as session:
+            await session.initialize()
+            tools_result = await session.list_tools()
 
-def initialize_tracing(project_name: str, endpoint: str):
-    global _TRACING
-    with _TRACE_LOCK:
-        if _TRACING is not None:
-            if _TRACING[:2] != (project_name, endpoint):
-                raise ValueError(
-                    "Tracing is already initialized for another project/endpoint"
+            for tool_def in tools_result.tools:
+                # Capture in closure — Python loop variable binding
+                _name = tool_def.name
+                _description = tool_def.description or _name
+                _schema = tool_def.inputSchema or {}
+
+                def _make_tool_fn(name: str):
+                    async def _call_tool(**kwargs) -> str:
+                        async with streamable_http_client(mcp_url) as (r, w, _):
+                            async with ClientSession(r, w) as sess:
+                                await sess.initialize()
+                                result = await sess.call_tool(name, kwargs)
+                                # Return first text content
+                                for c in result.content:
+                                    if hasattr(c, "text"):
+                                        return c.text
+                                return str(result.content)
+
+                    return _call_tool
+
+                # Build a synchronous wrapper for LangChain
+                _async_fn = _make_tool_fn(_name)
+
+                def _make_sync_fn(afn):
+                    def _sync(**kwargs) -> str:
+                        return asyncio.run(afn(**kwargs))
+                    return _sync
+
+                _sync_fn = _make_sync_fn(_async_fn)
+                _sync_fn.__name__ = _name
+
+                lc_tool = StructuredTool.from_function(
+                    func=_sync_fn,
+                    name=_name,
+                    description=_description,
+                    args_schema=None,  # Let LangChain infer from the function
                 )
-            return _TRACING[2]
+                tools_out.append(lc_tool)
+
+    return tools_out
+
+
+# ── Agent builder ─────────────────────────────────────────────────────────────
+
+def _build_agent(model, tools, system_prompt: str):
+    from langchain.agents import AgentExecutor, create_tool_calling_agent
+    from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+
+    prompt = ChatPromptTemplate.from_messages([
+        ("system", system_prompt),
+        MessagesPlaceholder(variable_name="chat_history", optional=True),
+        ("human", "{input}"),
+        MessagesPlaceholder(variable_name="agent_scratchpad"),
+    ])
+    agent = create_tool_calling_agent(model, tools, prompt)
+    return AgentExecutor(agent=agent, tools=tools, verbose=False, max_iterations=12)
+
+
+# ── RespMcpAgent ──────────────────────────────────────────────────────────────
+
+class RespMcpAgent:
+    """Agent that calls the Respiratory MCP server and is evaluated by Phoenix."""
+
+    def __init__(
+        self,
+        system_prompt_version: str = "v2",
+        project_name: str = "respiratory-mcp-eval",
+        phoenix_endpoint: str = "http://localhost:6006",
+        mcp_url: str | None = None,
+    ) -> None:
+        self.system_prompt_version = system_prompt_version
+        self.project_name = project_name
+        self.phoenix_endpoint = phoenix_endpoint
+        self.mcp_url = mcp_url or os.getenv("MCP_SERVER_URL", "http://localhost:8000/mcp")
+        self._executor = None
+        self._initialized = False
+
+    def _load_system_prompt(self) -> str:
+        prompt_file = (
+            Path(__file__).parent
+            / "prompts"
+            / f"system_prompt_{self.system_prompt_version}.txt"
+        )
+        if not prompt_file.exists():
+            raise FileNotFoundError(f"System prompt not found: {prompt_file}")
+        return prompt_file.read_text()
+
+    async def initialize(self) -> None:
+        if self._initialized:
+            return
+
+        # Phoenix OTEL instrumentation
         from openinference.instrumentation.langchain import LangChainInstrumentor
         from phoenix.otel import register
 
-        provider = register(
-            project_name=project_name,
-            endpoint=endpoint,
-            protocol="http/protobuf",
-            batch=False,
-            verbose=False,
+        tracer_provider = register(
+            project_name=self.project_name,
+            endpoint=f"{self.phoenix_endpoint}/v1/traces",
         )
-        LangChainInstrumentor().instrument(tracer_provider=provider)
-        _TRACING = (project_name, endpoint, provider)
-        return provider
+        LangChainInstrumentor().instrument(tracer_provider=tracer_provider)
 
+        # Load tools from the MCP server via native mcp 2.x HTTP client
+        tools = await _load_mcp_tools_http(self.mcp_url)
+        logger.info("MCP tools loaded: %s", [t.name for t in tools])
 
-def text_content(content) -> str:
-    if isinstance(content, str):
-        return content
-    if isinstance(content, list):
-        return "\n".join(
-            block.get("text", "") if isinstance(block, dict) else str(block)
-            for block in content
+        # LangChain model (OpenAI-compatible)
+        from langchain_openai import ChatOpenAI
+
+        base_url = os.environ["USAI_BASE_URL"].rstrip("/")
+        if not base_url.endswith("/api/v1"):
+            base_url = f"{base_url}/api/v1"
+
+        model = ChatOpenAI(
+            model=os.environ["AGENT_MODEL"],
+            openai_api_key=os.environ["USAI_API_KEY"],
+            openai_api_base=base_url,
+            temperature=0,
+            max_retries=2,
         )
-    return str(content)
 
-
-def capture_messages(messages) -> tuple[str, list[dict]]:
-    calls, by_id = [], {}
-    for message in messages:
-        if isinstance(message, AIMessage):
-            for tool in message.tool_calls:
-                call = {
-                    "id": tool["id"],
-                    "name": tool["name"],
-                    "arguments": tool["args"],
-                    "status": "pending",
-                    "output": None,
-                }
-                by_id[tool["id"]] = call
-                calls.append(call)
-        elif isinstance(message, ToolMessage):
-            call = by_id.get(message.tool_call_id)
-            if call is None:
-                raise ValueError("Tool result has no matching assistant tool call")
-            artifact = message.artifact or {}
-            output = (
-                artifact.get("structured_content")
-                if isinstance(artifact, dict)
-                else None
-            )
-            if output is None:
-                try:
-                    output = json.loads(text_content(message.content))
-                except (ValueError, TypeError):
-                    output = {
-                        "error": "mcp_protocol_error",
-                        "message": text_content(message.content),
-                    }
-            call.update(
-                output=output,
-                status="error" if message.status == "error" else "completed",
-            )
-    assistants = [m for m in messages if isinstance(m, AIMessage)]
-    answer = text_content(assistants[-1].content) if assistants else ""
-    return answer, calls
-
-
-class RespiratoryAgent:
-    def __init__(
-        self,
-        system_prompt_version="v2",
-        project_name="respiratory-eval",
-        phoenix_endpoint=None,
-        trace=True,
-        model_factory=None,
-    ):
-        if system_prompt_version not in ("v1", "v2"):
-            raise ValueError("Unknown prompt version")
-        self.prompt_version = system_prompt_version
-        self.project_name = project_name
-        self.endpoint = phoenix_endpoint or os.getenv(
-            "PHOENIX_COLLECTOR_ENDPOINT", "http://localhost:6006/v1/traces"
-        )
-        self.trace = trace
-        self.model_factory = (
-            model_factory  # For credential-free protocol/graph tests only.
-        )
-        self._initialized = False
-        self._task_limit = threading.BoundedSemaphore(1)
-
-    def initialize(self):
-        if self._initialized:
-            return
-        if self.model_factory is None:
-            gateway("agent")
-        if self.trace:
-            initialize_tracing(self.project_name, self.endpoint)
-        self.identity = source_identity()
+        self._executor = _build_agent(model, tools, self._load_system_prompt())
         self._initialized = True
+        logger.info("RespMcpAgent initialized (prompt=%s)", self.system_prompt_version)
 
-    async def run(self, query: str, case_id: str) -> dict:
-        self.initialize()
-        # Case ID configures only frozen-data/outage isolation, never an answer.
-        reference_for(case_id)
-        start = time.perf_counter()
-        os.environ["LANGSMITH_TRACING"] = "false"
-        async with adapter(case_id) as mcp_adapter:
-            tools = await mcp_adapter.list_tools()
-            if len(tools) != 4:
-                raise ValueError("Expected four respiratory tools")
-            if self.model_factory:
-                result = await self._invoke(self.model_factory(), tools, query)
-                model_name = "scripted-verification-model"
-            else:
-                cfg = gateway("agent")
-                # A new HTTP client per asyncio.run avoids reusing a closed loop.
-                async with httpx.AsyncClient(
-                    trust_env=False, timeout=cfg.timeout
-                ) as client:
-                    model = ChatOpenAI(
-                        model=cfg.model,
-                        base_url=cfg.base_url,
-                        api_key=cfg.api_key,
-                        temperature=0,
-                        timeout=cfg.timeout,
-                        max_retries=1,
-                        max_completion_tokens=1536,
-                        use_responses_api=False,
-                        http_async_client=client,
-                    )
-                    result = await self._invoke(model, tools, query)
-                model_name = cfg.model
-        answer, calls = capture_messages(result["messages"])
-        output = {
-            "answer": answer,
-            "tool_calls": calls,
-            "case_id": case_id,
-            "elapsed_seconds": time.perf_counter() - start,
-            "prompt_version": self.prompt_version,
-            "agent_model": model_name,
-            "verification_only": self.model_factory is not None,
-            **self.identity,
-        }
-        folder = MODULE / "runs"
-        folder.mkdir(exist_ok=True)
-        (folder / f"{case_id}-{uuid.uuid4().hex}.json").write_text(
-            json.dumps(output, indent=2) + "\n", encoding="utf-8"
-        )
-        return output
+    async def run(self, query: str) -> str:
+        if not self._initialized:
+            await self.initialize()
+        result = await self._executor.ainvoke({"input": query})
+        return result.get("output", "")
 
-    async def _invoke(self, model, tools, query):
-        prompt = (
-            MODULE / "prompts" / f"system_prompt_{self.prompt_version}.txt"
-        ).read_text(encoding="utf-8")
-        graph = create_agent(model=model, tools=tools, system_prompt=prompt)
-        async with asyncio.timeout(
-            float(os.getenv("AGENT_RUN_TIMEOUT_SECONDS", "180"))
-        ):
-            return await graph.ainvoke(
-                {"messages": [{"role": "user", "content": query}]},
-                config={"recursion_limit": 24, "metadata": self.identity},
-            )
+    async def close(self) -> None:
+        pass  # HTTP transport — no persistent connection to close
 
     def create_experiment_task(self):
-        def task(example):
-            inputs = example.input if hasattr(example, "input") else example["input"]
-            try:
-                with self._task_limit:
-                    return asyncio.run(self.run(inputs["query"], inputs["case_id"]))
-            except Exception as exc:
-                # SDK/provider exceptions may contain credentials or response bodies.
-                raise RuntimeError(
-                    f"Agent execution failed ({type(exc).__name__}); "
-                    f"no answer was scored."
-                ) from None
+        """Return a synchronous task function for Phoenix run_experiment."""
+        agent = self
+
+        def task(example) -> str:
+            query = example.input.get("query", "")
+            return asyncio.run(agent.run(query))
 
         return task
 
 
-async def check_mcp():
-    identity = source_identity()
-    async with adapter("P01") as mcp_adapter:
-        tools = await mcp_adapter.list_tools()
-        assert len(tools) == 4
-        tool = next(t for t in tools if t.name == "assess_trend")
-        result = await tool.ainvoke(
-            {
-                "jurisdiction": "GA",
-                "pathogen": "influenza",
-                "signal": "hospital_admissions",
-                "as_of": "2026-10-31",
-            }
-        )
-        text = text_content(result)
-        assert "admissions_per_100k" in text, text
-    print(
-        json.dumps(
-            {"mcp_check": "passed", "tools": 4, "frozen_stdio": True, **identity},
-            indent=2,
-        )
+# ── CLI ───────────────────────────────────────────────────────────────────────
+
+
+async def _check_mcp_only() -> None:
+    """Verify MCP server is running and returns tools (no model needed).
+
+    Requires the server to be running:
+        MCP_TRANSPORT=streamable-http MCP_PORT=8000 uv run python main.py
+    """
+    from mcp import ClientSession
+    from mcp.client.streamable_http import streamable_http_client
+
+    mcp_url = os.getenv("MCP_SERVER_URL", "http://localhost:8000/mcp")
+    async with streamable_http_client(mcp_url) as (read, write, _):
+        async with ClientSession(read, write) as session:
+            await session.initialize()
+            tools_result = await session.list_tools()
+            tools = tools_result.tools
+            print(f"MCP server responded — {len(tools)} tools registered:")
+            for t in tools:
+                print(f"  {t.name}: {(t.description or '')[:60]}")
+
+
+async def _smoke_test() -> None:
+    agent = RespMcpAgent(system_prompt_version="v2")
+    await agent.initialize()
+    q = (
+        "What was the influenza hospital admission rate in Georgia "
+        "for the week ending October 31 2026?"
     )
+    print(f"\nQuery: {q}")
+    answer = await agent.run(q)
+    print(f"Answer: {answer}")
+    await agent.close()
+
+
+def main() -> None:
+    logging.basicConfig(level=logging.INFO, stream=sys.stderr)
+    parser = argparse.ArgumentParser(description="RespMcpAgent CLI")
+    parser.add_argument(
+        "--check-mcp", action="store_true",
+        help="Check that the MCP server is running and tools load (no model needed)"
+    )
+    args = parser.parse_args()
+
+    if args.check_mcp:
+        asyncio.run(_check_mcp_only())
+    else:
+        asyncio.run(_smoke_test())
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--check-mcp", action="store_true")
-    parser.add_argument("--case-id", default="P01")
-    args = parser.parse_args()
-    if args.check_mcp:
-        asyncio.run(check_mcp())
-    else:
-        from eval.phoenix.data import load_dataset
-
-        row = next(
-            r
-            for r in load_dataset("respiratory-eval-0")[0]
-            if r["case_id"] == args.case_id
-        )
-        print(
-            json.dumps(
-                asyncio.run(RespiratoryAgent().run(row["query"], args.case_id)),
-                indent=2,
-            )
-        )
+    main()
