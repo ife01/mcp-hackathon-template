@@ -3,6 +3,38 @@
 All deviations from the build plan are recorded here with a date and rationale.
 
 
+## 2026-11-22 — Build 3.5: First wxO live run — `as_of` not passed; values correct for live data
+
+**What happened:** First five-question wxO agent walkthrough via local MCP toolkit
+(stdio transport, `respiratory_mcp_local`, ca-tor instance). Agent used live CDC
+data because no `as_of` parameter was passed in the prompts.
+
+**Observed discrepancies vs. frozen reference (as_of 2026-10-31):**
+
+| Q | Metric | Reference (2026-10-31) | Agent (2026-11-14 live) | Delta |
+|---|---|---|---|---|
+| Q1 | GA flu admissions/100k | 1.76 | 2.47 | +0.71 — later week |
+| Q3 | National flu positivity | 10.1% | 11.8% | +1.7pp — later week |
+| Q4 | Rising states count | Reference at 2026-10-31 | 44 at 2026-11-14 | Different week |
+
+**What was correct:** Q2 (trend direction = increasing), Q5 (refused forecast).
+All public health invariants passed: national positivity cited as national-only;
+numeric claims grounded with dataset ID and week-ending date; trend labeled heuristic.
+
+**Root cause:** The wxO agent instructions (docs/WXO_AGENT_SETUP.md §3) did not
+include the `as_of="2026-10-31"` rule that `system_prompt_v2.txt` already contains.
+
+**Fix:** Added explicit `as_of` instruction to WXO_AGENT_SETUP.md under agent
+instructions. For live production use the agent's behavior (most recent data) is
+correct and expected. The `as_of` parameter is only required for reproducible
+deterministic evaluation against the frozen benchmark.
+
+**Decision:** No tool code changes needed. The discrepancies are expected behavior
+for a live-data run, not tool bugs. Results recorded in eval/RESULTS.md.
+
+---
+
+
 ## 2026-11-20 — Build 4.1: langchain-mcp-adapters excluded; native mcp 2.x HTTP transport used
 
 **What changed:** The build plan and mcp-eval skill both reference `langchain-mcp-adapters` for

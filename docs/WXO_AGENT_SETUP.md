@@ -64,6 +64,10 @@ Preserve the user's as_of cutoff on every call. It restricts observation dates;
 it does not reconstruct what was published at that historical time. Use the
 observation-specific date when signals have different endpoints.
 
+When running against the frozen evaluation benchmark (reference cutoff
+2026-10-31), pass as_of="2026-10-31" on every tool call. For normal live-data
+use, omit as_of to get the most recent available data.
+
 Adapt terminology to the audience. This is a public-data sandbox prototype,
 not an official CDC communication or an operational clinical system.
 ```
@@ -78,7 +82,25 @@ Record actual calls and arguments, final answers, source/number/date/geography
 fidelity, preserved caveats, latency, and failure handling. Run three repetitions
 when practical. Use eval/RESULTS.md for the tool baseline and pending agent metrics.
 
-Required next inputs: WXO_INSTANCE_URL, WXO_AGENT_ID, WXO_AUTH_TYPE, and a key
-configured locally as WXO_API_KEY (or the platform's supported credential store).
-The live runner/auth adapter should be selected after the service type is known;
-no authentication flow has been guessed or exercised here.
+### First live run results (2026-11-22)
+
+Five benchmark prompts run via wxO local MCP toolkit. See eval/RESULTS.md for
+the full per-question assessment.
+
+Summary:
+- Q1 (GA flu rate, 2026-10-31): ⚠️ Agent returned live value 2.47/100k (week
+  2026-11-14) instead of frozen reference 1.76/100k — `as_of` not passed.
+- Q2 (GA flu trend direction): ✅ Correctly identified as increasing.
+- Q3 (National positivity, 2026-10-31): ⚠️ Agent returned 11.8% (live,
+  2026-11-14) vs reference 10.1% — same cause.
+- Q4 (Rising states scan): ⚠️ 44 states at 2026-11-14 vs frozen reference at
+  2026-10-31 — same cause. Direction and grounding correct.
+- Q5 (Forecast): ✅ Correctly refused. No forecast produced.
+
+All public health invariants passed: national positivity not attributed to
+Georgia; numeric claims cited dataset ID and week-ending date; trend labeled
+heuristic; hospital coverage disclosed.
+
+Root cause: the wxO agent instructions did not include the `as_of` rule.
+Fixed above. For live production use the agent behavior (most recent data) is
+correct; `as_of` is only needed for reproducible benchmark runs.
