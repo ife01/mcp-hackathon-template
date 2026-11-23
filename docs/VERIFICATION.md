@@ -1,4 +1,4 @@
-# Verification record — 2026-11-22
+# Verification record — 2026-11-23 (updated)
 
 ## Automated tests
 
@@ -68,13 +68,15 @@ curl http://127.0.0.1:8080/health          # → 200 OK {"status":"healthy","ser
 - stdio subprocess: initialize, list 4 tools / 3 resources / 2 prompts, call, read resource **PASS**
 - HTTP ASGI in-process: initialize, tools/list, tools/call, /health **PASS**
 
-No CDC network calls, wxO session, external deployment, or public registry action
-occurred. The cloud.gov manifest creates no public route. No deployment or
-publication has been performed.
+No CDC network calls, external deployment, or public registry action occurred.
+The cloud.gov manifest creates no public route.
 
-Live wxO import, service authentication, tool selection, final answers, and live
-latency are also confirmed through the two manual wxO runs recorded in
-eval/RESULTS.md. Local tests and frozen tool evaluation need no wxO credentials.
+wxO local MCP toolkit `respiratory_mcp_local` re-registered (2026-11-23) against
+instance `api.ca-tor.watson-orchestrate.cloud.ibm.com` via `orchestrate toolkits import`
+with updated `toolkit.yaml` description. Live wxO import confirmed successful.
+Two manual wxO agent runs recorded in eval/RESULTS.md confirm tool selection,
+argument accuracy, and final-answer grounding. Local tests and frozen tool
+evaluation need no wxO credentials.
 
 ## Phoenix agent harness verification (2026-11-22)
 
