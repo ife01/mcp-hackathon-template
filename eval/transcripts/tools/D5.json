@@ -3,7 +3,7 @@
   "category": "synthesis",
   "prompt": "Which HHS Region 4 states had rising flu admissions through October 31, 2026? Report missing data and the total before limiting.",
   "passed": true,
-  "replay_seconds": 0.07632625801488757,
+  "replay_seconds": 0.0685835350304842,
   "checks": [
     {
       "check": "total rising before limit",
@@ -63,7 +63,7 @@
               "dataset_name": "Weekly Hospital Respiratory Admission Levels and Rates by Jurisdiction, National Healthcare Safety Network (NHSN)",
               "url": "https://data.cdc.gov/resource/vdzy-6i9v.json",
               "latest_week_ending": "2026-10-31",
-              "retrieved_at": "2026-11-22T23:37:34.827281Z",
+              "retrieved_at": "2026-11-23T02:08:59.965859Z",
               "source_last_updated": null,
               "geography_level": "state",
               "notes": []
@@ -81,7 +81,7 @@
               "dataset_name": "Weekly Hospital Respiratory Admission Levels and Rates by Jurisdiction, National Healthcare Safety Network (NHSN)",
               "url": "https://data.cdc.gov/resource/vdzy-6i9v.json",
               "latest_week_ending": "2026-10-31",
-              "retrieved_at": "2026-11-22T23:37:34.826699Z",
+              "retrieved_at": "2026-11-23T02:08:59.965498Z",
               "source_last_updated": null,
               "geography_level": "state",
               "notes": []
@@ -99,7 +99,7 @@
               "dataset_name": "Weekly Hospital Respiratory Admission Levels and Rates by Jurisdiction, National Healthcare Safety Network (NHSN)",
               "url": "https://data.cdc.gov/resource/vdzy-6i9v.json",
               "latest_week_ending": "2026-10-31",
-              "retrieved_at": "2026-11-22T23:37:34.827487Z",
+              "retrieved_at": "2026-11-23T02:08:59.966025Z",
               "source_last_updated": null,
               "geography_level": "state",
               "notes": []
@@ -117,7 +117,7 @@
               "dataset_name": "Weekly Hospital Respiratory Admission Levels and Rates by Jurisdiction, National Healthcare Safety Network (NHSN)",
               "url": "https://data.cdc.gov/resource/vdzy-6i9v.json",
               "latest_week_ending": "2026-10-31",
-              "retrieved_at": "2026-11-22T23:37:34.827421Z",
+              "retrieved_at": "2026-11-23T02:08:59.965979Z",
               "source_last_updated": null,
               "geography_level": "state",
               "notes": []
@@ -135,7 +135,7 @@
               "dataset_name": "Weekly Hospital Respiratory Admission Levels and Rates by Jurisdiction, National Healthcare Safety Network (NHSN)",
               "url": "https://data.cdc.gov/resource/vdzy-6i9v.json",
               "latest_week_ending": "2026-10-31",
-              "retrieved_at": "2026-11-22T23:37:34.827697Z",
+              "retrieved_at": "2026-11-23T02:08:59.966220Z",
               "source_last_updated": null,
               "geography_level": "state",
               "notes": []
@@ -147,7 +147,7 @@
           "dataset_name": "Weekly Hospital Respiratory Admission Levels and Rates by Jurisdiction, National Healthcare Safety Network (NHSN)",
           "url": "https://data.cdc.gov/resource/vdzy-6i9v.json",
           "latest_week_ending": "2026-10-31",
-          "retrieved_at": "2026-11-22T23:37:34.826699Z",
+          "retrieved_at": "2026-11-23T02:08:59.965498Z",
           "source_last_updated": null,
           "geography_level": "state",
           "notes": [

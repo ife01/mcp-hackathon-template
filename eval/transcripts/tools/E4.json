@@ -3,7 +3,7 @@
   "category": "robustness",
   "prompt": "Assess Georgia flu admissions as of January 1, 2015.",
   "passed": true,
-  "replay_seconds": 0.022816697135567665,
+  "replay_seconds": 0.015210766810923815,
   "checks": [
     {
       "check": "expected error",

@@ -3,7 +3,7 @@
   "category": "robustness",
   "prompt": "Assess Georgia flu B admission trends.",
   "passed": true,
-  "replay_seconds": 0.02124371938407421,
+  "replay_seconds": 0.014785392209887505,
   "checks": [
     {
       "check": "expected error",

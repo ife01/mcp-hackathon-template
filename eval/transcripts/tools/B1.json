@@ -3,7 +3,7 @@
   "category": "trend",
   "prompt": "Assess the recent influenza hospital_admissions trend for GA, through October 31, 2026.",
   "passed": true,
-  "replay_seconds": 0.036701819859445095,
+  "replay_seconds": 0.0370317529886961,
   "checks": [
     {
       "check": "trend direction",
@@ -183,7 +183,7 @@
           "dataset_name": "Weekly Hospital Respiratory Admission Levels and Rates by Jurisdiction, National Healthcare Safety Network (NHSN)",
           "url": "https://data.cdc.gov/resource/vdzy-6i9v.json",
           "latest_week_ending": "2026-10-31",
-          "retrieved_at": "2026-11-22T23:37:31.087958Z",
+          "retrieved_at": "2026-11-23T02:08:56.552295Z",
           "source_last_updated": null,
           "geography_level": "state",
           "notes": []

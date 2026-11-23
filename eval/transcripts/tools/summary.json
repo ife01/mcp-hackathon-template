@@ -15,151 +15,151 @@
       "id": "A1",
       "category": "lookup",
       "passed": true,
-      "replay_seconds": 0.5512118600308895
+      "replay_seconds": 0.48720194306224585
     },
     {
       "id": "A2",
       "category": "lookup",
       "passed": true,
-      "replay_seconds": 0.03766369912773371
+      "replay_seconds": 0.04499860620126128
     },
     {
       "id": "A3",
       "category": "lookup",
       "passed": true,
-      "replay_seconds": 0.030525596346706152
+      "replay_seconds": 0.03614022955298424
     },
     {
       "id": "A4",
       "category": "lookup",
       "passed": true,
-      "replay_seconds": 0.03521587606519461
+      "replay_seconds": 0.03471849858760834
     },
     {
       "id": "A5",
       "category": "lookup",
       "passed": true,
-      "replay_seconds": 0.05672276020050049
+      "replay_seconds": 0.06596012227237225
     },
     {
       "id": "B1",
       "category": "trend",
       "passed": true,
-      "replay_seconds": 0.036701819859445095
+      "replay_seconds": 0.0370317529886961
     },
     {
       "id": "B2",
       "category": "trend",
       "passed": true,
-      "replay_seconds": 0.03114062687382102
+      "replay_seconds": 0.03784734522923827
     },
     {
       "id": "B3",
       "category": "trend",
       "passed": true,
-      "replay_seconds": 0.03320010378956795
+      "replay_seconds": 0.04061591112986207
     },
     {
       "id": "B4",
       "category": "trend",
       "passed": true,
-      "replay_seconds": 0.3179059471003711
+      "replay_seconds": 0.3483832450583577
     },
     {
       "id": "B5",
       "category": "trend",
       "passed": true,
-      "replay_seconds": 0.04801039583981037
+      "replay_seconds": 0.04125505918636918
     },
     {
       "id": "C1",
       "category": "season",
       "passed": true,
-      "replay_seconds": 0.059055446181446314
+      "replay_seconds": 0.02941075200214982
     },
     {
       "id": "C2",
       "category": "season",
       "passed": true,
-      "replay_seconds": 1.2909145941957831
+      "replay_seconds": 1.042049955110997
     },
     {
       "id": "C3",
       "category": "season",
       "passed": true,
-      "replay_seconds": 0.04068891517817974
+      "replay_seconds": 0.031040215399116278
     },
     {
       "id": "C4",
       "category": "season",
       "passed": true,
-      "replay_seconds": 0.5008182181045413
+      "replay_seconds": 0.4280776879750192
     },
     {
       "id": "C5",
       "category": "season",
       "passed": true,
-      "replay_seconds": 0.03938218392431736
+      "replay_seconds": 0.03659841511398554
     },
     {
       "id": "D1",
       "category": "synthesis",
       "passed": true,
-      "replay_seconds": 0.23301054583862424
+      "replay_seconds": 0.2226391639560461
     },
     {
       "id": "D2",
       "category": "synthesis",
       "passed": true,
-      "replay_seconds": 0.409513424616307
+      "replay_seconds": 0.4159636883996427
     },
     {
       "id": "D3",
       "category": "synthesis",
       "passed": true,
-      "replay_seconds": 0.3669750280678272
+      "replay_seconds": 0.3533868961967528
     },
     {
       "id": "D4",
       "category": "synthesis",
       "passed": true,
-      "replay_seconds": 0.30975332809612155
+      "replay_seconds": 0.33184529561549425
     },
     {
       "id": "D5",
       "category": "synthesis",
       "passed": true,
-      "replay_seconds": 0.07632625801488757
+      "replay_seconds": 0.0685835350304842
     },
     {
       "id": "E1",
       "category": "robustness",
       "passed": true,
-      "replay_seconds": 0.022511462680995464
+      "replay_seconds": 0.01921479683369398
     },
     {
       "id": "E2",
       "category": "robustness",
       "passed": true,
-      "replay_seconds": 0.02129028970375657
+      "replay_seconds": 0.014423578977584839
     },
     {
       "id": "E3",
       "category": "robustness",
       "passed": true,
-      "replay_seconds": 0.02124371938407421
+      "replay_seconds": 0.014785392209887505
     },
     {
       "id": "E4",
       "category": "robustness",
       "passed": true,
-      "replay_seconds": 0.022816697135567665
+      "replay_seconds": 0.015210766810923815
     },
     {
       "id": "E5",
       "category": "robustness",
       "passed": true,
-      "replay_seconds": 0.10307513177394867
+      "replay_seconds": 0.0813013156875968
     }
   ]
 }

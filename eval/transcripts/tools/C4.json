@@ -3,7 +3,7 @@
   "category": "season",
   "prompt": "Compare TX flu wastewater with three prior seasons through October 31, 2026; state when historical evidence is missing.",
   "passed": true,
-  "replay_seconds": 0.5008182181045413,
+  "replay_seconds": 0.4280776879750192,
   "checks": [
     {
       "check": "historical rank",
@@ -101,7 +101,7 @@
           "dataset_name": "CDC Wastewater Viral Activity Level for SARS-CoV-2, Influenza A and RSV",
           "url": "https://data.cdc.gov/resource/atcp-73re.json",
           "latest_week_ending": "2026-10-31",
-          "retrieved_at": "2026-11-22T23:37:33.268418Z",
+          "retrieved_at": "2026-11-23T02:08:58.416102Z",
           "source_last_updated": null,
           "geography_level": "site_aggregate",
           "notes": [

@@ -3,7 +3,7 @@
   "category": "lookup",
   "prompt": "What was national flu test positivity through October 31, 2026?",
   "passed": true,
-  "replay_seconds": 0.05672276020050049,
+  "replay_seconds": 0.06596012227237225,
   "checks": [
     {
       "check": "trend direction",
@@ -159,7 +159,7 @@
           "dataset_name": "Percent of Tests Positive for Viral Respiratory Pathogens",
           "url": "https://data.cdc.gov/resource/seuz-s2cv.json",
           "latest_week_ending": "2026-10-31",
-          "retrieved_at": "2026-11-22T23:37:31.022292Z",
+          "retrieved_at": "2026-11-23T02:08:56.488440Z",
           "source_last_updated": null,
           "geography_level": "national",
           "notes": [
