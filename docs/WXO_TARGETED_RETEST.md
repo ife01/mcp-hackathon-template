@@ -2,7 +2,27 @@
 
 The local server fix separates the application date limit from CDC dataset history.
 All four tools return the corrected message for an unsupported early date.
-The deployed wxO toolkit still needs the updated package and six focused retests.
+The updated package is active in wxO as `respiratory_mcp_local_v2`.
+RSA uses its four tools. The complete six-question retest remains pending.
+
+## Verified reimport on November 23, 2026
+
+The first upload changed stored files but left the old error active.
+A new toolkit registration succeeded, and RSA received the four new tool references.
+RSA kept its existing instructions and model settings. The original toolkit remains as a backup.
+
+The deployed source is commit `8f5fabb`. Runtime dependencies use exact versions from `uv.lock`.
+A live RSA run completed at `2026-11-23T15:24:03Z` with model `groq/openai/gpt-oss-120b`.
+Its actual `assess_trend` call used Georgia, influenza, hospital admissions and `as_of="2015-01-01"`.
+The tool returned the corrected application-limit error. The final answer preserved that distinction.
+See the [sanitized run evidence](../eval/transcripts/wxo/2026-11-23-v2-date-boundary.json).
+
+This directed smoke test confirms the runtime correction for question 6.
+It does not establish a pass for the natural-language retest or questions 1–5.
+The Phoenix results remain separate evidence.
+
+Refresh the wxO page and select **RSA** for further tests.
+Start a new conversation and check that its tools come from `respiratory_mcp_local_v2`.
 
 ## What you need
 
@@ -15,7 +35,12 @@ The deployed wxO toolkit still needs the updated package and six focused retests
 The organizational model gateway key is not required for these wxO sessions.
 Keep the wxO key in the local credential mechanism or hidden registration prompt.
 
-## Update the uploaded toolkit
+## Future toolkit registration
+
+The current RSA tools use the versioned registration described above.
+The commands below recreate the original template name, `respiratory_mcp_local`.
+They do not update the active versioned registration.
+After any future registration, attach the intended new tools to the agent.
 
 Run these commands in Bash on the machine used for toolkit registration:
 
@@ -110,4 +135,5 @@ Remove credentials before sharing files.
 
 These six retests do not replace or invalidate the earlier manual evaluations.
 They check the known failures after the toolkit and instruction update.
-No wxO retest is claimed until the new records are available.
+Only the directed date-boundary smoke test above has new live wxO evidence.
+Do not report the full six-question retest as complete without its records.

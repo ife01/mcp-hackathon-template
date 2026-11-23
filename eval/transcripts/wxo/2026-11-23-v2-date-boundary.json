@@ -1,0 +1,59 @@
+{
+  "purpose": "Post-reimport live wxO date-boundary smoke test; not the full six-question retest",
+  "source_commit": "8f5fabb",
+  "toolkit": "respiratory_mcp_local_v2",
+  "agent_display_name": "RSA",
+  "status": "completed",
+  "started_at": "2026-11-23T15:23:48.072972Z",
+  "completed_at": "2026-11-23T15:24:03.265392Z",
+  "model": "groq/openai/gpt-oss-120b",
+  "prompt": "Use assess_trend for GA influenza hospital_admissions with as_of 2015-01-01 and show the full tool error.",
+  "step_history": [
+    {
+      "role": "assistant",
+      "step_details": [
+        {
+          "type": "tool_calls",
+          "tool_calls": [
+            {
+              "id": "fc_2577f1c7-57a9-4260-acc9-1e861d4b23be",
+              "args": {
+                "as_of": "2015-01-01",
+                "signal": "hospital_admissions",
+                "pathogen": "influenza",
+                "jurisdiction": "GA"
+              },
+              "name": "assess_trend"
+            }
+          ],
+          "agent_display_name": "RSA"
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "step_details": [
+        {
+          "name": "assess_trend",
+          "type": "tool_response",
+          "content": "{\"data\": {\"error\": \"invalid_input\", \"message\": \"as_of date '2015-01-01' is before the earliest supported date for this application (2020-01-01). This application limit does not establish a CDC dataset's start date or whether earlier records exist. Choose an as_of date on or after 2020-01-01.\"}}",
+          "tool_call_id": "fc_2577f1c7-57a9-4260-acc9-1e861d4b23be"
+        },
+        {
+          "args": {
+            "as_of": "2015-01-01",
+            "signal": "hospital_admissions",
+            "pathogen": "influenza",
+            "jurisdiction": "GA"
+          },
+          "name": "assess_trend",
+          "type": "tool_call",
+          "tool_call_id": "fc_2577f1c7-57a9-4260-acc9-1e861d4b23be"
+        }
+      ]
+    }
+  ],
+  "answer": [
+    "The request could not be completed because the **as_of** date `2015-01-01` is earlier than the earliest date supported by the tool (2020‑01‑01). The tool returned the following error:\n\n```json\n{\n  \"error\": \"invalid_input\",\n  \"message\": \"as_of date '2015-01-01' is before the earliest supported date for this application (2020-01-01). This application limit does not establish a CDC dataset's start date or whether earlier records exist. Choose an as_of date on or after 2020-01-01.\"\n}\n```\n\nPlease provide a later **as_of** date (on or after 2020‑01‑01) if you would like to retrieve the trend for Georgia influenza hospital admissions."
+  ]
+}
