@@ -50,7 +50,7 @@
     }
   },
   "assess_trend": {
-    "description": "Assess the recent trend for one respiratory signal in a jurisdiction.\n\nReturns a weekly time series and a heuristic trend classification\n(increasing / stable / decreasing / insufficient_data) for one\ncombination of jurisdiction, pathogen, and signal.\n\nUSE WHEN you want to characterise the direction of change for a specific\nsignal over recent weeks. Includes the weekly series so values can be cited.\n\nDO NOT use for multi-pathogen overviews \u2014 use get_respiratory_snapshot.\nDO NOT use for prior-season comparison \u2014 use compare_to_prior_seasons.\n\nReturns: weekly series, trend direction, % change, provenance, and caveats.",
+    "description": "Assess the recent trend for one respiratory signal in a jurisdiction.\n\nReturns a weekly time series and a heuristic trend classification\n(increasing / stable / decreasing / insufficient_data) for one\ncombination of jurisdiction, pathogen, and signal.\n\nUSE WHEN you want to characterise the direction of change for a specific\nsignal over recent weeks. Includes the weekly series so values can be cited.\n\nDO NOT use for multi-pathogen overviews \u2014 use get_respiratory_snapshot.\nDO NOT use for prior-season comparison \u2014 use compare_to_prior_seasons.\n\nReturns: weekly series, trend direction, % change, provenance, and caveats.\nThe trend heuristic belongs to this application; CDC supplies the source\nobservations, not the application's trend classification.",
     "inputSchema": {
       "additionalProperties": false,
       "properties": {
@@ -150,7 +150,7 @@
     }
   },
   "find_jurisdictions_with_rising_activity": {
-    "description": "Find rising states/DC for hospital admissions or wastewater.\n\nUSE WHEN comparing jurisdictions; use assess_trend for one location.\nNational-only test positivity cannot support a state scan. Fetches one\npaginated query and reports assessed/missing counts, per-row provenance,\nand caveats. min_level applies only to hospital admissions.\nResults are descriptive heuristics, not validated outbreak predictions.",
+    "description": "Find rising states/DC for hospital admissions or wastewater.\n\nUSE WHEN comparing jurisdictions; use assess_trend for one location.\nNational-only test positivity cannot support a state scan. Fetches one\npaginated query and reports assessed/missing counts, per-row provenance,\nand caveats. min_level applies only to hospital admissions.\nResults are descriptive heuristics, not validated outbreak predictions.\nCopy display_text for the membership list and counts; it is generated\nfrom the actual returned rising rows. Do not add other jurisdictions.",
     "inputSchema": {
       "additionalProperties": false,
       "properties": {

@@ -371,6 +371,12 @@ async def test_scan_returns_scan_output():
     assert data["n_assessed"] == 8
     assert len(data["rising"]) == 5
     assert data["n_rising_total"] == 8
+    assert data["n_returned"] == 5
+    assert data["rising_jurisdictions"] == [r["jurisdiction"] for r in data["rising"]]
+    assert "Returned rising jurisdictions (5): " in data["display_text"]
+    assert "Total rising before result limit: 8." in data["display_text"]
+    assert "Scope: HHS Region 4." in data["display_text"]
+    assert "not a CDC trend classification" in data["trend_attribution"]
     assert all(r["provenance"]["dataset_id"] == "vdzy-6i9v" for r in data["rising"])
 
 

@@ -58,6 +58,8 @@ def register(mcp: FastMCP) -> None:
         paginated query and reports assessed/missing counts, per-row provenance,
         and caveats. min_level applies only to hospital admissions.
         Results are descriptive heuristics, not validated outbreak predictions.
+        Copy display_text for the membership list and counts; it is generated
+        from the actual returned rising rows. Do not add other jurisdictions.
         """
         try:
             inp = ScanInput(
@@ -194,6 +196,7 @@ def _summarize(inp, jurisdictions, results, start, end) -> dict:
     return ScanOutput(
         pathogen=inp.pathogen,
         signal=inp.signal,
+        hhs_region=inp.hhs_region,
         as_of_week_ending=prov.latest_week_ending,
         rising=rows[: inp.limit],
         provenance=prov,

@@ -11,6 +11,13 @@ For a single value question, report the value, native unit, jurisdiction, observ
 For a trend question, also report the returned direction and method.
 Describe 2w_vs_prior_2w as: "latest two-week mean compared with the preceding two-week mean across four consecutive weeks."
 For a scan, report the requested scope, rising list, total rising, assessed, insufficient and unavailable counts.
+For scan answers, reproduce the tool's display_text verbatim as the membership list and count block.
+Do not reconstruct the list from memory, prior turns, all-state lists or a different tool call.
+Do not append another jurisdiction list. The displayed names must match rising_jurisdictions exactly, including its length.
+When a result limit applies, distinguish n_returned from n_rising_total and disclose truncation.
+The trend heuristic belongs to this application. CDC supplies the observations only.
+Use "application-derived heuristic calculated from CDC surveillance data" for trend attribution.
+Never call it a "CDC heuristic", "CDC NHSN server heuristic" or official CDC trend classification.
 For a prior-season question, report the current value and the requested prior-week comparisons, including missingness.
 Only add change percentages, historical ranks or peak ratios when the user asks for them.
 Do not add extra numerical tables, inferred thresholds, significance claims or computed ranges.

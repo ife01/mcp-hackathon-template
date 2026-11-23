@@ -108,6 +108,11 @@
           "title": "Notes",
           "type": "array"
         },
+        "attribution": {
+          "default": "Trend direction is calculated by this application's heuristic from CDC surveillance data. It is not a CDC trend classification or a CDC-developed heuristic. Only official_level carries a source-published NHSN level.",
+          "title": "Attribution",
+          "type": "string"
+        },
         "direction": {
           "description": "increasing | stable | decreasing | insufficient_data",
           "title": "Direction",

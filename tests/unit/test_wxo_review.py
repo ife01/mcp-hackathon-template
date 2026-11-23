@@ -2,7 +2,7 @@
 
 import json
 
-from eval.wxo_review import review, tool_evidence
+from eval.wxo_review import review, scan_answer_membership, tool_evidence
 
 
 def record(args, payload, answer="", include_response=True):
@@ -97,3 +97,14 @@ def test_exact_error_message_passes_without_observations():
 def test_latest_question_does_not_require_a_benchmark_date():
     data = record({}, {"week_ending": "2026-11-14"})
     assert review(data, None)["checks"]["cutoff_arguments"]
+
+
+def test_correct_scan_total_cannot_mask_added_or_duplicate_jurisdictions():
+    payload = {
+        "rising": [{"jurisdiction": "GA"}, {"jurisdiction": "FL"}],
+        "n_rising_total": 2,
+    }
+    assert scan_answer_membership("GA, FL", payload)
+    assert not scan_answer_membership("GA, FL, AK", payload)
+    assert not scan_answer_membership("GA, FL, GA", payload)
+    assert not scan_answer_membership("GA, AK", payload)

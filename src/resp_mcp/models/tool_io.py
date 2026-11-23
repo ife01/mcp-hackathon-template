@@ -23,9 +23,15 @@ from __future__ import annotations
 from datetime import date
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, computed_field
 
 from resp_mcp.models.common import Pathogen, Provenance, Signal, WeeklyObservation
+
+TREND_ATTRIBUTION = (
+    "Trend direction is calculated by this application's heuristic from CDC "
+    "surveillance data. It is not a CDC trend classification or a CDC-developed "
+    "heuristic. Only official_level carries a source-published NHSN level."
+)
 
 # ── Shared input constraints ──────────────────────────────────────────────────
 
@@ -111,6 +117,7 @@ class TrendSummary(BaseModel):
     """Serialisable version of TrendResult for tool outputs."""
 
     notes: list[str] = Field(default_factory=list)
+    attribution: str = TREND_ATTRIBUTION
     direction: str = Field(
         description="increasing | stable | decreasing | insufficient_data"
     )
@@ -385,6 +392,8 @@ class ScanOutput(BaseModel):
 
     pathogen: Pathogen
     signal: Signal
+    hhs_region: int | None = None
+    trend_attribution: str = TREND_ATTRIBUTION
     as_of_week_ending: date | None = None
     rising: list[ScanRow] = Field(
         description=(
@@ -403,3 +412,34 @@ class ScanOutput(BaseModel):
     )
     summary: str = Field(description="1–2 sentence plain-English summary.")
     caveats: list[str] = Field(default_factory=list)
+
+    @computed_field
+    @property
+    def rising_jurisdictions(self) -> list[str]:
+        """Membership of the returned rows, after any requested result limit."""
+        return [row.jurisdiction for row in self.rising]
+
+    @computed_field
+    @property
+    def n_returned(self) -> int:
+        return len(self.rising)
+
+    @computed_field
+    @property
+    def display_text(self) -> str:
+        """A copyable list and counts derived from this response, not LLM recall."""
+        codes = ", ".join(self.rising_jurisdictions) or "none returned"
+        scope = (
+            f"HHS Region {self.hhs_region}" if self.hhs_region else "US states and DC"
+        )
+        return (
+            f"Scope: {scope}. Signal: {self.pathogen.value} {self.signal.value}. "
+            f"Latest observation week ending: {self.as_of_week_ending}.\n"
+            f"Returned rising jurisdictions ({self.n_returned}): {codes}.\n"
+            f"Total rising before result limit: {self.n_rising_total}. "
+            f"Assessed: {self.n_assessed}. Requested: {self.n_jurisdictions_scanned}. "
+            f"Insufficient data: {self.n_insufficient_data}. "
+            f"Unavailable: {self.n_unavailable}. Status: {self.status}.\n"
+            f"{self.trend_attribution} "
+            "Missing or insufficient data is not evidence of stable activity."
+        )

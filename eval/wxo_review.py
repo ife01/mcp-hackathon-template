@@ -67,9 +67,40 @@ def review(record: dict, cutoff: str | None, region: int | None = None) -> dict:
         and all(c["arguments"].get("as_of") == cutoff for c in calls),
     }
     dates = [d for c in calls for d in observation_dates(c.get("output"))]
+    answer = "\n".join(record.get("answer") or [])
     checks["observations_within_cutoff"] = (
         all(d <= cutoff for d in dates) if cutoff and dates else None
     )
+    scans = [
+        c
+        for c in calls
+        if c["name"] == "find_jurisdictions_with_rising_activity"
+        and isinstance(c.get("output"), dict)
+        and not c["output"].get("error")
+    ]
+    if scans:
+        checks["scan_payload_membership_consistent"] = all(
+            scan_membership_consistent(c["output"]) for c in scans
+        )
+        checks["scan_display_preserved"] = all(
+            bool(c["output"].get("display_text"))
+            and c["output"]["display_text"] in answer
+            for c in scans
+        )
+        checks["scan_answer_membership"] = all(
+            scan_answer_membership(answer, c["output"]) for c in scans
+        )
+    if scans or any(
+        c["name"] == "assess_trend"
+        and isinstance(c.get("output"), dict)
+        and c["output"].get("trend")
+        for c in calls
+    ):
+        checks["application_heuristic_attribution"] = bool(
+            re.search(r"application.{0,40}heuristic", answer, re.I)
+        ) and not re.search(
+            r"\bCDC(?:\s+NHSN)?(?:\s+server)?\s+heuristic\b", answer, re.I
+        )
     if region is not None:
         scans = [
             c for c in calls if c["name"] == "find_jurisdictions_with_rising_activity"
@@ -94,7 +125,6 @@ def review(record: dict, cutoff: str | None, region: int | None = None) -> dict:
         if isinstance(c["output"], dict) and c["output"].get("error")
     ]
     if errors:
-        answer = "\n".join(record.get("answer") or [])
         checks["error_message_preserved"] = all(
             e.get("message") and e["message"] in answer for e in errors
         )
@@ -104,6 +134,35 @@ def review(record: dict, cutoff: str | None, region: int | None = None) -> dict:
         "semantic_answer_review_required": True,
         "tool_calls": len(calls),
     }
+
+
+def scan_membership_consistent(payload: dict) -> bool:
+    """Check displayed membership against rows, allowing a declared result limit."""
+    rows = payload.get("rising")
+    if not isinstance(rows, list):
+        return False
+    codes = [r.get("jurisdiction") for r in rows]
+    return (
+        bool(all(isinstance(code, str) for code in codes))
+        and len(set(codes)) == len(codes)
+        and payload.get("rising_jurisdictions") == codes
+        and payload.get("n_returned") == len(codes)
+        and isinstance(payload.get("n_rising_total"), int)
+        and payload["n_rising_total"] >= len(codes)
+    )
+
+
+def scan_answer_membership(answer: str, payload: dict) -> bool:
+    """Check code lists; other answer formats require semantic review."""
+    expected = [r["jurisdiction"] for r in payload.get("rising", [])]
+    if not expected:
+        return bool(payload.get("display_text")) and payload["display_text"] in answer
+    lists = re.findall(r"\b[A-Z]{2}(?:,\s*[A-Z]{2})+\b", answer)
+    return bool(lists) and all(
+        len(codes := re.findall(r"[A-Z]{2}", text)) == len(expected)
+        and set(codes) == set(expected)
+        for text in lists
+    )
 
 
 def main():

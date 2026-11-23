@@ -46,7 +46,9 @@ _MODELS = [
 ]
 
 for name, model in _MODELS:
-    schema = model.model_json_schema()
+    schema = model.model_json_schema(
+        mode="serialization" if name.endswith("_output") else "validation"
+    )
     out = SCHEMA_DIR / f"{name}.json"
     out.write_text(json.dumps(schema, indent=2) + "\n", encoding="utf-8")
     print(f"  wrote {out}")

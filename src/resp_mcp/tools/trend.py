@@ -74,6 +74,8 @@ def register(mcp: FastMCP) -> None:
         DO NOT use for prior-season comparison — use compare_to_prior_seasons.
 
         Returns: weekly series, trend direction, % change, provenance, and caveats.
+        The trend heuristic belongs to this application; CDC supplies the source
+        observations, not the application's trend classification.
         """
         try:
             return await _assess_trend_impl(
