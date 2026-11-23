@@ -42,8 +42,12 @@ not a raw provider export.
 - Ruff lint/format, offline lock consistency and whitespace checks passed.
 
 Reproduce using the commands in VERIFICATION.md and eval/phoenix/README.md.
-The updated GitHub workflow runs the credential-free checks on Ubuntu when
-published; remote CI status must be checked separately.
+The updated workflow is configured to run credential-free checks on Ubuntu.
+After pushing the fixes, GitHub's public API lists CI as active but reports zero
+workflow runs for the entire repository. A remote pass is therefore unverified.
+The workflow also supports manual dispatch. In GitHub's Actions tab, allow fork
+workflows if prompted, check repository Actions permissions, then select CI and
+Run workflow on main. Do not describe local verification as a GitHub CI pass.
 
 ## Remaining work with current access
 
