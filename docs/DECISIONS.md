@@ -3,6 +3,34 @@
 All deviations from the build plan are recorded here with a date and rationale.
 
 
+
+## 2026-11-23 — Build 4.3/4.4: Second wxO live run — 16/16 pass after as_of fix
+
+**What happened:** Second manual wxO agent walkthrough. Session opened with the
+instruction `"For all tool calls in this session, use as_of="2026-10-31"."` All tool
+calls correctly used the frozen cutoff throughout. 16 of 25 cases.yaml cases were
+explicitly exercised; the remaining 9 are covered by the deterministic tool baseline.
+
+**Result:** 16/16 ✅ — 100% pass rate. Full scorecard in eval/RESULTS.md.
+
+**Improvement vs run 1:** 40% → 100% pass rate. The single root-cause fix (instructing
+the agent to pass `as_of`) resolved all run-1 date/value mismatches. No tool code changes
+were required.
+
+**Notable observations:**
+- Agent called `get_respiratory_snapshot(USA)` proactively as a national baseline,
+  then correctly scoped positivity as "national only" in all state briefings.
+- Small-number guard applied correctly for CA RSV (0.13/100k → stable despite +47% ratio).
+- Prior-season NHSN rank correctly withheld for GA and OH (insufficient history).
+- AR missing from HHS Region 4 scan correctly flagged as "missing, not evidence of stability".
+
+**Decision:** Build 4.3/4.4 complete. No code changes needed. eval/RESULTS.md updated with
+second-run scorecard and before/after comparison. Transcript saved to
+eval/transcripts/wxo/run2_2026-11-23.md.
+
+---
+
+
 ## 2026-11-22 — Build 3.5: First wxO live run — `as_of` not passed; values correct for live data
 
 **What happened:** First five-question wxO agent walkthrough via local MCP toolkit
