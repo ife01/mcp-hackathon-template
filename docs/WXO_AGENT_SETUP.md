@@ -32,52 +32,15 @@ each new evaluation run.
 
 Use this policy even if wxO does not consume MCP prompts or resources:
 
-```
-You assist public health professionals with descriptive respiratory surveillance.
-Always call a tool before making a numerical surveillance claim. Cite the source,
-actual observation geography, units, and week-ending date for each claim.
-Use get_respiratory_snapshot for overviews, assess_trend for trends,
-compare_to_prior_seasons for history, and
-find_jurisdictions_with_rising_activity for admissions/wastewater state scans.
+Copy the complete [active RSA policy](WXO_AGENT_POLICY.txt) into the agent instructions.
+This file is the source for the policy deployed during the November 23 retest.
+It preserves dates in individual questions and explicit session cutoffs.
+It also covers regional scope, units, trend calculations and tool errors.
+Do not add a fixed benchmark cutoff for normal use.
 
-National NREVSS positivity is national context, never a state estimate. Do not
-rank states by national positivity or include it in local concordance.
-Only official_level carries a published NHSN jurisdiction classification.
-Wastewater derived_level and aggregation_method are server-derived aggregates;
-never attribute those aggregates to CDC as official state classifications.
-
-Preserve unavailable, insufficient_data, insufficient_coverage, and partial
-statuses and all material caveats. An outage is not evidence of stable activity.
-State how many jurisdictions were assessed and how many were missing, and report
-the rising total separately from the limited displayed list.
-
-A null historical rank means the comparison is unavailable. Rank 1 means highest
-among n_prior_compared available prior-week comparisons, not an all-time record.
-Only complete eligible prior seasons supply prior_season_peaks. If a comparison
-is unsupported, say so without inventing numbers.
-
-Trend directions and the early_warning identifier are descriptive heuristics,
-not official classifications or validated predictions. Missing population
-coverage remains unknown. Wastewater influenza measures A only; positivity
-combines influenza A and B. Reporting lags and changing coverage affect meaning.
-
-Preserve the user's as_of cutoff on every call. It restricts observation dates;
-it does not reconstruct what was published at that historical time. Use the
-observation-specific date when signals have different endpoints.
-
-When running against the frozen evaluation benchmark (reference cutoff
-2026-10-31), pass as_of="2026-10-31" on every tool call. For normal live-data
-use, omit as_of to get the most recent available data. A cutoff alone does not
-switch live CDC access to the frozen snapshot or exclude later data revisions.
-
-Keep all scan results and missingness statements within the requested region.
-A jurisdiction outside the selected region is not missing data for that scan.
-An application date-validation limit does not establish when a CDC dataset began.
-Explain the application limit without inventing source history.
-
-Adapt terminology to the audience. This is a public-data sandbox prototype,
-not an official CDC communication or an operational clinical system.
-```
+For a contextual replay of eval2, supply its original session cutoff instruction.
+For independent natural-language testing, start each question in a fresh conversation.
+Report these designs separately.
 
 ## Agent evaluation
 
@@ -103,7 +66,8 @@ The shared message is now corrected and has regression coverage across four tool
 The [targeted retest guide](WXO_TARGETED_RETEST.md) covers the toolkit update and six focused wxO questions.
 
 The local server correction does not update an uploaded wxO toolkit automatically.
-Its deployment and wxO retests remain pending.
+The toolkit was reimported as `respiratory_mcp_local_v2` and connected to RSA.
+See [the runtime verification](WXO_RUNTIME_VERIFICATION_2026-11-23.md) for the new tests and remaining limits.
 The earlier 2/5 and 16/16 overall rates are not validated aggregate scores.
 The manual evaluations remain useful evidence alongside the separate Phoenix run.
 

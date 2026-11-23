@@ -80,7 +80,11 @@ The server error at review time included a broad statement about NHSN beginning 
 The shared message now identifies the application limit without asserting source inception.
 Local regression checks cover all four tools.
 The [targeted retest guide](../docs/WXO_TARGETED_RETEST.md) describes the required toolkit update and six wxO questions.
-No corrected deployment or new wxO retest is claimed here.
+The corrected toolkit is now active as `respiratory_mcp_local_v2` on RSA.
+The [runtime verification](../docs/WXO_RUNTIME_VERIFICATION_2026-11-23.md) records the original-session replay, fresh tests and two policy revisions.
+All six final questions preserve cutoff arguments; the regional call preserves Region 4 scope.
+Strict verbatim error preservation remains incomplete. A supplemental historical answer mislabels the peak denominator despite a correct tool payload.
+These unresolved answer defects remain documented. The new runs do not change the Phoenix scores.
 
 ### How the records are counted
 

@@ -3,7 +3,8 @@
 The local server fix separates the application date limit from CDC dataset history.
 All four tools return the corrected message for an unsupported early date.
 The updated package is active in wxO as `respiratory_mcp_local_v2`.
-RSA uses its four tools. The complete six-question retest remains pending.
+RSA uses its four tools. The six-question retest now has complete captured records.
+See [runtime verification](WXO_RUNTIME_VERIFICATION_2026-11-23.md) for the results, policy changes and remaining error-fidelity limit.
 
 ## Verified reimport on November 23, 2026
 
@@ -17,8 +18,8 @@ Its actual `assess_trend` call used Georgia, influenza, hospital admissions and 
 The tool returned the corrected application-limit error. The final answer preserved that distinction.
 See the [sanitized run evidence](../eval/transcripts/wxo/2026-11-23-v2-date-boundary.json).
 
-This directed smoke test confirms the runtime correction for question 6.
-It does not establish a pass for the natural-language retest or questions 1–5.
+This directed smoke test confirmed the runtime correction for question 6.
+The subsequent natural-language tests are recorded separately in the runtime verification.
 The Phoenix results remain separate evidence.
 
 Refresh the wxO page and select **RSA** for further tests.
@@ -68,7 +69,7 @@ Record that version and the Git commit printed above.
 ## Agent instructions for the retest
 
 Keep the public health policy in [WXO_AGENT_SETUP.md](WXO_AGENT_SETUP.md#agent-instructions).
-For this live retest, omit its benchmark-only paragraph that fixes every call to October 31.
+Use the active RSA policy without adding a fixed benchmark cutoff.
 Do not add a session-wide cutoff message.
 The questions themselves must supply the dates.
 
@@ -135,5 +136,5 @@ Remove credentials before sharing files.
 
 These six retests do not replace or invalidate the earlier manual evaluations.
 They check the known failures after the toolkit and instruction update.
-Only the directed date-boundary smoke test above has new live wxO evidence.
-Do not report the full six-question retest as complete without its records.
+The runtime verification includes the six new natural-language records and all failed development attempts.
+Do not report complete instruction compliance: some final error answers omit part of the tool message.

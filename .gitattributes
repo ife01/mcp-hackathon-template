@@ -3,3 +3,4 @@
 eval/snapshot_v2/** -text
 # Preserve source bytes and intentional original whitespace; do not style-clean evidence.
 eval/transcripts/wxo/originals/** -text -whitespace
+eval/transcripts/wxo/2026-11-23-runtime-retest/** -text -whitespace

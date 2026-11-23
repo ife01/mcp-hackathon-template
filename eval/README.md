@@ -15,6 +15,9 @@
    actual wxO workflow. The [manual review](transcripts/wxo/MANUAL_REVIEW_2026-11-23.md)
    preserves both files and documents failures, improvements and evidence limits.
 
+The [wxO runtime verification](../docs/WXO_RUNTIME_VERIFICATION_2026-11-23.md) adds complete tool traces for the November 23 replays and retests.
+It distinguishes original-session replay, fresh questions and remaining error-message fidelity limits.
+
 These layers complement each other. Phoenix results do not certify wxO answers.
 The baseline is deliberately not reported as an agent success rate. The recorded
 replay timings are not live cold/warm latency measurements.
