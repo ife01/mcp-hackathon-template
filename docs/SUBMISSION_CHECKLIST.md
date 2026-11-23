@@ -4,6 +4,10 @@ This checklist supersedes the earlier Build 5.5 readiness claims.
 The user confirmed an end-of-business submission extension for November 23.
 Use the organizer's participant instructions for the final submission channel and receipt.
 
+Submission tag: [v1.1-hackathon](https://github.com/ife01/mcp-hackathon-template/tree/v1.1-hackathon).
+This new tag includes the fixes, evaluation evidence and this checklist update.
+The earlier `v1.0-hackathon` tag remains unchanged.
+
 ## Required deliverables
 
 GSA lists a GitHub repository, presentation slide deck and evaluation documentation.
@@ -13,7 +17,7 @@ Follow any additional participant-specific instructions.
 
 | Item | Current evidence | Remaining action |
 | --- | --- | --- |
-| Complete documented repository | Public repository; code and evidence on main | Use the final main commit in the submission |
+| Complete documented repository | Public repository; code and evidence included in v1.1-hackathon | Use the new submission tag link |
 | Evaluation documentation | [Combined results](../eval/RESULTS.md), frozen baseline, Phoenix results, API traces and manual wxO retests | Include this link; preserve the separate evidence labels |
 | Presentation slide deck | No PPTX or presentation PDF found in this checkout | Complete or locate the deck and attach it as instructed |
 | Submission delivery | No portal receipt or final submission confirmation observed | Send the required links and files through the organizer's channel; retain the receipt |
@@ -32,18 +36,21 @@ A live public production deployment is not required; the event scope is a sandbo
 | Trend attribution follow-up | Three independent captured trend answers attribute the heuristic to the application |
 | Latest manual UI retest | Six targeted visible-answer reviews pass; raw tool details were not supplied |
 | Phoenix | Separate 15-case frozen-agent run; original scores and limitations unchanged |
-| Remote GitHub CI | Public API still reports zero workflow runs as of this check; no remote pass claimed |
-| Existing v1.0-hackathon tag | Points to old commit 27c232255c95fe530e9415ec531e87732cf19aa3; excludes later fixes |
+| Remote GitHub CI | [Run 45219261002 passed](https://github.com/ife01/mcp-hackathon-template/actions/runs/45219261002) on a90f51e36ef65141bcc5ce2c0e2279cafd3bef2f |
+| Submission tag | v1.1-hackathon includes all fixes and evaluation documentation; v1.0-hackathon remains the earlier candidate |
 
 See [scan verification](WXO_SCAN_FIX_2026-11-23.md) and the [successful manual retest](../eval/transcripts/wxo/2026-11-23-manual-success/REVIEW.md).
+The successful CI run passed lint, formatting, tests, Phoenix dry-run validation, frozen evaluation and MCP integration checks.
+It verified commit `a90f51e`; the new submission tag adds only this checklist update to that verified revision.
+
 Historical Docker, transport and coverage results retain their original scope in [VERIFICATION.md](VERIFICATION.md).
 They were not rerun for this documentation update.
 
 ## Final packaging and rehearsal
 
 - [ ] Complete or locate the required slide deck.
-- [ ] Enable fork Actions if needed, then run the CI workflow on final main. The reason for zero runs is not confirmed.
-- [ ] Link the final main commit, or create a new submission tag after the last change. Do not submit the stale tag as current.
+- [x] Enable Actions and obtain a successful remote CI run; linked above.
+- [x] Create the new v1.1-hackathon submission tag after the checklist update; preserve the old tag.
 - [ ] Rehearse with RSA and the v3 toolkit using the current policy. Check source dates and visible claims.
 - [ ] Disclose the historical peak-denominator explanation defect. Verify that feature before demonstrating peak comparisons.
 - [ ] Include repository, deck and evaluation links in the organizer's submission process and retain confirmation.
