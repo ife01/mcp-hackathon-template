@@ -101,6 +101,15 @@ Its membership, payload consistency, cutoff and application-attribution checks p
 Do not suppress the strict failure or report all checks as passing.
 New checks apply to this follow-up; previously stored scores retain their original check definitions.
 
+## Subsequent successful manual retest
+
+The user supplied another six-question RSA conversation with UI times from 11:29 AM to 11:32 AM.
+All six visible answers meet the targeted correctness criteria, including the 43-member national list and application attribution.
+The unsupported-date answer preserves the complete corrected message.
+See the [manual review](../eval/transcripts/wxo/2026-11-23-manual-success/REVIEW.md) and its separate transcribed evidence.
+No raw tool details accompany that UI session. The API traces above remain a separate verification.
+This does not resolve the historical peak-denominator defect or change Phoenix scores.
+
 ## Scope and remaining limits
 
 These are development and targeted regression checks, not independent holdout accuracy estimates.

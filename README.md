@@ -135,11 +135,12 @@ Trends, concordance patterns, season ranks, and site aggregates are descriptive 
 | Deterministic tool baseline | 25 / 25 (155 assertions) | **100%** | Automated; frozen snapshot_v2 replay; hash-verified |
 | wxO manual run 1 | 5 questions | No validated overall rate | Exposed four historical-cutoff failures; forecast refusal demonstrated |
 | wxO manual run 2 | 14 task prompts | No validated overall rate | Improved date handling; remaining geography and source-history explanation errors |
+| wxO manual v3 retest | 6 questions in one conversation | Six visible-answer reviews pass; no overall accuracy claim | User-supplied answers; raw tool details not included |
 | Phoenix agent + semantic judges | 15 frozen questions | **15/15** correctness, scope and public health | One real-model run; same model for both roles; grading corrections documented |
 
-The [manual wxO review](eval/transcripts/wxo/MANUAL_REVIEW_2026-11-23.md) links both unchanged original records. It distinguishes observed improvements, remaining failures and pending retests. The Phoenix run used a separate agent; its scores do not certify wxO performance.
+The [manual wxO review](eval/transcripts/wxo/MANUAL_REVIEW_2026-11-23.md) links both unchanged original records. It distinguishes observed improvements and remaining failures. The [latest successful manual retest](eval/transcripts/wxo/2026-11-23-manual-success/REVIEW.md) adds six visible-answer passes. The Phoenix run used a separate agent; its scores do not certify wxO performance.
 
-Latest model run: [Phoenix results and limitations](eval/phoenix/RESULTS_2026-11-23.md).
+Recorded Phoenix run: [Phoenix results and limitations](eval/phoenix/RESULTS_2026-11-23.md).
 
 Full details: [`eval/RESULTS.md`](eval/RESULTS.md) · [`docs/VERIFICATION.md`](docs/VERIFICATION.md) · [`eval/README.md`](eval/README.md)
 

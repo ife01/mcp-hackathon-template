@@ -80,7 +80,7 @@ The server error at review time included a broad statement about NHSN beginning 
 The shared message now identifies the application limit without asserting source inception.
 Local regression checks cover all four tools.
 The [targeted retest guide](../docs/WXO_TARGETED_RETEST.md) describes the required toolkit update and six wxO questions.
-The corrected toolkit is now active as `respiratory_mcp_local_v2` on RSA.
+The earlier corrected toolkit was registered as `respiratory_mcp_local_v2`; RSA now uses v3, documented below.
 The [runtime verification](../docs/WXO_RUNTIME_VERIFICATION_2026-11-23.md) records the original-session replay, fresh tests and two policy revisions.
 All six final questions preserve cutoff arguments; the regional call preserves Region 4 scope.
 Strict verbatim error preservation remains incomplete. A supplemental historical answer mislabels the peak denominator despite a correct tool payload.
@@ -115,6 +115,19 @@ The historical peak-labeling defect from the earlier supplemental test remains o
 
 The updated tool baseline passes 25 cases and 155 assertions; all 386 regression tests pass.
 These wxO findings do not change the separate Phoenix scores below.
+
+## Successful user manual wxO retest — 2026-11-23, 11:29–11:32 AM
+
+The user supplied six RSA answers after the v3 deployment.
+All six pass the targeted visible-answer review: dated Georgia rate and trend, national positivity, national membership, Region 4 scope and the unsupported-date explanation.
+The national list contains exactly 43 unique jurisdictions and matches the separately captured v3 membership.
+Trend attribution is application-derived, and the final date error preserves the complete application-limit explanation.
+
+See the [manual review and evidence boundaries](transcripts/wxo/2026-11-23-manual-success/REVIEW.md), [transcribed answers](transcripts/wxo/2026-11-23-manual-success/answers.json) and [file hash](transcripts/wxo/2026-11-23-manual-success/manifest.json).
+This is one shared conversation with six visible-answer passes, not a validated overall wxO accuracy rate.
+No raw tool details accompany this particular UI session; earlier API traces remain separate evidence.
+The historical peak-denominator explanation defect was not retested here and remains disclosed.
+Phoenix scores are unchanged.
 
 ## Phoenix agent evaluation — 2026-11-23
 

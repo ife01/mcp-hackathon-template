@@ -7,6 +7,9 @@ See [the scan-fix verification](WXO_SCAN_FIX_2026-11-23.md) for the current sour
 RSA uses its four tools. The six-question retest now has complete captured records.
 See [runtime verification](WXO_RUNTIME_VERIFICATION_2026-11-23.md) for the results, policy changes and remaining error-fidelity limit.
 
+The subsequent [user manual retest](../eval/transcripts/wxo/2026-11-23-manual-success/REVIEW.md) passes all six visible-answer criteria.
+Its pasted answers do not include new raw tool traces.
+
 ## Verified reimport on November 23, 2026
 
 The first upload changed stored files but left the old error active.

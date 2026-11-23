@@ -21,6 +21,9 @@ It distinguishes original-session replay, fresh questions and remaining error-me
 The later [scan-fix verification](../docs/WXO_SCAN_FIX_2026-11-23.md) checks exact returned membership and application heuristic attribution on wxO v3.
 It preserves actual calls and responses separately from the earlier scores.
 
+The [successful manual v3 retest](transcripts/wxo/2026-11-23-manual-success/REVIEW.md) records six targeted visible-answer passes in a shared conversation.
+It does not include new raw tool traces or change the separate Phoenix scores.
+
 These layers complement each other. Phoenix results do not certify wxO answers.
 The baseline is deliberately not reported as an agent success rate. The recorded
 replay timings are not live cold/warm latency measurements.

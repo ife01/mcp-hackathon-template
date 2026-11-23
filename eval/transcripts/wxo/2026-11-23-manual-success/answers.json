@@ -1,0 +1,68 @@
+{
+  "evidence_type": "user_supplied_manual_wxo_answers",
+  "session_date": "2026-11-23",
+  "ui_times": "11:29 AM to 11:32 AM; timezone not embedded in pasted transcript",
+  "agent_display_name": "RSA",
+  "expected_deployment": "respiratory_mcp_local_v3, source 13d68fa, based on preceding verified deployment; not independently identified in the pasted UI text",
+  "model_id_in_pasted_text": null,
+  "tool_calls_and_responses_included": false,
+  "conversation_design": "Six questions in the supplied shared-conversation excerpt; no cutoff preamble appears in that excerpt.",
+  "transcription_note": "Transcribed from the user message; layout, punctuation and Unicode spacing normalized. This is not a byte-identical provider export.",
+  "assessment_scope": "Visible answer correctness against the targeted criteria and separately retained v3 evidence; not verification of this session actual tool arguments or responses.",
+  "records": [
+    {
+      "case": 1,
+      "ui_answer_time": "11:29 AM",
+      "prompt": "What was the influenza hospital admission rate in Georgia for the week ending October 31, 2026?",
+      "answer": "Influenza hospital admission rate in Georgia for the week ending 2026-10-31: 1.76 admissions per 100 000 (official level Low).\n\nObservation date: 2026-10-31 (week ending)\nJurisdiction: GA (Georgia)\nPathogen: influenza\nSignal: hospital_admissions (NHSN)\nSource: CDC Weekly Hospital Respiratory Admission Levels and Rates (dataset vdzy-6i9v)\nTrend heuristic (application-derived from CDC data) classifies the recent 4-week pattern as increasing (method 2w_vs_prior_2w, pct change approximately 88.8%).\n\nCaveat: the as_of filter limits the data to observations retrieved now; it does not reconstruct what was published at that historical time.",
+      "visible_answer_review": "pass",
+      "review_reason": "Correct requested week, 1.76 admissions per 100,000 and source; fractional trend change rendered as 88.8%."
+    },
+    {
+      "case": 2,
+      "ui_answer_time": "11:30 AM",
+      "prompt": "Is influenza increasing or decreasing in Georgia as of October 31, 2026?",
+      "answer": "As of the week ending 2026-10-31, influenza hospital admissions in Georgia are increasing.\n\nTrend direction: increasing (application-derived heuristic, method 2w_vs_prior_2w)\nSource: CDC Weekly Hospital Respiratory Admission Levels and Rates (dataset vdzy-6i9v) - latest observation 1.76 admissions per 100 000 (official level Low).",
+      "visible_answer_review": "pass",
+      "review_reason": "Increasing direction with explicit application heuristic attribution."
+    },
+    {
+      "case": 3,
+      "ui_answer_time": "11:30 AM",
+      "prompt": "What does national test positivity show for influenza as of October 31, 2026?",
+      "answer": "National influenza test-positivity (influenza A + B) for the week ending 2026-10-31 is 10.1% positive.\n\nObservation date: 2026-10-31 (week ending)\nJurisdiction: USA (national)\nPathogen: influenza\nSignal: test_positivity (NREVSS) - unit percent_positive\nSource: CDC Percent of Tests Positive for Viral Respiratory Pathogens dataset (seuz-s2cv)\nThe application-derived trend heuristic classifies the recent 4-week pattern as increasing (method 2w_vs_prior_2w, pct change approximately 65%).\n\nCaveats: recent weeks may be incomplete or revised; the as_of filter limits data to observations retrieved now and does not reconstruct what was published at that historical time.",
+      "visible_answer_review": "pass",
+      "review_reason": "National geography, 10.1% positivity, influenza A+B and revision caveats; fractional trend change rendered as 65%."
+    },
+    {
+      "case": 4,
+      "ui_answer_time": "11:31 AM",
+      "prompt": "Which US states had rising influenza hospital admissions as of October 31, 2026?",
+      "answer": "U.S. states and DC with rising influenza hospital admissions (hospital_admissions) as of the week ending 2026-10-31\n\nScope: US states and DC - Signal: influenza hospital_admissions - Latest observation week ending 2026-10-31\n\nReturned rising jurisdictions (43):\nFL, LA, PA, AL, CA, MS, KY, DE, NJ, TN, TX, SC, ID, NV, NY, SD, DC, WA, AR, NH, NC, AZ, IN, GA, NM, OR, ME, UT, CO, OH, OK, VA, WV, IL, MA, IA, MD, NE, RI, MI, MO, WI, MN\n\nCounts - Total rising before result limit: 43; Assessed: 48; Requested: 51; Insufficient data: 3; Unavailable: 0 (partial result).\n\nSource: CDC Weekly Hospital Respiratory Admission Levels and Rates (dataset vdzy-6i9v).\n\nCaveats: the as_of filter limits data to observations retrieved now and does not reconstruct what was published at that historical time; rising status requires four consecutive weeks of usable data.",
+      "visible_answer_review": "pass",
+      "review_reason": "43 unique displayed codes; membership agrees with the separately captured v3 response, and counts reconcile."
+    },
+    {
+      "case": 5,
+      "ui_answer_time": "11:31 AM",
+      "prompt": "Which HHS Region 4 states had rising flu admissions through October 31, 2026? Report missing data and the total before limiting.",
+      "answer": "HHS Region 4 states with rising influenza hospital admissions (hospital_admissions) through 2026-10-31\n\nScope: HHS Region 4 - Signal: influenza hospital_admissions - Latest observation week ending 2026-10-31\n\nReturned rising jurisdictions (8):\nFL, AL, MS, KY, TN, SC, NC, GA\n\nCounts - Total rising before result limit: 8; Assessed: 8; Requested: 8; Insufficient data: 0; Unavailable: 0 (status ok).\n\nSource: CDC Weekly Hospital Respiratory Admission Levels and Rates (dataset vdzy-6i9v).\n\nCaveats: the as_of filter limits data to observations retrieved now and does not reconstruct what was published at that historical time; rising status requires four consecutive weeks of usable data.",
+      "visible_answer_review": "pass",
+      "review_reason": "All eight Region 4 states; eight assessed and rising, zero insufficient or unavailable."
+    },
+    {
+      "case": 6,
+      "ui_answer_time": "11:32 AM",
+      "prompt": "Georgia flu admissions as of January 1, 2015.",
+      "answer": "invalid_input: as_of date '2015-01-01' is before the earliest supported date for this application (2020-01-01). This application limit does not establish a CDC dataset's start date or whether earlier records exist. Choose an as_of date on or after 2020-01-01.",
+      "visible_answer_review": "pass",
+      "review_reason": "Complete corrected application-limit explanation; no inferred CDC dataset inception."
+    }
+  ],
+  "limits": [
+    "Six related questions in one conversation, not six independent sessions.",
+    "No raw tool traces, fresh-call compliance, model metadata, latency or cost verification for this UI session.",
+    "Earlier API-captured evidence remains separate; Phoenix scores are unchanged.",
+    "This retest does not cover the previously observed historical peak-denominator explanation defect."
+  ]
+}

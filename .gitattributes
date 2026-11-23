@@ -5,3 +5,5 @@ eval/snapshot_v2/** -text
 eval/transcripts/wxo/originals/** -text -whitespace
 eval/transcripts/wxo/2026-11-23-runtime-retest/** -text -whitespace
 eval/transcripts/wxo/2026-11-23-scan-fix/** -text -whitespace
+eval/transcripts/wxo/2026-11-23-manual-success/answers.json -text
+eval/transcripts/wxo/2026-11-23-manual-success/manifest.json -text

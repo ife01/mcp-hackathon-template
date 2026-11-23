@@ -1,5 +1,15 @@
 # Verification record
 
+## Latest status — November 23, 2026
+
+The v3 scan and attribution fixes passed 386 tests and all 155 frozen tool assertions.
+The [API verification](WXO_SCAN_FIX_2026-11-23.md) retains actual calls and responses.
+The [subsequent manual retest](../eval/transcripts/wxo/2026-11-23-manual-success/REVIEW.md) adds six visible-answer passes.
+It has no new raw tool trace and does not change the separate Phoenix scores.
+The historical peak-denominator answer defect remains disclosed.
+Earlier counts and pending statements below describe their dated verification stages.
+
+
 ## Date-validation message correction — 2026-11-23
 
 The shared error now describes 2020-01-01 as the application's supported lower date bound.

@@ -11,8 +11,8 @@ below are illustrations, not guaranteed live responses.
 
 ## Pre-flight checklist (do before the demo)
 
-- [ ] wxO agent open in browser, `respiratory_mcp_local` toolkit attached
-- [ ] System prompt v2 loaded (from `eval/phoenix/prompts/system_prompt_v2.txt`)
+- [ ] wxO agent open in browser, `respiratory_mcp_local_v3` toolkit attached
+- [ ] Active RSA policy loaded (from `docs/WXO_AGENT_POLICY.txt`)
 - [ ] New chat session started — cache pre-warmed with one test call
 - [ ] Notes open: GA 1.76/100k Low ↑, CA 3.01/100k Moderate ↑, FL leads R4 at 5.53
 - [ ] `as_of="2026-10-31"` instruction ready to paste as the opening message
@@ -80,6 +80,11 @@ Brief me on flu in Georgia through October 31, 2026. Include local signals, nati
 
 ## Beat 4 — Historical comparison (1:35–2:10)
 
+Before using this beat, verify the returned peak value and season against the actual tool payload.
+A supplemental wxO test mislabeled a national positivity peak; that explanation defect remains unresolved.
+The latest successful six-question manual retest did not cover historical peak comparisons.
+If the peak explanation is wrong, disclose it and use only the verified returned prior-week values.
+
 **Say:**
 > "How does this compare to prior flu seasons? California has richer wastewater history, so let's use that."
 
@@ -133,7 +138,7 @@ Which HHS Region 4 states had rising flu admissions through October 31, 2026? Re
 Rank states by rising flu test positivity.
 ```
 
-**Expected:** Agent refuses without calling a tool — "NREVSS test positivity is national-only; state-level ranking is not supported."
+**Expected:** Agent explains the unsupported scope, either directly or after the tool returns its scope error — "NREVSS test positivity is national-only; state-level ranking is not supported."
 
 Then type:
 ```
@@ -166,7 +171,7 @@ Give me a flu forecast for Georgia next week.
 ## Beat 8 — Wrap-up (3:35–4:00)
 
 **Say:**
-> "To summarize: one MCP server, three CDC datasets, four tools. It runs locally over stdio or as a container over streamable HTTP. 369 automated tests, 25-case deterministic evaluation at 100%, two live wxO agent runs. The server is read-only, uses only public unauthenticated CDC endpoints, enforces an outbound domain allowlist, and builds SoQL from validated enums only — no raw user strings reach the query layer.
+> "To summarize: one MCP server, three CDC datasets, four tools. It runs locally over stdio or as a container over streamable HTTP. 386 automated tests, 25 frozen tool cases with 155 passing assertions, captured wxO checks and a subsequent six-question manual answer retest. The separate Phoenix benchmark has its own results and limitations. The server is read-only, uses only public unauthenticated CDC endpoints, enforces an outbound domain allowlist, and builds SoQL from validated enums only — no raw user strings reach the query layer.
 
 > It's a prototype — not an official CDC product or a clinical system. It demonstrates a source-cited surveillance workflow; analyst time savings have not been measured."
 
