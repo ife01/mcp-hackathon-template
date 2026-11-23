@@ -212,8 +212,8 @@ access remains open.
 **Layout mapping:** `src/example_server/` will be renamed to `src/resp_mcp/` in
 Build 0.4. `app.py` becomes `server.py` (per the plan's architecture). `models.py`
 splits into `models/common.py` and `models/tool_io.py`. `utils.py` is replaced by
-the hardened `clients/socrata.py`. All other submodule paths map 1:1 (see
-docs/NOTES_TEMPLATE.md §2 for the full table).
+the hardened `clients/socrata.py`. All other submodule paths map 1:1.
+These notes describe the initial migration; the current layout is in the project README.
 
 **wxO transport choice:** Streamable HTTP (remote MCP toolkit via IBM Code Engine or
 prebuilt image) is the target for the Phase 5 container demo — it gives wxO a stable

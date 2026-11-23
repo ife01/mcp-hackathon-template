@@ -7,6 +7,9 @@ Results include observation dates, geography, units, coverage and analytical lim
 Repository: [ife01/respiratory-surveillance-mcp](https://github.com/ife01/respiratory-surveillance-mcp).
 Verified code and evaluation evidence: [v1.1-hackathon](https://github.com/ife01/respiratory-surveillance-mcp/tree/v1.1-hackathon).
 
+The slide deck, standalone evaluation document and demo video are submitted separately.
+They are not stored in this repository.
+
 > Prototype for the GSA "Model Context Protocol Server and SI Agent Government Hackathon."
 > Primary platform: IBM watsonx Orchestrate (wxO) via local MCP toolkit.
 > Not an official CDC product. Not a clinical system. Not a validated outbreak prediction service.
@@ -270,6 +273,17 @@ Inputs have explicit length bounds. Concurrent identical reads share one upstrea
 Platform prompts and traces still need appropriate handling. See [SECURITY.md](SECURITY.md) for the controls and limits.
 
 ---
+
+## Fork this project
+
+Fork the `main` branch into your organization, then follow the [quickstart](QUICKSTART.md).
+Update deployment repository URLs and image names to use your organization's fork.
+Copy the relevant `.env.example` file for local configuration. Keep credentials out of Git.
+
+The [v1.1-hackathon tag](https://github.com/ife01/respiratory-surveillance-mcp/tree/v1.1-hackathon) preserves the original submission code and evidence.
+Recorded evaluation scores apply to their documented code, data and model versions.
+Run the checks again after changing the server or agent policy.
+Retain the [MIT license](LICENSE) and source attribution when you reuse the project.
 
 ## Repository layout
 

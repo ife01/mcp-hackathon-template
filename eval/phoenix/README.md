@@ -1,6 +1,6 @@
 # Phoenix respiratory agent evaluation
 
-This harness follows .agents/skills/mcp-eval/SKILL.md: an agent uses MCP tools,
+In this harness, an agent uses MCP tools,
 independent frozen-data answers remain hidden, semantic judges score its final
 response, and Phoenix stores datasets, experiments and traces. It complements
 the earlier deterministic tool baseline in ../run_eval.py.

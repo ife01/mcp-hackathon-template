@@ -1,8 +1,7 @@
 # Submission checklist — November 23, 2026
 
-This checklist supersedes the earlier Build 5.5 readiness claims.
-The user confirmed an end-of-business submission extension for November 23.
-Use the organizer's participant instructions for the final submission channel and receipt.
+Submit the repository link and separate files through the organizers' submission form.
+Keep the submission receipt. A completed submission has not been confirmed here.
 
 Repository: [ife01/respiratory-surveillance-mcp](https://github.com/ife01/respiratory-surveillance-mcp).
 Submission tag: [v1.1-hackathon](https://github.com/ife01/respiratory-surveillance-mcp/tree/v1.1-hackathon).
@@ -20,7 +19,9 @@ Follow any additional participant-specific instructions.
 | --- | --- | --- |
 | Complete documented repository | Public repository; code and evidence included in v1.1-hackathon | Use the new submission tag link |
 | Evaluation documentation | [Combined results](../eval/RESULTS.md), frozen baseline, Phoenix results, API traces and manual wxO retests | Include this link; preserve the separate evidence labels |
-| Presentation slide deck | No PPTX or presentation PDF found in this checkout | Complete or locate the deck and attach it as instructed |
+| Presentation slide deck | Prepared outside the repository: Respiratory-MCP-Hackathon-Submission-v2.pptx | Upload through the submission form |
+| Standalone evaluation document | Prepared outside the repository: Respiratory-MCP-Hackathon-Evaluation.docx | Upload through the submission form |
+| Demo video | Prepared outside the repository: Demo-compressed-corrected.mp4 | Upload the corrected copy through the submission form |
 | Submission delivery | No portal receipt or final submission confirmation observed | Send the required links and files through the organizer's channel; retain the receipt |
 
 The deck must cover the problem, solution, technical approach and key decisions, and demonstration of functionality.
@@ -37,23 +38,25 @@ A live public production deployment is not required; the event scope is a sandbo
 | Trend attribution follow-up | Three independent captured trend answers attribute the heuristic to the application |
 | Latest manual UI retest | Six targeted visible-answer reviews pass; raw tool details were not supplied |
 | Phoenix | Separate 15-case frozen-agent run; original scores and limitations unchanged |
-| Remote GitHub CI | [Run 45219261002 passed](https://github.com/ife01/respiratory-surveillance-mcp/actions/runs/45219261002) on a90f51e36ef65141bcc5ce2c0e2279cafd3bef2f |
+| Recorded GitHub CI | [Run 45219867192 passed](https://github.com/ife01/respiratory-surveillance-mcp/actions/runs/45219867192) on submission commit 9af0c35 |
 | Submission tag | v1.1-hackathon includes all fixes and evaluation documentation; v1.0-hackathon remains the earlier candidate |
 
 See [scan verification](WXO_SCAN_FIX_2026-11-23.md) and the [successful manual retest](../eval/transcripts/wxo/2026-11-23-manual-success/REVIEW.md).
 The successful CI run passed lint, formatting, tests, Phoenix dry-run validation, frozen evaluation and MCP integration checks.
-It verified commit `a90f51e`; the new submission tag adds only this checklist update to that verified revision.
+That run verified submission commit `9af0c35`. Later repository cleanup does not change the recorded evaluation results.
 
 Historical Docker, transport and coverage results retain their original scope in [VERIFICATION.md](VERIFICATION.md).
 They were not rerun for this documentation update.
 
 ## Final packaging and rehearsal
 
-- [ ] Complete or locate the required slide deck.
+- [x] Prepare the slide deck and standalone evaluation document outside the repository.
+- [x] Save the corrected demo outside the repository; retain the original recording.
 - [x] Enable Actions and obtain a successful remote CI run; linked above.
 - [x] Create the new v1.1-hackathon submission tag after the checklist update; preserve the old tag.
 - [ ] Rehearse with RSA and the v3 toolkit using the current policy. Check source dates and visible claims.
-- [ ] Disclose the historical peak-denominator explanation defect. Verify that feature before demonstrating peak comparisons.
+- [x] Disclose the historical peak-denominator explanation defect in the submission materials.
+- [x] Add a correction caption for the demo's incorrect trend-week explanation.
 - [ ] Include repository, deck and evaluation links in the organizer's submission process and retain confirmation.
 
 CI and an immutable commit/tag improve verification and reproducibility; the event page does not list them as separate deliverables.
@@ -68,3 +71,8 @@ The model can still reformat generated display blocks and reuse prior conversati
 The supplemental historical peak-labeling error remains unresolved; the latest six questions did not test it.
 Phoenix uses a different agent and frozen replay. Its scores do not transfer to wxO.
 No measured analyst time savings, independent holdout accuracy or clinical validity is claimed.
+
+The recorded demo also contains incorrect week labels in RSA's trend explanation.
+Its correction caption identifies the latest window as October 24 and 31, versus October 10 and 17.
+The corresponding means are 1.350 and 0.715 admissions per 100,000, an increase of 88.8%.
+This caption corrects the presentation; it does not establish a fix to the agent's explanation behavior.
