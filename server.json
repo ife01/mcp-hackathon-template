@@ -1,10 +1,40 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
   "name": "io.github.ife01/respiratory-mcp-server",
-  "description": "Sandbox prototype for respiratory situational awareness using public CDC data with provenance and explicit uncertainty.",
+  "description": "Respiratory Season Situational Awareness MCP Server — real-time flu, COVID-19, and RSV situational awareness from public CDC data (NHSN, NWSS, NREVSS) with source-cited provenance, explicit geography, and analytical uncertainty. Read-only sandbox prototype for the GSA MCP Hackathon.",
   "repository": {
     "url": "https://github.com/ife01/mcp-hackathon-template",
     "source": "github"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "tools": [
+    {
+      "name": "get_respiratory_snapshot",
+      "description": "Current multi-pathogen situational snapshot for one jurisdiction: latest values, trends, concordance, provenance, and caveats."
+    },
+    {
+      "name": "assess_trend",
+      "description": "Four-consecutive-week heuristic trend (increasing/stable/decreasing) with supporting series and provenance for one pathogen/signal."
+    },
+    {
+      "name": "compare_to_prior_seasons",
+      "description": "Equivalent-week rank and complete prior-season peaks for one pathogen/signal versus up to 5 prior seasons."
+    },
+    {
+      "name": "find_jurisdictions_with_rising_activity",
+      "description": "Scan all 50 states + DC for rising hospital admissions or wastewater for one pathogen, with missingness counts and total before limiting."
+    }
+  ],
+  "prompts": [
+    { "name": "weekly_respiratory_briefing" },
+    { "name": "regional_hotspot_review" }
+  ],
+  "resources": [
+    { "uri": "resp://sources" },
+    { "uri": "resp://methods" },
+    { "uri": "resp://jurisdictions" }
+  ],
+  "transport": ["stdio", "streamable-http"],
+  "license": "MIT",
+  "prototype": true
 }

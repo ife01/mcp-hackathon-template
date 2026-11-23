@@ -18,7 +18,13 @@
 spec_version: v1
 kind: mcp
 name: respiratory_mcp_local
-description: "Respiratory Season Situational Awareness MCP Server — flu, COVID-19, and RSV situational awareness from public CDC data."
+description: >
+  Respiratory Season Situational Awareness MCP Server.
+  Provides real-time flu, COVID-19, and RSV situational awareness using public
+  CDC data (NHSN hospital admissions, NWSS wastewater, NREVSS test positivity).
+  Tools: get_respiratory_snapshot, assess_trend, compare_to_prior_seasons,
+  find_jurisdictions_with_rising_activity. Read-only sandbox prototype.
+  GSA MCP Hackathon submission — github.com/ife01/mcp-hackathon-template.
 command: python server.py
 env: []
 tools:

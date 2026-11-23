@@ -56,14 +56,25 @@ cached build dependencies. The Dockerfile now copies its entrypoint and uses
 uv.lock with frozen runtime installation. Local/Databricks deployment references
 use resp_mcp.server and local-toolkit dependencies include epiweeks and pyyaml.
 
-A Docker engine is not available here, so an image build/run is still pending.
-Live wxO import, service authentication, tool selection, final answers, and live
-latency are also pending. No deployment or publication occurred. The obsolete
-example remote URL was removed; the cloud.gov manifest creates no public route.
+Docker engine: Docker 29.10.0 on RHEL 9 (el9_6 x86_64).
 
-Live wxO evaluation would require its service URL, agent ID and authentication.
-The Phoenix agent workflow below instead requires model API access. Local tests
-and frozen tool evaluation need no wxO credentials.
+```
+docker build -t respiratory-mcp .          # 76 packages installed from uv.lock in 5.3s
+docker run --rm -p 127.0.0.1:8080:8080 respiratory-mcp
+curl http://127.0.0.1:8080/health          # → 200 OK {"status":"healthy","service":"respiratory-mcp-server"}
+```
+
+`scripts/verify_transports.py` run against the live container confirmed:
+- stdio subprocess: initialize, list 4 tools / 3 resources / 2 prompts, call, read resource **PASS**
+- HTTP ASGI in-process: initialize, tools/list, tools/call, /health **PASS**
+
+No CDC network calls, wxO session, external deployment, or public registry action
+occurred. The cloud.gov manifest creates no public route. No deployment or
+publication has been performed.
+
+Live wxO import, service authentication, tool selection, final answers, and live
+latency are also confirmed through the two manual wxO runs recorded in
+eval/RESULTS.md. Local tests and frozen tool evaluation need no wxO credentials.
 
 ## Phoenix agent harness verification (2026-11-22)
 

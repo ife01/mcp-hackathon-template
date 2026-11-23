@@ -1,23 +1,31 @@
 ---
 # cloud.gov (Cloud Foundry) deployment manifest.
 #
-# cloud.gov injects PORT=8080 at runtime; server.py picks that up and serves HTTP.
-# Deploy with the Python buildpack (no Docker needed):
+# cloud.gov injects PORT=8080 at runtime; server.py picks that up and serves
+# streamable-HTTP at /mcp with a health check at /health.
 #
+# Deploy with the Python buildpack (no Docker needed):
 #   cf login -a api.fr.cloud.gov --sso
 #   cf target -o <your-org> -s <your-space>
 #   cf push
 #
-# Rename the app and route to something unique to you before pushing.
+# IMPORTANT: no-route: true means NO public route is created by default.
+# A human must explicitly create and map a route before this app is reachable
+# from outside the platform. See SECURITY.md — sandbox-only deployment posture.
+#
+# Rename the app name to something unique before pushing.
 applications:
   - name: respiratory-mcp-server
     buildpacks:
       - python_buildpack
-    command: PYTHONPATH=src python main.py
+    command: PYTHONPATH=src uv run python main.py
     health-check-type: http
     health-check-http-endpoint: /health
     env:
-      PYTHONUNBUFFERED: 1
+      PYTHONUNBUFFERED: "1"
+      MCP_TRANSPORT: streamable-http
+      MCP_HOST: "0.0.0.0"
+      MCP_PORT: "8080"
     no-route: true
     disk_quota: 1G
-    memory: 256M
+    memory: 512M
