@@ -4,8 +4,9 @@ This checklist supersedes the earlier Build 5.5 readiness claims.
 The user confirmed an end-of-business submission extension for November 23.
 Use the organizer's participant instructions for the final submission channel and receipt.
 
-Submission tag: [v1.1-hackathon](https://github.com/ife01/mcp-hackathon-template/tree/v1.1-hackathon).
-This new tag includes the fixes, evaluation evidence and this checklist update.
+Repository: [ife01/respiratory-surveillance-mcp](https://github.com/ife01/respiratory-surveillance-mcp).
+Submission tag: [v1.1-hackathon](https://github.com/ife01/respiratory-surveillance-mcp/tree/v1.1-hackathon).
+This tag preserves the verified code and evaluation evidence. Later documentation edits appear on main.
 The earlier `v1.0-hackathon` tag remains unchanged.
 
 ## Required deliverables
@@ -36,7 +37,7 @@ A live public production deployment is not required; the event scope is a sandbo
 | Trend attribution follow-up | Three independent captured trend answers attribute the heuristic to the application |
 | Latest manual UI retest | Six targeted visible-answer reviews pass; raw tool details were not supplied |
 | Phoenix | Separate 15-case frozen-agent run; original scores and limitations unchanged |
-| Remote GitHub CI | [Run 45219261002 passed](https://github.com/ife01/mcp-hackathon-template/actions/runs/45219261002) on a90f51e36ef65141bcc5ce2c0e2279cafd3bef2f |
+| Remote GitHub CI | [Run 45219261002 passed](https://github.com/ife01/respiratory-surveillance-mcp/actions/runs/45219261002) on a90f51e36ef65141bcc5ce2c0e2279cafd3bef2f |
 | Submission tag | v1.1-hackathon includes all fixes and evaluation documentation; v1.0-hackathon remains the earlier candidate |
 
 See [scan verification](WXO_SCAN_FIX_2026-11-23.md) and the [successful manual retest](../eval/transcripts/wxo/2026-11-23-manual-success/REVIEW.md).

@@ -1,6 +1,11 @@
-# Respiratory Season Situational Awareness MCP Server
+# Respiratory Surveillance MCP
 
-**Turn public CDC respiratory surveillance into source-cited weekly briefings — with explicit geography, reporting lag, coverage, and analytical uncertainty — delivered through any MCP-compatible agent.**
+Use public CDC data to prepare source-cited respiratory surveillance briefings.
+The server combines hospital admissions, wastewater and national test positivity for influenza, COVID-19 and RSV.
+Results include observation dates, geography, units, coverage and analytical limits.
+
+Repository: [ife01/respiratory-surveillance-mcp](https://github.com/ife01/respiratory-surveillance-mcp).
+Verified code and evaluation evidence: [v1.1-hackathon](https://github.com/ife01/respiratory-surveillance-mcp/tree/v1.1-hackathon).
 
 > Prototype for the GSA "Model Context Protocol Server and SI Agent Government Hackathon."
 > Primary platform: IBM watsonx Orchestrate (wxO) via local MCP toolkit.
@@ -8,7 +13,10 @@
 
 ---
 
-## 30-second wxO briefing example
+## Example briefing
+
+This example uses the frozen reference for October 31, 2026.
+Live CDC observations can change after revisions.
 
 ```
 User  →  Brief me on flu in Georgia this week. Use as_of="2026-10-31".
@@ -37,7 +45,7 @@ Agent →  [calls get_respiratory_snapshot(jurisdiction="GA", pathogens=["influe
 | Name | What it answers | When to use | Returns |
 |---|---|---|---|
 | `get_respiratory_snapshot` | Current multi-pathogen snapshot for one jurisdiction | Weekly situation update starting point | Latest values, trends, concordance, provenance, caveats for 1–3 pathogens × 3 signals |
-| `assess_trend` | Is one signal rising, stable, or falling? | Drilling into a specific pathogen/signal for one jurisdiction | 4-week series, trend direction, pct/abs change, provenance |
+| `assess_trend` | Is one signal rising, stable, or falling? | Review one pathogen and signal in a jurisdiction | Weekly series, four-week heuristic trend, relative and absolute change, provenance |
 | `compare_to_prior_seasons` | How does this week compare to the same point in prior seasons? | Putting current activity in historical context | Equivalent-week rank, % of prior-season peaks, prior-season peaks table |
 | `find_jurisdictions_with_rising_activity` | Which states are rising right now? | Regional or national hotspot scan | Ranked list of jurisdictions with rising trend, missingness counts, total before limit |
 
@@ -46,7 +54,9 @@ These fields use the returned rows; `n_rising_total` remains the total before li
 Trend attribution distinguishes the application heuristic from CDC source observations.
 See [wxO scan verification](docs/WXO_SCAN_FIX_2026-11-23.md) for actual calls and answer checks.
 
-All tools accept an optional `as_of` date to restrict observation weeks. Live CDC responses can still be revised. Repeatable evaluation requires the frozen replay server, not just a date cutoff.
+All tools accept an optional `as_of` date to restrict observation weeks.
+Live CDC responses can still be revised.
+Use the frozen replay server for repeatable evaluation. A date cutoff alone does not select frozen data.
 
 ### Prompts
 
@@ -70,10 +80,10 @@ All tools accept an optional `as_of` date to restrict observation weeks. Live CD
 ```mermaid
 flowchart TD
     subgraph wxO["IBM watsonx Orchestrate"]
-        Agent["wxO Agent\n(system prompt v2)"]
+        Agent["RSA agent\n(active wxO policy)"]
     end
 
-    Agent -->|MCP stdio / streamable-HTTP| Tools
+    Agent -->|MCP over stdio| Tools
 
     subgraph Server["resp_mcp — FastMCP 4.x"]
         Tools["tools/\nget_snapshot · assess_trend\ncompare_seasons · scan"]
@@ -92,7 +102,10 @@ flowchart TD
     Client -->|HTTPS, read-only| CDC["Public CDC datasets\ndata.cdc.gov"]
 ```
 
-**Layering rule:** `analytics/` has zero network I/O. Source adapters use `clients/` for CDC access; tools orchestrate source retrieval and analysis.
+The `analytics/` modules make no network requests.
+Source adapters use `clients/` for CDC access. Tools combine source retrieval and analysis.
+RSA uses the [active wxO policy](docs/WXO_AGENT_POLICY.txt).
+Other sandbox clients can use the optional streamable HTTP transport.
 
 ---
 
@@ -104,7 +117,9 @@ flowchart TD
 | CDC Wastewater Viral Activity Level (NWSS) | WVAL site-level + derived category | Site → server-aggregated to state/national | Weekly | ~1–2 weeks | `atcp-73re` |
 | Percent of Tests Positive for Viral Respiratory Pathogens (NREVSS) | Test positivity % | **National only** | Weekly | ~1 week | `seuz-s2cv` |
 
-The production server retrieves unauthenticated public `data.cdc.gov` data at query time and caches responses in memory for one hour, including between requests. The cache is not persisted to disk. The evaluation harness instead replays committed frozen data.
+During live use, the server reads public `data.cdc.gov` endpoints when a tool requests data.
+It caches responses in memory for one hour and does not save the cache to disk.
+The frozen evaluation harness replays committed data.
 
 ---
 
@@ -138,7 +153,14 @@ Trends, concordance patterns, season ranks, and site aggregates are descriptive 
 | wxO manual v3 retest | 6 questions in one conversation | Six visible-answer reviews pass; no overall accuracy claim | User-supplied answers; raw tool details not included |
 | Phoenix agent + semantic judges | 15 frozen questions | **15/15** correctness, scope and public health | One real-model run; same model for both roles; grading corrections documented |
 
-The [manual wxO review](eval/transcripts/wxo/MANUAL_REVIEW_2026-11-23.md) links both unchanged original records. It distinguishes observed improvements and remaining failures. The [latest successful manual retest](eval/transcripts/wxo/2026-11-23-manual-success/REVIEW.md) adds six visible-answer passes. The Phoenix run used a separate agent; its scores do not certify wxO performance.
+The [manual wxO review](eval/transcripts/wxo/MANUAL_REVIEW_2026-11-23.md) links both unchanged original records and explains their findings.
+The [latest successful manual retest](eval/transcripts/wxo/2026-11-23-manual-success/REVIEW.md) adds six visible-answer passes.
+The Phoenix run used a separate agent. Its scores do not certify wxO performance.
+
+The verified code suite passed 386 tests.
+[CI also passed on submission commit 9af0c35](https://github.com/ife01/respiratory-surveillance-mcp/actions/runs/45219867192).
+Some wxO answers still reformat output or reuse prior tool evidence.
+A supplemental historical answer mislabeled a peak denominator. See the [remaining limits](docs/WXO_RUNTIME_VERIFICATION_2026-11-23.md).
 
 Recorded Phoenix run: [Phoenix results and limitations](eval/phoenix/RESULTS_2026-11-23.md).
 
@@ -149,6 +171,13 @@ Full details: [`eval/RESULTS.md`](eval/RESULTS.md) · [`docs/VERIFICATION.md`](d
 ## Running locally
 
 Python 3.11+ and [`uv`](https://docs.astral.sh/uv/) are required.
+
+Clone the repository and enter its directory:
+
+```shell
+git clone https://github.com/ife01/respiratory-surveillance-mcp.git
+cd respiratory-surveillance-mcp
+```
 
 ```shell
 # Install dependencies
@@ -196,7 +225,8 @@ docker build -t respiratory-mcp .
 docker run --rm -p 127.0.0.1:8080:8080 respiratory-mcp
 ```
 
-The container installs locked runtime dependencies from `uv.lock` and starts on port 8080. Verify with MCP Inspector (`npx @modelcontextprotocol/inspector`) against `http://localhost:8080/mcp`, or via curl handshake (see [`docs/VERIFICATION.md`](docs/VERIFICATION.md)).
+The container installs locked runtime dependencies from `uv.lock` and starts on port 8080.
+Verify the MCP endpoint at `http://localhost:8080/mcp` with MCP Inspector or the handshake procedure in [VERIFICATION.md](docs/VERIFICATION.md).
 
 > **Reported status:** Bob recorded a successful RHEL image build and health check. The transport verification script separately checks a subprocess and in-process HTTP; it does not test a running Docker endpoint. See the verification record.
 
@@ -204,7 +234,11 @@ The container installs locked runtime dependencies from `uv.lock` and starts on 
 
 ## IBM watsonx Orchestrate (wxO)
 
-The local MCP toolkit connects the server to wxO via stdio:
+The verified RSA agent uses `respiratory_mcp_local_v3` over stdio and the [active policy](docs/WXO_AGENT_POLICY.txt).
+See the [v3 verification](docs/WXO_SCAN_FIX_2026-11-23.md) for deployed source identity and captured calls.
+
+For a new registration, the template below imports a toolkit named `respiratory_mcp_local`.
+It does not update the existing v3 registration. After import, attach the intended new tools to your agent.
 
 ```shell
 cd deploy/ibm/local-mcp-toolkit
@@ -212,7 +246,8 @@ cp .env.example .env          # fill in WXO_INSTANCE_URL and TOOLKIT_NAME
 bash register-toolkit.sh      # builds _stage/ and imports the toolkit
 ```
 
-Then create a wxO agent using the instructions in [`docs/WXO_AGENT_SETUP.md`](docs/WXO_AGENT_SETUP.md) and add the `respiratory_mcp_local` toolkit. For a live-data walkthrough with the benchmark's observation cutoff, start each session with:
+Use [WXO_AGENT_SETUP.md](docs/WXO_AGENT_SETUP.md) to configure a new agent and attach the imported tools.
+For a shared-conversation demonstration with an explicit cutoff, start the session with:
 
 ```
 Use as_of="2026-10-31" for all tool calls unless I specify otherwise.
@@ -220,6 +255,7 @@ Use as_of="2026-10-31" for all tool calls unless I specify otherwise.
 
 This instruction does not switch the toolkit to frozen data. For exact replay,
 use the frozen server described in [the evaluation guide](eval/phoenix/README.md).
+For independent natural-language checks, start a fresh conversation for each question and supply the cutoff in the question.
 Without model API access, use the [manual wxO review procedure](docs/WXO_AGENT_SETUP.md#evaluation-without-a-model-api).
 
 Full setup, prerequisites, and known caveats: [`docs/WXO_AGENT_SETUP.md`](docs/WXO_AGENT_SETUP.md)
@@ -228,7 +264,10 @@ Full setup, prerequisites, and known caveats: [`docs/WXO_AGENT_SETUP.md`](docs/W
 
 ## Security
 
-Read-only public aggregate data. No PII or PHI. All outbound requests are validated against an enforced domain allowlist (`data.cdc.gov`, `api.us.socrata.com`). SoQL is built from validated enums only — no raw user strings reach the query layer. Inputs have explicit length and character bounds. Single-flight cache prevents thundering-herd requests. See [`SECURITY.md`](SECURITY.md) for full posture.
+The tools read public aggregate CDC data and do not require patient records.
+The client restricts outbound hosts and builds SoQL queries from validated values.
+Inputs have explicit length bounds. Concurrent identical reads share one upstream request.
+Platform prompts and traces still need appropriate handling. See [SECURITY.md](SECURITY.md) for the controls and limits.
 
 ---
 
@@ -243,9 +282,9 @@ src/resp_mcp/
   reference/                     Jurisdiction codes, MMWR/season helpers
   sources/                       NHSN, NWSS, NREVSS adapters + concurrent registry
   analytics/                     Pure-function trend, season, concordance, narrative
-  tools/                         4 MCP tool functions (thin wrappers over analytics + sources)
+  tools/                         4 validated analyst tasks with structured outputs
   models/                        Pydantic I/O models + exported JSON schemas
-tests/                           355 tests; 94% server line coverage
+tests/                           Regression and contract tests
 eval/
   run_eval.py                    25-case deterministic baseline (25/25, 155/155 checks)
   snapshot_v2/                   12 gzip fixtures, hash-verified capture manifest
@@ -259,6 +298,9 @@ docs/
   WXO_AGENT_SETUP.md             wxO agent setup, system prompt, and eval instructions
 deploy/ibm/local-mcp-toolkit/   stdio toolkit for wxO import
 ```
+
+Use the [documentation index](docs/README.md) to find setup, methods, evaluation and submission guides.
+The [verification record](docs/VERIFICATION.md) retains dated coverage and transport results.
 
 ---
 
