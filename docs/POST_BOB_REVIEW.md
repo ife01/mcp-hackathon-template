@@ -1,5 +1,8 @@
 # Post-Bob review — 2026-11-22
 
+> Code follow-up 2026-11-23: the shared date-error wording is corrected and covered across all four tools.
+> Local verification passes 372 tests. The [wxO toolkit update and retests](WXO_TARGETED_RETEST.md) remain pending.
+
 > Source update 2026-11-23: the user supplied both original manual wxO records.
 > The [case review](../eval/transcripts/wxo/MANUAL_REVIEW_2026-11-23.md) supersedes earlier source attribution and question counts.
 > The original questions explicitly requested dates. The server's date-error wording can contribute to the source-inception error.

@@ -199,6 +199,7 @@ async def test_sars_cov_2_alias_resolves_correctly():
 def test_parse_as_of_too_early_raises():
     with pytest.raises(ValueError, match="before the earliest"):
         parse_as_of("2015-01-01")
+    assert parse_as_of("2020-01-01") == date(2020, 1, 1)
 
 
 def test_parse_as_of_too_far_future_raises():
@@ -212,19 +213,49 @@ def test_parse_as_of_bad_format_raises():
 
 
 @pytest.mark.asyncio
-async def test_as_of_out_of_range_returns_error():
+@pytest.mark.parametrize(
+    "tool,arguments",
+    [
+        (
+            "get_respiratory_snapshot",
+            {"jurisdiction": "GA", "pathogens": ["influenza"]},
+        ),
+        (
+            "assess_trend",
+            {
+                "jurisdiction": "GA",
+                "pathogen": "influenza",
+                "signal": "hospital_admissions",
+            },
+        ),
+        (
+            "compare_to_prior_seasons",
+            {
+                "jurisdiction": "GA",
+                "pathogen": "influenza",
+                "signal": "hospital_admissions",
+            },
+        ),
+        (
+            "find_jurisdictions_with_rising_activity",
+            {"pathogen": "influenza", "signal": "hospital_admissions"},
+        ),
+    ],
+)
+async def test_as_of_out_of_range_returns_application_limit_not_source_history(
+    tool, arguments
+):
     result = await mcp.call_tool(
-        "assess_trend",
-        {
-            "jurisdiction": "GA",
-            "pathogen": "influenza",
-            "signal": "hospital_admissions",
-            "as_of": "2015-01-01",
-        },
+        tool,
+        {**arguments, "as_of": "2015-01-01"},
     )
     data = _result_text(result)
     assert data.get("error") == "invalid_input"
-    assert "2020" in data["message"]
+    message = data["message"]
+    assert "for this application (2020-01-01)" in message
+    assert "does not establish" in message and "earlier records" in message
+    assert "began" not in message
+    assert "Choose an as_of date on or after 2020-01-01" in message
 
 
 # ── classify_tool_error helper ─────────────────────────────────────────────────

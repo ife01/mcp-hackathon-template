@@ -1,5 +1,9 @@
 # Submission checklist — Build 5.5
 
+> Date-message fix: the shared server error is corrected; 372 tests pass locally.
+> The [targeted wxO handoff](WXO_TARGETED_RETEST.md) covers toolkit update and six focused retests.
+> Updating GitHub does not update the uploaded wxO toolkit automatically.
+
 > Update 2026-11-23: organizational model access is now configured locally. A real Phoenix run completed all 15 cases.
 > See [the results and limitations](../eval/phoenix/RESULTS_2026-11-23.md). Earlier statements about unavailable model access describe the prior review.
 

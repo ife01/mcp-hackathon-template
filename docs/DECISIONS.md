@@ -2,6 +2,21 @@
 
 All deviations from the build plan are recorded here with a date and rationale.
 
+## 2026-11-23 — Correct the date-validation error
+
+Replaced the source-inception claim in the shared early-date error.
+The message states the application limit and explains that it does not establish source history.
+The supported date range and structured error code remain unchanged.
+Four actual MCP tool response checks and boundary acceptance guard this behavior.
+The full offline suite passes 372 tests at 94% server coverage.
+Frozen replay passes 25 cases / 155 checks.
+
+The uploaded wxO toolkit does not update automatically from GitHub.
+Added a deployment handoff with six targeted questions and evidence criteria.
+No wxO deployment or new model evaluation occurred during this fix.
+The original manual and Phoenix evidence remains unchanged.
+
+
 ## 2026-11-23 — Integrate the user's original manual wxO records
 
 Preserved both supplied conversation files unchanged, with file hashes and a separate case review.

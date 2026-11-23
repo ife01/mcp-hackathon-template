@@ -98,10 +98,12 @@ Several visible values match the frozen reference, but live queries can include 
 
 Two second-run explanation problems remain: Arkansas is outside the requested Region 4,
 and the application date bound does not establish CDC dataset inception.
-The server's current date-error wording can contribute to the latter inference.
-Its correction and new wxO retests remain pending.
+The earlier server error wording could contribute to the latter inference.
+The shared message is now corrected and has regression coverage across four tools.
+The [targeted retest guide](WXO_TARGETED_RETEST.md) covers the toolkit update and six focused wxO questions.
 
-This documentation update does not change a deployed wxO agent or the server message.
+The local server correction does not update an uploaded wxO toolkit automatically.
+Its deployment and wxO retests remain pending.
 The earlier 2/5 and 16/16 overall rates are not validated aggregate scores.
 The manual evaluations remain useful evidence alongside the separate Phoenix run.
 

@@ -145,8 +145,10 @@ def parse_as_of(as_of: str | None) -> date | None:
     if parsed < _AS_OF_MIN:
         raise ValueError(
             f"as_of date {as_of!r} is before the earliest supported date "
-            f"({_AS_OF_MIN.isoformat()}). "
-            "CDC NHSN reporting began in 2020."
+            f"for this application ({_AS_OF_MIN.isoformat()}). "
+            "This application limit does not establish a CDC dataset's start "
+            "date or whether earlier records exist. "
+            f"Choose an as_of date on or after {_AS_OF_MIN.isoformat()}."
         )
     today = date.today()
     max_allowed = date.fromordinal(today.toordinal() + _AS_OF_MAX_FUTURE_DAYS)

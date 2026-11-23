@@ -76,9 +76,10 @@ The abbreviated record cannot attribute the error to the deployed tool, model or
 The visible answer fails geographic-scope correctness.
 
 The 2015 answer treats the application's 2020 lower date bound as proof of CDC dataset inception.
-The current server error itself includes a broad statement about NHSN beginning in 2020.
-That wording can contribute to the inference and remains a server-message issue to correct.
-Documentation now distinguishes application limits from dataset history.
+The server error at review time included a broad statement about NHSN beginning in 2020.
+The shared message now identifies the application limit without asserting source inception.
+Local regression checks cover all four tools.
+The [targeted retest guide](../docs/WXO_TARGETED_RETEST.md) describes the required toolkit update and six wxO questions.
 No corrected deployment or new wxO retest is claimed here.
 
 ### How the records are counted

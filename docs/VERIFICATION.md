@@ -1,5 +1,20 @@
 # Verification record
 
+## Date-validation message correction — 2026-11-23
+
+The shared error now describes 2020-01-01 as the application's supported lower date bound.
+It no longer asserts when CDC reporting or a selected dataset began.
+Regression checks exercise the actual MCP response from all four tools.
+They also preserve acceptance of the boundary date.
+
+The full offline suite passes **372 tests**, with **94% server line coverage**.
+Two upstream ldap3/pyasn1 deprecation warnings remain.
+The frozen tool baseline still passes **25 cases / 155 checks**.
+No new paid model calls or wxO deployments were used for this fix.
+The existing Phoenix result retains its original code identity and scores.
+See [the targeted wxO retest guide](WXO_TARGETED_RETEST.md) for deployment and follow-up evidence.
+
+
 ## Manual wxO records integrated — 2026-11-23
 
 The user supplied the original generated records for two earlier wxO evaluations.
@@ -9,7 +24,8 @@ The [case review](../eval/transcripts/wxo/MANUAL_REVIEW_2026-11-23.md) covers fi
 The records demonstrate wxO integration, date-handling improvement and appropriate scope refusals.
 They also expose historical-cutoff failures, an out-of-region missingness claim and unsupported source-history inference.
 The server's current date-error wording can contribute to the latter claim.
-That message and deployed wxO behavior still require correction or retest.
+The message was corrected in a later code change documented below.
+The deployed wxO toolkit still needs the update and a retest.
 
 Originals retain their omissions and generated instructions as evidence only.
 They do not constitute complete provider trace exports or independent repeated trials.

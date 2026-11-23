@@ -79,10 +79,11 @@ It cannot establish whether that error arose in the deployed tool, the answer or
 The visible answer is incorrect regardless of that unresolved attribution.
 
 The 2015 response also needs a server-side explanation.
-The current `parse_as_of` error includes the sentence `CDC NHSN reporting began in 2020.`
+At the time of review, the `parse_as_of` error included `CDC NHSN reporting began in 2020.`
 That message can encourage the unsupported inference in the agent answer.
 The application's 2020 lower bound does not establish the selected dataset's first observation.
-This is a remaining error-message issue, not a proven agent-only failure.
+The shared server message was corrected in a later code change.
+Regression checks cover all four tools; deployment and a new wxO retest remain pending.
 
 The earlier 16/16 and all-invariants-pass claims are withdrawn.
 No replacement overall pass rate is assigned from incomplete responses.
@@ -96,12 +97,14 @@ That secondary percentage is not treated as a confirmed error in the original wx
 | Requested dates were not preserved | Date-preservation policy documented; second session adds an explicit cutoff instruction | Improvement visible in the second record; unseen arguments remain unverified |
 | Historical data incorrectly declared absent | Corrected evaluation interpretation identifies the October 31 observations | No new wxO retest of the absence claim |
 | Arkansas incorrectly listed as missing | Manual grading corrected; scope policy documented; current frozen output has no missing Region 4 states | Current tool evidence supports the correction; new wxO retest pending |
-| Application date bound treated as source inception | Setup guidance separates those concepts | Server error wording still needs correction; deployed-agent retest pending |
+| Application date bound treated as source inception | Shared server error now identifies the application limit without asserting source inception | Four-tool regression checks pass; toolkit update and wxO retest pending |
 | Shared answers counted as independent trials | Record 14 task prompts and describe the conversational design | Documentation correction complete |
 | Manual and Phoenix scores conflated | Report the two platforms and evidence types separately | Documentation correction complete |
 
-This update changes documentation and evidence only.
-It does not establish deployment of revised instructions or correction of the remaining server error message.
+The original documentation review changed evidence only.
+A later code fix corrected the server message and passed local regression checks.
+The [targeted retest guide](../../../docs/WXO_TARGETED_RETEST.md) covers toolkit update and six wxO questions.
+No new wxO deployment or retest is claimed here.
 
 ## Relationship to Phoenix
 
