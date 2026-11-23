@@ -1,5 +1,25 @@
 # Verification record
 
+## Manual wxO records integrated — 2026-11-23
+
+The user supplied the original generated records for two earlier wxO evaluations.
+Unchanged copies and SHA-256 hashes are under eval/transcripts/wxo/originals.
+The [case review](../eval/transcripts/wxo/MANUAL_REVIEW_2026-11-23.md) covers five first-run questions and 14 second-run task prompts.
+
+The records demonstrate wxO integration, date-handling improvement and appropriate scope refusals.
+They also expose historical-cutoff failures, an out-of-region missingness claim and unsupported source-history inference.
+The server's current date-error wording can contribute to the latter claim.
+That message and deployed wxO behavior still require correction or retest.
+
+Originals retain their omissions and generated instructions as evidence only.
+They do not constitute complete provider trace exports or independent repeated trials.
+No replacement overall manual accuracy rate is assigned.
+The separate Phoenix 15/15 result does not certify wxO performance.
+
+This update changes documentation and evidence, not application behavior.
+No new evaluation, deployment or paid model request occurred.
+Documentation checks cover source hashes, question counts, relative links and credential exclusion.
+
 ## Organizational gateway evaluation — 2026-11-23
 
 The full offline suite passes **369 tests** with **94% server line coverage**.

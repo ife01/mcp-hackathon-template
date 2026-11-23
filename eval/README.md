@@ -10,10 +10,12 @@
    following the repository mcp-eval skill. It uses a real agent over frozen stdio
    MCP, independent hidden references, semantic judges, and public health gates.
    Its 10 multi-call benchmark questions plus five supplemental cases are separate
-   from the original 25-case tool suite. Model access is not yet configured.
-3. Optional wxO platform evaluation: test the actual wxO-hosted agent separately;
-   its credentials and service behavior differ from the local Phoenix workflow.
+   from the original 25-case tool suite. The [first real-model run](phoenix/RESULTS_2026-11-23.md) completed all 15 cases.
+3. Manual wxO evaluation: the user supplied two conversation records from the
+   actual wxO workflow. The [manual review](transcripts/wxo/MANUAL_REVIEW_2026-11-23.md)
+   preserves both files and documents failures, improvements and evidence limits.
 
+These layers complement each other. Phoenix results do not certify wxO answers.
 The baseline is deliberately not reported as an agent success rate. The recorded
 replay timings are not live cold/warm latency measurements.
 

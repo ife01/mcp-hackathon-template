@@ -1,3 +1,5 @@
 # Frozen data identity is a hash of exact bytes, independent of checkout OS.
 # The existing manifest contains CRLF. Preserve it; do not rewrite its newlines.
 eval/snapshot_v2/** -text
+# Preserve source bytes and intentional original whitespace; do not style-clean evidence.
+eval/transcripts/wxo/originals/** -text -whitespace

@@ -1,4 +1,4 @@
-# Evaluation results — evidence audit 2026-11-22
+# Evaluation results — updated 2026-11-23
 
 ## Deterministic tool baseline
 
@@ -43,45 +43,57 @@ See ../docs/VERIFICATION.md for the full verification record.
 
 ---
 
-## wxO manual walkthroughs (reported by Bob)
+## Manual wxO evaluations
 
-Bob reports a first five-question walkthrough and a second shared-session
-walkthrough covering 16 case IDs. The second is summarized in
-[the retained transcript](transcripts/wxo/run2_2026-11-23.md). Its original
-2026-11-23 date label is retained as reported. These are human-written session
-summaries, not exported provider traces or independent Phoenix experiments.
+The user's two earlier manual evaluations are part of the evidence package.
+They test the actual wxO conversation workflow and show useful error discovery.
+The original files remain unchanged:
 
-The first walkthrough reportedly omitted `as_of`, producing later observation
-weeks for several benchmark questions. Explicit cutoff instructions addressed
-that date mismatch in the second walkthrough. A cutoff still queries live CDC
-records: it does not establish use of snapshot_v2 or exclude later revisions.
+- [First evaluation](<transcripts/wxo/originals/1st Evals.txt>)
+- [Second evaluation](<transcripts/wxo/originals/2nd Evals.txt>)
+- [Case review, failures and fix status](transcripts/wxo/MANUAL_REVIEW_2026-11-23.md)
+- [Original file hashes](transcripts/wxo/originals/manifest.json)
 
-| Evidence | What it supports | Limits |
-| --- | --- | --- |
-| Run 1: five reported questions | Initial integration and a date-preservation issue; forecast refusal reported | No raw trace, exact model/version or independently reproducible grading |
-| Run 2: 16 case IDs discussed | Reported valid tool selection, scoped positivity, historical abstention and matching headline values in several answers | Shared history; B1 reused A1 and B5 reused a proactive snapshot; original pass labels contain a material geography error |
-| Reported public health checklist | Useful review topics | Overlapping observations and an N/A forecast item do not establish 12 independent passing tests |
+| Evaluation | Design | Supported findings | Limits |
+| --- | --- | --- | --- |
+| First wxO run | Five questions in one conversation | Four dated answers visibly use later observations; forecast refusal demonstrated | No complete tool-argument export; no validated aggregate pass rate |
+| Second wxO run | 14 task prompts after a date-setting preamble | Improved date handling and matching headline values; appropriate refusal of state positivity ranking | Region 4 missingness error, unsupported source-inception claim and abbreviated answers; no validated aggregate pass rate |
+| Phoenix run | 15 fresh case sessions over frozen replay | 15/15 correctness, scope and public health after documented grading corrections | Separate agent; one repetition; same-model judging |
 
-### Material correction to the original run-2 score
+### What failed and what improved
 
-The D5 summary labels Arkansas as missing from an HHS Region 4 scan and grades
-that answer PASS. Arkansas belongs to Region 6, according to the
-[HHS regional directory](https://www.hhs.gov/about/agencies/iea/regional-offices/index.html).
-The committed frozen D5 tool response has 8 requested, 8 assessed and 0 unavailable
-jurisdictions, with an empty unavailable list. Its limit of 5 affects display,
-not missingness. The manual run reportedly displayed all 8.
+The first user's questions already specified October 31, 2026.
+Several responses instead used November 14.
+The agent failed to preserve the requested cutoff; the user did not omit the date.
+Claims that October 31 observations were absent conflict with the retained series and second-run values.
+The second session added an explicit `as_of` instruction and shows improved date handling.
+It does not prove every abbreviated call preserved the argument.
+A live date-filtered query also remains distinct from frozen replay.
 
-The described D5 answer therefore fails the geographic-scope/missingness check,
-even though its rising total and lead state match the reference. The original
-16/16 and 100% invariant claims are withdrawn. We do not substitute 15/16 because
-the other answers have not been independently regraded from complete evidence.
-For example, the C5 summary says 31% where the reference is 31.86%; acceptable
-rounding and the full explanation need review.
+The second scan lists Arkansas as missing from HHS Region 4.
+Arkansas belongs to Region 6, and the current frozen Region 4 response has no unavailable states.
+The abbreviated record cannot attribute the error to the deployed tool, model or transcript generation.
+The visible answer fails geographic-scope correctness.
 
-Not every case was an independent prompt, and not every raw tool payload/final
-answer is retained. The original transcript remains available with an audit note;
-its PASS annotations are historical reviewer judgments, not current validated
-scores. Tool-baseline coverage does not establish agent coverage for unasked cases.
+The 2015 answer treats the application's 2020 lower date bound as proof of CDC dataset inception.
+The current server error itself includes a broad statement about NHSN beginning in 2020.
+That wording can contribute to the inference and remains a server-message issue to correct.
+Documentation now distinguishes application limits from dataset history.
+No corrected deployment or new wxO retest is claimed here.
+
+### How the records are counted
+
+The second file contains 14 task prompts, a session preamble and a transcript-generation request.
+Bob's 16-case mapping includes overlapping answers; it is not 16 independent trials.
+A shared conversation is a valid evaluation design, but it measures contextual behavior.
+The earlier 2/5 and 16/16 overall scores are not retained as validated accuracy rates.
+Visible matches, observed failures and unassessable content are listed separately in the review.
+
+The files are generated conversation records with ellipses and abbreviated payloads.
+They are useful manual integration evidence without being complete provider trace exports.
+Their embedded instructions and self-reported metadata are retained as source content only.
+The older [Bob summary](transcripts/wxo/run2_2026-11-23.md) remains a secondary historical artifact.
+The supplied original records take precedence where they differ.
 
 ## Phoenix agent evaluation — 2026-11-23
 
@@ -99,7 +111,8 @@ Read [the full result](phoenix/RESULTS_2026-11-23.md) before citing these scores
 It links all 15 answers, actual tool results, judge explanations and source identities.
 This is one repetition with same-model judging and no no-tool comparison.
 It does not establish independent holdout accuracy or operational validity.
-A separate manual wxO assessment remains useful for testing that platform itself.
+The supplied manual wxO evaluations test that platform separately.
+Phoenix scores do not apply to wxO or retroactively repair its recorded answers.
 
 ## Limits
 

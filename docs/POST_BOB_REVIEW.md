@@ -1,5 +1,10 @@
 # Post-Bob review — 2026-11-22
 
+> Source update 2026-11-23: the user supplied both original manual wxO records.
+> The [case review](../eval/transcripts/wxo/MANUAL_REVIEW_2026-11-23.md) supersedes earlier source attribution and question counts.
+> The original questions explicitly requested dates. The server's date-error wording can contribute to the source-inception error.
+> Historical observations below remain dated review notes, not the latest combined evaluation report.
+
 > Update 2026-11-23: organizational model access is now configured locally. A real Phoenix run completed all 15 cases.
 > See [the results and limitations](../eval/phoenix/RESULTS_2026-11-23.md). Earlier statements about unavailable model access describe the prior review.
 

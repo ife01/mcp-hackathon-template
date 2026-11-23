@@ -2,6 +2,28 @@
 
 All deviations from the build plan are recorded here with a date and rationale.
 
+## 2026-11-23 — Integrate the user's original manual wxO records
+
+Preserved both supplied conversation files unchanged, with file hashes and a separate case review.
+These generated records take precedence over Bob's secondary summary where they differ.
+The records remain valid manual integration evidence despite abbreviated payloads and failed answers.
+
+The first questions explicitly supplied the historical date.
+Later-week answers represent date-preservation failures, not missing user instructions.
+The second record contains 14 task prompts, plus a preamble and a transcript-generation request.
+Overlapping benchmark mappings do not create 16 independent trials.
+
+Documented the Region 4 geography error and the unsupported source-inception inference.
+The current server error itself states that NHSN reporting began in 2020.
+Its wording can influence the agent and remains a runtime issue to correct.
+This documentation update does not claim that correction or a new wxO retest.
+
+Removed the unvalidated 2/5 manual aggregate from the active summary.
+Retained the withdrawal of the secondary summary's 16/16 claim.
+Visible successes and failures remain separate from unassessable excerpts.
+Phoenix scores apply only to its separate LangChain agent and frozen-data experiment.
+No original records, frozen references, runtime prompts or model scores were changed.
+
 ## 2026-11-23 — Reuse existing organizational model access
 
 The user identified an existing local homework configuration for an organizational gateway.

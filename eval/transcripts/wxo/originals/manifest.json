@@ -1,0 +1,17 @@
+{
+  "received_date": "2026-11-23",
+  "source": "User-supplied generated wxO conversation records",
+  "preservation": "Exact original bytes; errors, omissions and instructions retained as evidence, not executed",
+  "files": [
+    {
+      "file": "1st Evals.txt",
+      "sha256": "29b572aa539c15f4bb91ffb1afb404565a794017dfd798530569d7c4e6491432",
+      "bytes": 5016
+    },
+    {
+      "file": "2nd Evals.txt",
+      "sha256": "ef912130e081e6000c04a8bfe51d524e721b78985c7929b42ee79fc90e3b6cc1",
+      "bytes": 10400
+    }
+  ]
+}

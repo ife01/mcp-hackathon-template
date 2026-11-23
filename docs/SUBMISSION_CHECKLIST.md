@@ -8,9 +8,10 @@ Repository: https://github.com/ife01/mcp-hackathon-template
 Tag: v1.0-hackathon
 
 > Follow-up audit: the tag records Bob's earlier submission candidate. It does
-> not automatically include later fixes. The original wxO 16/16 claim is
-> withdrawn after a material geography error was found. Phoenix real-model
-> scoring has not run; model access is unavailable. See POST_BOB_REVIEW.md.
+> not automatically include later fixes. The original wxO 16/16 claim remains withdrawn.
+> Current Phoenix scores describe a separate agent. The
+> [manual wxO review](../eval/transcripts/wxo/MANUAL_REVIEW_2026-11-23.md)
+> links the original records and lists confirmed findings and pending retests.
 
 ---
 
@@ -20,7 +21,7 @@ Tag: v1.0-hackathon
 |---|---|---|---|
 | 1 | Judge-ready README with pitch, example, tools table, architecture diagram, eval summary, run instructions | [README.md](../README.md) | ✅ |
 | 2 | Security and data-handling posture | [SECURITY.md](../SECURITY.md) | ✅ |
-| 3 | Evaluation results (deterministic baseline + 2 wxO agent runs) | [eval/RESULTS.md](../eval/RESULTS.md) | ✅ |
+| 3 | Evaluation results: tool baseline, two manual wxO records and separate Phoenix run | [eval/RESULTS.md](../eval/RESULTS.md) | Evidence retained; limitations and pending wxO retests documented |
 | 4 | Decision log (all deviations dated and reasoned) | [docs/DECISIONS.md](DECISIONS.md) | ✅ |
 | 5 | Data dictionary (every column name used by the server) | [docs/DATA_DICTIONARY.md](DATA_DICTIONARY.md) | ✅ |
 | 6 | Analytical methods and disclaimer | [docs/METHODS.md](METHODS.md) | ✅ |
@@ -75,7 +76,7 @@ Tag: v1.0-hackathon
 | `curl http://127.0.0.1:8080/health` | ✅ `200 OK {"status":"healthy","service":"respiratory-mcp-server"}` |
 | `scripts/verify_transports.py` | ✅ stdio PASS, HTTP ASGI PASS |
 | wxO toolkit `respiratory_mcp_local` | ✅ Re-registered 2026-11-23, ca-tor instance |
-| wxO agent run 2 (16 case IDs discussed) | Manual evidence retained; aggregate score withdrawn after audit |
+| wxO agent run 2 (14 task prompts; 16 historical case mappings) | Original record retained; no validated aggregate accuracy rate |
 
 ---
 

@@ -128,11 +128,11 @@ Trends, concordance patterns, season ranks, and site aggregates are descriptive 
 | Layer | Cases | Pass rate | Method |
 |---|---|---|---|
 | Deterministic tool baseline | 25 / 25 (155 assertions) | **100%** | Automated; frozen snapshot_v2 replay; hash-verified |
-| wxO agent — run 1 (no `as_of`) | 5 | 40% (2/5) | Manual; live CDC data; `as_of` not passed |
-| wxO agent — run 2 (`as_of` set) | 16 case IDs discussed | Not independently scored | Shared-session manual walkthrough; audit found an incorrect missing-state claim |
+| wxO manual run 1 | 5 questions | No validated overall rate | Exposed four historical-cutoff failures; forecast refusal demonstrated |
+| wxO manual run 2 | 14 task prompts | No validated overall rate | Improved date handling; remaining geography and source-history explanation errors |
 | Phoenix agent + semantic judges | 15 frozen questions | **15/15** correctness, scope and public health | One real-model run; same model for both roles; grading corrections documented |
 
-Explicit date instructions addressed the reported run-1 date mismatches. The run-2 transcript is a human-written summary, reuses some earlier answers, and has no raw provider trace or model-version record. Its original 16/16 claim is not a validated batch score. See [the follow-up audit](docs/POST_BOB_REVIEW.md).
+The [manual wxO review](eval/transcripts/wxo/MANUAL_REVIEW_2026-11-23.md) links both unchanged original records. It distinguishes observed improvements, remaining failures and pending retests. The Phoenix run used a separate agent; its scores do not certify wxO performance.
 
 Latest model run: [Phoenix results and limitations](eval/phoenix/RESULTS_2026-11-23.md).
 

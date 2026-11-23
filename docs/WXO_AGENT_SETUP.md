@@ -9,8 +9,8 @@ agent scoring require the sandbox instance/service URL, agent ID, authentication
 type (for example IBM IAM), and a suitably scoped API key. Store the key in the
 ignored root .env file or the service credential mechanism; do not paste it into
 a committed file, evaluation case, or transcript. .env.example lists placeholders.
-Bob's later manual wxO walkthroughs are summarized in eval/RESULTS.md. They are
-not a completed Phoenix experiment or a raw provider trace.
+The user supplied two manual wxO records. The [review](../eval/transcripts/wxo/MANUAL_REVIEW_2026-11-23.md)
+links unchanged originals and separates visible findings from omitted evidence.
 
 ## Connect the sandbox server
 
@@ -72,6 +72,8 @@ switch live CDC access to the frozen snapshot or exclude later data revisions.
 
 Keep all scan results and missingness statements within the requested region.
 A jurisdiction outside the selected region is not missing data for that scan.
+An application date-validation limit does not establish when a CDC dataset began.
+Explain the application limit without inventing source history.
 
 Adapt terminology to the audience. This is a public-data sandbox prototype,
 not an official CDC communication or an operational clinical system.
@@ -85,30 +87,23 @@ For deterministic scoring, the agent must connect to a sandbox server using the
 same frozen snapshot. Otherwise label the run a separate live-data test.
 Record actual calls and arguments, final answers, source/number/date/geography
 fidelity, preserved caveats, latency, and failure handling. Run three repetitions
-when practical. Use eval/RESULTS.md for the tool baseline and pending agent metrics.
+when practical. Use eval/RESULTS.md for tool, manual wxO and Phoenix findings.
 
-### First live run results (2026-11-22)
+### Recorded manual evaluations
 
-Five benchmark prompts run via wxO local MCP toolkit. See eval/RESULTS.md for
-the full per-question assessment.
+The [manual review](../eval/transcripts/wxo/MANUAL_REVIEW_2026-11-23.md) includes five first-run questions and 14 second-run task prompts.
+The first run failed to preserve dates already present in the user's questions.
+The second session added an explicit cutoff instruction and shows improved date handling.
+Several visible values match the frozen reference, but live queries can include later revisions.
 
-Summary:
-- Q1 (GA flu rate, 2026-10-31): ⚠️ Agent returned live value 2.47/100k (week
-  2026-11-14) instead of frozen reference 1.76/100k — `as_of` not passed.
-- Q2 (GA flu trend direction): ✅ Correctly identified as increasing.
-- Q3 (National positivity, 2026-10-31): ⚠️ Agent returned 11.8% (live,
-  2026-11-14) vs reference 10.1% — same cause.
-- Q4 (Rising states scan): ⚠️ 44 states at 2026-11-14 vs frozen reference at
-  2026-10-31 — same cause. Direction and grounding correct.
-- Q5 (Forecast): ✅ Correctly refused. No forecast produced.
+Two second-run explanation problems remain: Arkansas is outside the requested Region 4,
+and the application date bound does not establish CDC dataset inception.
+The server's current date-error wording can contribute to the latter inference.
+Its correction and new wxO retests remain pending.
 
-All public health invariants passed: national positivity not attributed to
-Georgia; numeric claims cited dataset ID and week-ending date; trend labeled
-heuristic; hospital coverage disclosed.
-
-The reported date mismatches motivated the `as_of` rule above. Preserve any
-explicit date in a user's question. For exact benchmark replay, the server must
-also use the frozen dataset; live records may have changed since capture.
+This documentation update does not change a deployed wxO agent or the server message.
+The earlier 2/5 and 16/16 overall rates are not validated aggregate scores.
+The manual evaluations remain useful evidence alongside the separate Phoenix run.
 
 ## Evaluation without a model API
 
