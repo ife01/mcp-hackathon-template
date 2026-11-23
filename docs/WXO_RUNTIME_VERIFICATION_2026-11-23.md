@@ -1,7 +1,9 @@
 # wxO runtime verification — November 23, 2026
 
-RSA uses `respiratory_mcp_local_v2`, with server source from commit `8f5fabb`.
-The active instructions are in [WXO_AGENT_POLICY.txt](WXO_AGENT_POLICY.txt).
+This earlier verification used `respiratory_mcp_local_v2`, with server source from commit `8f5fabb`.
+RSA now uses v3; see [the later scan-fix verification](WXO_SCAN_FIX_2026-11-23.md).
+The policies used for these records are retained in their evidence bundle.
+The current instructions are in [WXO_AGENT_POLICY.txt](WXO_AGENT_POLICY.txt).
 The model remains `groq/openai/gpt-oss-120b`. Its settings and four tool bindings are unchanged by the instruction updates.
 
 ## What the regression investigation found

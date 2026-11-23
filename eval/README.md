@@ -18,6 +18,9 @@
 The [wxO runtime verification](../docs/WXO_RUNTIME_VERIFICATION_2026-11-23.md) adds complete tool traces for the November 23 replays and retests.
 It distinguishes original-session replay, fresh questions and remaining error-message fidelity limits.
 
+The later [scan-fix verification](../docs/WXO_SCAN_FIX_2026-11-23.md) checks exact returned membership and application heuristic attribution on wxO v3.
+It preserves actual calls and responses separately from the earlier scores.
+
 These layers complement each other. Phoenix results do not certify wxO answers.
 The baseline is deliberately not reported as an agent success rate. The recorded
 replay timings are not live cold/warm latency measurements.

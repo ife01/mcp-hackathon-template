@@ -1,0 +1,71 @@
+{
+  "national_scans": [
+    {
+      "phase": "scan-after",
+      "index": 3,
+      "n_returned": 43,
+      "n_rising_total": 43,
+      "membership_match": true,
+      "application_attribution": true
+    },
+    {
+      "phase": "scan-repeat",
+      "index": 0,
+      "n_returned": 43,
+      "n_rising_total": 43,
+      "membership_match": true,
+      "application_attribution": true
+    },
+    {
+      "phase": "scan-repeat",
+      "index": 2,
+      "n_returned": 43,
+      "n_rising_total": 43,
+      "membership_match": true,
+      "application_attribution": true
+    },
+    {
+      "phase": "scan-repeat",
+      "index": 4,
+      "n_returned": 43,
+      "n_rising_total": 43,
+      "membership_match": true,
+      "application_attribution": true
+    }
+  ],
+  "independent_trends": [
+    {
+      "phase": "scan-repeat",
+      "index": 1,
+      "fresh_call": true,
+      "application_attribution": true
+    },
+    {
+      "phase": "scan-repeat",
+      "index": 3,
+      "fresh_call": true,
+      "application_attribution": true
+    },
+    {
+      "phase": "scan-repeat",
+      "index": 5,
+      "fresh_call": true,
+      "application_attribution": true
+    }
+  ],
+  "shared_conversation_trend": {
+    "phase": "scan-after",
+    "index": 1,
+    "fresh_call": false,
+    "supporting_tool_record_index": 0,
+    "assistant_review": "Correct application attribution; uses the prior assess_trend response in the same conversation."
+  },
+  "strict_display_text_matches": 0,
+  "scan_answers_checked": 5,
+  "remaining_limits": [
+    "RSA changes display formatting; exact display_text reproduction is not satisfied.",
+    "One shared-conversation trend answer reused prior tool evidence instead of making a new call.",
+    "Previously documented historical-peak answer defect is outside this targeted fix.",
+    "These are development checks with reused prompts, not independent holdout accuracy."
+  ]
+}

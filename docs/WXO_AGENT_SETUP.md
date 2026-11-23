@@ -66,7 +66,8 @@ The shared message is now corrected and has regression coverage across four tool
 The [targeted retest guide](WXO_TARGETED_RETEST.md) covers the toolkit update and six focused wxO questions.
 
 The local server correction does not update an uploaded wxO toolkit automatically.
-The toolkit was reimported as `respiratory_mcp_local_v2` and connected to RSA.
+RSA now uses `respiratory_mcp_local_v3`, including the scan membership and attribution fixes.
+See [the scan-fix verification](WXO_SCAN_FIX_2026-11-23.md) for current deployment details.
 See [the runtime verification](WXO_RUNTIME_VERIFICATION_2026-11-23.md) for the new tests and remaining limits.
 The earlier 2/5 and 16/16 overall rates are not validated aggregate scores.
 The manual evaluations remain useful evidence alongside the separate Phoenix run.

@@ -1,0 +1,165 @@
+{
+  "mode": "offline_tool_replay",
+  "passed": 25,
+  "total": 25,
+  "checks_passed": 155,
+  "checks_total": 155,
+  "agent_evaluation": "not run",
+  "snapshot": "snapshot_v2",
+  "snapshot_manifest_sha256": "806ca24b42709a745858cec8684021d7a2cbf0a25ce732c75731801deb20c05a",
+  "server_source_sha256": "0d1d722e331416e5d4ea02cbd69c7b8f8583313dbf3d5b773db25ad08cf24b46",
+  "reference_sha256": "15e48aed5e1bf3ff94c2b9b95daea82d5beac7c727d9f767c8b6b8701b662088",
+  "cases_sha256": "302980e92d157fb05474ed647c889fd3c7a691192b83d2848037f3645b2e7ebf",
+  "cases": [
+    {
+      "id": "A1",
+      "category": "lookup",
+      "passed": true,
+      "replay_seconds": 0.21676250000018626
+    },
+    {
+      "id": "A2",
+      "category": "lookup",
+      "passed": true,
+      "replay_seconds": 0.0201453999907244
+    },
+    {
+      "id": "A3",
+      "category": "lookup",
+      "passed": true,
+      "replay_seconds": 0.017193300009239465
+    },
+    {
+      "id": "A4",
+      "category": "lookup",
+      "passed": true,
+      "replay_seconds": 0.01707119998172857
+    },
+    {
+      "id": "A5",
+      "category": "lookup",
+      "passed": true,
+      "replay_seconds": 0.026695799984736368
+    },
+    {
+      "id": "B1",
+      "category": "trend",
+      "passed": true,
+      "replay_seconds": 0.017080899997381493
+    },
+    {
+      "id": "B2",
+      "category": "trend",
+      "passed": true,
+      "replay_seconds": 0.019091199996182695
+    },
+    {
+      "id": "B3",
+      "category": "trend",
+      "passed": true,
+      "replay_seconds": 0.017063899984350428
+    },
+    {
+      "id": "B4",
+      "category": "trend",
+      "passed": true,
+      "replay_seconds": 0.10968090000096709
+    },
+    {
+      "id": "B5",
+      "category": "trend",
+      "passed": true,
+      "replay_seconds": 0.021291799988830462
+    },
+    {
+      "id": "C1",
+      "category": "season",
+      "passed": true,
+      "replay_seconds": 0.018213100003777072
+    },
+    {
+      "id": "C2",
+      "category": "season",
+      "passed": true,
+      "replay_seconds": 0.2795240000123158
+    },
+    {
+      "id": "C3",
+      "category": "season",
+      "passed": true,
+      "replay_seconds": 0.01753479999024421
+    },
+    {
+      "id": "C4",
+      "category": "season",
+      "passed": true,
+      "replay_seconds": 0.1931357000139542
+    },
+    {
+      "id": "C5",
+      "category": "season",
+      "passed": true,
+      "replay_seconds": 0.021760900010121986
+    },
+    {
+      "id": "D1",
+      "category": "synthesis",
+      "passed": true,
+      "replay_seconds": 0.0858003000030294
+    },
+    {
+      "id": "D2",
+      "category": "synthesis",
+      "passed": true,
+      "replay_seconds": 0.1573398999753408
+    },
+    {
+      "id": "D3",
+      "category": "synthesis",
+      "passed": true,
+      "replay_seconds": 0.1350873000046704
+    },
+    {
+      "id": "D4",
+      "category": "synthesis",
+      "passed": true,
+      "replay_seconds": 0.11682909997762181
+    },
+    {
+      "id": "D5",
+      "category": "synthesis",
+      "passed": true,
+      "replay_seconds": 0.03702640000847168
+    },
+    {
+      "id": "E1",
+      "category": "robustness",
+      "passed": true,
+      "replay_seconds": 0.00877119999495335
+    },
+    {
+      "id": "E2",
+      "category": "robustness",
+      "passed": true,
+      "replay_seconds": 0.007538599980762228
+    },
+    {
+      "id": "E3",
+      "category": "robustness",
+      "passed": true,
+      "replay_seconds": 0.008249100006651133
+    },
+    {
+      "id": "E4",
+      "category": "robustness",
+      "passed": true,
+      "replay_seconds": 0.007859800010919571
+    },
+    {
+      "id": "E5",
+      "category": "robustness",
+      "passed": true,
+      "replay_seconds": 0.059543199982726946
+    }
+  ]
+}

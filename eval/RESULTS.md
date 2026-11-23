@@ -100,6 +100,22 @@ Their embedded instructions and self-reported metadata are retained as source co
 The older [Bob summary](transcripts/wxo/run2_2026-11-23.md) remains a secondary historical artifact.
 The supplied original records take precedence where they differ.
 
+## wxO follow-up: scan membership and heuristic attribution
+
+RSA now uses `respiratory_mcp_local_v3`, source commit `13d68fa`.
+The [scan-fix verification](../docs/WXO_SCAN_FIX_2026-11-23.md) records the changes and complete API evidence.
+Four post-fix national scan answers match their actual 43 returned members and counts.
+Three independent trend calls and answers preserve the cutoff and application attribution.
+The regional regression returns the correct eight-state scope and counts.
+
+Exact display reproduction fails in all five scan answers because RSA reformats the block.
+One shared-conversation trend answer reuses the preceding response rather than making a new call.
+Those limits remain visible; this is not an overall pass rate or independent holdout evaluation.
+The historical peak-labeling defect from the earlier supplemental test remains outside this fix.
+
+The updated tool baseline passes 25 cases and 155 assertions; all 386 regression tests pass.
+These wxO findings do not change the separate Phoenix scores below.
+
 ## Phoenix agent evaluation — 2026-11-23
 
 One real-model run completed the 15 frozen cases with prompt v2.

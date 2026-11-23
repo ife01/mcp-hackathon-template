@@ -2,7 +2,8 @@
 
 The local server fix separates the application date limit from CDC dataset history.
 All four tools return the corrected message for an unsupported early date.
-The updated package is active in wxO as `respiratory_mcp_local_v2`.
+The current package is active in wxO as `respiratory_mcp_local_v3`.
+See [the scan-fix verification](WXO_SCAN_FIX_2026-11-23.md) for the current source and captured calls.
 RSA uses its four tools. The six-question retest now has complete captured records.
 See [runtime verification](WXO_RUNTIME_VERIFICATION_2026-11-23.md) for the results, policy changes and remaining error-fidelity limit.
 
@@ -12,7 +13,7 @@ The first upload changed stored files but left the old error active.
 A new toolkit registration succeeded, and RSA received the four new tool references.
 RSA kept its existing instructions and model settings. The original toolkit remains as a backup.
 
-The deployed source is commit `8f5fabb`. Runtime dependencies use exact versions from `uv.lock`.
+The initial v2 deployment used source commit `8f5fabb`. Runtime dependencies use exact versions from `uv.lock`.
 A live RSA run completed at `2026-11-23T15:24:03Z` with model `groq/openai/gpt-oss-120b`.
 Its actual `assess_trend` call used Georgia, influenza, hospital admissions and `as_of="2015-01-01"`.
 The tool returned the corrected application-limit error. The final answer preserved that distinction.
@@ -23,7 +24,7 @@ The subsequent natural-language tests are recorded separately in the runtime ver
 The Phoenix results remain separate evidence.
 
 Refresh the wxO page and select **RSA** for further tests.
-Start a new conversation and check that its tools come from `respiratory_mcp_local_v2`.
+Start a new conversation and check that its tools come from `respiratory_mcp_local_v3`.
 
 ## What you need
 

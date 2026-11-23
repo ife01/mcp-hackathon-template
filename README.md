@@ -41,6 +41,11 @@ Agent →  [calls get_respiratory_snapshot(jurisdiction="GA", pathogens=["influe
 | `compare_to_prior_seasons` | How does this week compare to the same point in prior seasons? | Putting current activity in historical context | Equivalent-week rank, % of prior-season peaks, prior-season peaks table |
 | `find_jurisdictions_with_rising_activity` | Which states are rising right now? | Regional or national hotspot scan | Ranked list of jurisdictions with rising trend, missingness counts, total before limit |
 
+Scan responses include `rising_jurisdictions`, `n_returned` and a generated `display_text` block.
+These fields use the returned rows; `n_rising_total` remains the total before limiting.
+Trend attribution distinguishes the application heuristic from CDC source observations.
+See [wxO scan verification](docs/WXO_SCAN_FIX_2026-11-23.md) for actual calls and answer checks.
+
 All tools accept an optional `as_of` date to restrict observation weeks. Live CDC responses can still be revised. Repeatable evaluation requires the frozen replay server, not just a date cutoff.
 
 ### Prompts

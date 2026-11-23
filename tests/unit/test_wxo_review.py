@@ -108,3 +108,16 @@ def test_correct_scan_total_cannot_mask_added_or_duplicate_jurisdictions():
     assert not scan_answer_membership("GA, FL, AK", payload)
     assert not scan_answer_membership("GA, FL, GA", payload)
     assert not scan_answer_membership("GA, AK", payload)
+
+
+def test_cdc_source_does_not_make_the_application_heuristic_a_cdc_method():
+    data = record(
+        {"as_of": "2026-10-31"},
+        {"trend": {"direction": "increasing"}},
+        "Increasing according to the CDC NHSN server heuristic.",
+    )
+    assert not review(data, "2026-10-31")["checks"]["application_heuristic_attribution"]
+    data["answer"] = [
+        "Increasing, using an application-derived heuristic from CDC data."
+    ]
+    assert review(data, "2026-10-31")["checks"]["application_heuristic_attribution"]
