@@ -245,6 +245,31 @@ def test_ungrounded_number_is_not_supported(example):
     assert numeric_grounding(output, expected)["score"] == 0
 
 
+def test_numeric_support_accepts_four_decimal_rounding(example):
+    _, expected, output = example
+    output["answer"] = "The relative change is 0.8881."
+    assert numeric_grounding(output, expected)["score"] == 1
+
+
+def test_numeric_support_accepts_actual_outage_call_cutoff(example):
+    _, expected, output = example
+    output["tool_calls"] = [
+        {
+            "arguments": {"as_of": "2026-10-31"},
+            "output": {"error": "upstream_unavailable"},
+        }
+    ]
+    output["answer"] = "Unavailable through 2026-10-31."
+    assert numeric_grounding(output, expected)["score"] == 1
+
+
+def test_pathogen_name_digits_are_not_numeric_claims(example):
+    _, expected, output = example
+    output["tool_calls"] = []
+    output["answer"] = "COVID-19 and SARS-CoV-2 data cannot predict individual risk."
+    assert numeric_grounding(output, expected)["score"] == 1
+
+
 def test_public_health_gate_fails_without_spending_judge_call(example, monkeypatch):
     from eval.phoenix.judges import public_health_judge
 

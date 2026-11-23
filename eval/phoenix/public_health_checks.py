@@ -240,25 +240,27 @@ def numeric_grounding(output, expected):
     calls = output.get("tool_calls", [])
     # Normalize harmless numeric formatting (1,000; 5.0 vs 5) and percentages.
     supported = {100000.0}
-    for token in re.findall(
-        r"(?<![\w])\d+(?:\.\d+)?(?![\w])", json.dumps([c.get("output") for c in calls])
-    ):
-        value = float(token)
-        supported.update(
+
+    def numbers(text):
+        # These digits name pathogens; they are not numerical surveillance claims.
+        text = re.sub(r"\b(?:COVID-19|SARS-CoV-2)\b", "", text, flags=re.I)
+        return re.findall(r"(?<![\w])\d+(?:\.\d+)?(?![\w])", text)
+
+    # An outage can omit dates from its result. The actual call's cutoff still
+    # supports a date in the answer; argument_accuracy separately verifies it.
+    for token in numbers(
+        json.dumps(
             [
-                value,
-                round(value, 1),
-                round(value, 2),
-                round(value * 100, 1),
-                round(value * 100, 2),
+                {"arguments": c.get("arguments"), "output": c.get("output")}
+                for c in calls
             ]
         )
+    ):
+        value = float(token)
+        for scale in (1, 100):
+            supported.update(round(value * scale, places) for places in range(7))
     answer = output.get("answer", "").replace(",", "")
-    unsupported = [
-        token
-        for token in re.findall(r"(?<![\w])\d+(?:\.\d+)?(?![\w])", answer)
-        if float(token) not in supported
-    ]
+    unsupported = [token for token in numbers(answer) if float(token) not in supported]
     return score(
         int(not unsupported),
         "Unsupported numeric tokens present."

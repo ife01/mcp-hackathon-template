@@ -83,18 +83,23 @@ answer is retained. The original transcript remains available with an audit note
 its PASS annotations are historical reviewer judgments, not current validated
 scores. Tool-baseline coverage does not establish agent coverage for unasked cases.
 
-## Phoenix agent evaluation
+## Phoenix agent evaluation — 2026-11-23
 
-The 15-question frozen benchmark, stdio agent, three semantic judges, deterministic
-checks and trace/experiment storage are implemented. Credential-free integration
-verification used scripted responses and mocked HTTP. **No real-model Phoenix
-experiment has been run.** The user currently has wxO service access but no model
-API gateway; the current agent and judges require separate model access.
+One real-model run completed the 15 frozen cases with prompt v2.
+Correctness, scope and public health judges each scored 15/15 pass.
+All applicable deterministic checks pass. No execution errors or missing scores remain.
+The agent and judge used the same configured gpt-5.4-mini deployment.
 
-An honest next step using existing access is a fresh-conversation manual wxO
-assessment with retained evidence and the rubric in
-[WXO_AGENT_SETUP.md](../docs/WXO_AGENT_SETUP.md#evaluation-without-a-model-api).
-Such a review is useful but is not a Phoenix LLM-as-judge result.
+The initial run had 17 rate-limited judge calls and three false numeric-check failures.
+Request spacing and bounded retry recovered the missing scores without new agent calls.
+Regression-tested grader corrections addressed rounding, outage dates and pathogen-name digits.
+The original results and the revision remain in the public evidence.
+
+Read [the full result](phoenix/RESULTS_2026-11-23.md) before citing these scores.
+It links all 15 answers, actual tool results, judge explanations and source identities.
+This is one repetition with same-model judging and no no-tool comparison.
+It does not establish independent holdout accuracy or operational validity.
+A separate manual wxO assessment remains useful for testing that platform itself.
 
 ## Limits
 

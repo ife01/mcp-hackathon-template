@@ -1,5 +1,8 @@
 # Submission checklist — Build 5.5
 
+> Update 2026-11-23: organizational model access is now configured locally. A real Phoenix run completed all 15 cases.
+> See [the results and limitations](../eval/phoenix/RESULTS_2026-11-23.md). Earlier statements about unavailable model access describe the prior review.
+
 GSA "Model Context Protocol Server and SI Agent Government Hackathon"
 Repository: https://github.com/ife01/mcp-hackathon-template
 Tag: v1.0-hackathon

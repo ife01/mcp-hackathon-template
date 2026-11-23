@@ -175,23 +175,15 @@ class RespiratoryAgent:
                 model_name = "scripted-verification-model"
             else:
                 cfg = gateway("agent")
-                # A new HTTP client per asyncio.run avoids reusing a closed loop.
-                async with httpx.AsyncClient(
-                    trust_env=False, timeout=cfg.timeout
-                ) as client:
-                    model = ChatOpenAI(
-                        model=cfg.model,
-                        base_url=cfg.base_url,
-                        api_key=cfg.api_key,
-                        temperature=0,
-                        timeout=cfg.timeout,
-                        max_retries=1,
-                        max_completion_tokens=1536,
-                        use_responses_api=False,
-                        http_async_client=client,
-                    )
-                    result = await self._invoke(model, tools, query)
-                model_name = cfg.model
+                if cfg.provider == "digital_gateway":
+                    from eval.phoenix.digital_gateway import agent_model
+
+                    async with agent_model(cfg) as model:
+                        result = await self._invoke(model, tools, query)
+                    model_name = cfg.model
+                else:
+                    result = await self._compatible_run(cfg, tools, query)
+                    model_name = cfg.model
         answer, calls = capture_messages(result["messages"])
         output = {
             "answer": answer,
@@ -209,6 +201,22 @@ class RespiratoryAgent:
             json.dumps(output, indent=2) + "\n", encoding="utf-8"
         )
         return output
+
+    async def _compatible_run(self, cfg, tools, query):
+        # A new HTTP client per asyncio.run avoids reusing a closed loop.
+        async with httpx.AsyncClient(trust_env=False, timeout=cfg.timeout) as client:
+            model = ChatOpenAI(
+                model=cfg.model,
+                base_url=cfg.base_url,
+                api_key=cfg.api_key,
+                temperature=0,
+                timeout=cfg.timeout,
+                max_retries=1,
+                max_completion_tokens=1536,
+                use_responses_api=False,
+                http_async_client=client,
+            )
+            return await self._invoke(model, tools, query)
 
     async def _invoke(self, model, tools, query):
         prompt = (

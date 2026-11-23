@@ -1,5 +1,8 @@
 # Post-Bob review — 2026-11-22
 
+> Update 2026-11-23: organizational model access is now configured locally. A real Phoenix run completed all 15 cases.
+> See [the results and limitations](../eval/phoenix/RESULTS_2026-11-23.md). Earlier statements about unavailable model access describe the prior review.
+
 Reviewed GitHub main through 0beed5e and the supplied local
 Build_Summary/respiratory-mcp-project-summary.html. The implementation is a
 working descriptive-surveillance prototype. Automated agent performance is

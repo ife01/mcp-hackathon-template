@@ -130,9 +130,11 @@ Trends, concordance patterns, season ranks, and site aggregates are descriptive 
 | Deterministic tool baseline | 25 / 25 (155 assertions) | **100%** | Automated; frozen snapshot_v2 replay; hash-verified |
 | wxO agent — run 1 (no `as_of`) | 5 | 40% (2/5) | Manual; live CDC data; `as_of` not passed |
 | wxO agent — run 2 (`as_of` set) | 16 case IDs discussed | Not independently scored | Shared-session manual walkthrough; audit found an incorrect missing-state claim |
-| Phoenix agent + semantic judges | 15-question benchmark prepared | Not run | Model API access unavailable; harness verified with scripted responses |
+| Phoenix agent + semantic judges | 15 frozen questions | **15/15** correctness, scope and public health | One real-model run; same model for both roles; grading corrections documented |
 
 Explicit date instructions addressed the reported run-1 date mismatches. The run-2 transcript is a human-written summary, reuses some earlier answers, and has no raw provider trace or model-version record. Its original 16/16 claim is not a validated batch score. See [the follow-up audit](docs/POST_BOB_REVIEW.md).
+
+Latest model run: [Phoenix results and limitations](eval/phoenix/RESULTS_2026-11-23.md).
 
 Full details: [`eval/RESULTS.md`](eval/RESULTS.md) · [`docs/VERIFICATION.md`](docs/VERIFICATION.md) · [`eval/README.md`](eval/README.md)
 

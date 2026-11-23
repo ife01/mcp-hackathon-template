@@ -2,6 +2,29 @@
 
 All deviations from the build plan are recorded here with a date and rationale.
 
+## 2026-11-23 — Reuse existing organizational model access
+
+The user identified an existing local homework configuration for an organizational gateway.
+Read its authentication implementation without changing the homework files.
+Copied only required gateway configuration into the respiratory project's ignored .env.
+No credentials or private gateway identities enter Git or the serializable model configuration.
+
+Added an evaluation-only Azure adapter with client-credential token refresh and a subscription header.
+The synthetic tool/schema check passed. Both roles use the existing configured small model.
+Experiment metadata records same-model judging; it is a limitation, not independent validation.
+
+The 15-case v2 run produced all answers without agent errors.
+Initial grading had 17 throttled calls and three false numeric-check failures.
+Added request spacing, bounded 429 retry and regression-tested numeric corrections.
+Resumed only missing judgments and rescored the affected grading logic.
+No agent answers, references, prompts or frozen data changed.
+All 120 final metric records are present, with no remaining execution errors.
+Correctness, scope and public health each score 15/15 on this single run.
+
+The report preserves initial grading, revised grading, source identities and limitations.
+Full offline verification passes 369 tests at 94% server coverage.
+See eval/phoenix/RESULTS_2026-11-23.md for the evidence.
+
 ## 2026-11-22 — Follow-up evidence and portability audit
 
 Read Bob's local Build_Summary HTML and fetched main through 0beed5e. Historical

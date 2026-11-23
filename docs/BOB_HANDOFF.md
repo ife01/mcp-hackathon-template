@@ -1,5 +1,8 @@
 # IBM Bob evaluation handoff
 
+> Update 2026-11-23: organizational model access is now configured locally. A real Phoenix run completed all 15 cases.
+> See [the results and limitations](../eval/phoenix/RESULTS_2026-11-23.md). Earlier statements about unavailable model access describe the prior review.
+
 The public health correctness fixes and Phoenix evaluation harness are ready for
 provider configuration and real-model evaluation. Start with
 [the harness guide](../eval/phoenix/README.md) and

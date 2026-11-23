@@ -54,7 +54,7 @@ Get these non-secret details from the service console or administrator:
 | Complete API base URL (or gateway origin) | USAI_BASE_URL |
 | Exact agent model/deployment ID with function/tool calling | AGENT_MODEL |
 | Exact judge model/deployment ID | JUDGE_MODEL |
-| Authentication method | This adapter currently supports a standard Bearer API key |
+| Authentication method | Standard Bearer key, or the Azure Digital Gateway adapter below |
 | Extra headers, project/tenant ID, API version, proxy/certificate requirements | Tell us before configuring; an additional provider adapter may be needed |
 
 Store the secret locally as USAI_API_KEY in the ignored repository-root .env.
@@ -66,13 +66,56 @@ vary. Neither a wxO URL nor a wxO API key is required for this local agent workf
 IBM watsonx.ai or other native APIs with token exchange/project IDs may require a
 provider-specific adapter; a wxO key must not simply be substituted as a model key.
 
+### Organizational Azure Digital Gateway
+
+Set `MODEL_PROVIDER=digital_gateway` in the ignored root `.env`.
+This adapter uses an Azure client credential and a subscription key.
+It does not use `USAI_API_KEY`.
+
+Configure these variables:
+
+- `AZURE_TENANT_ID`, `AZURE_CLIENT_ID`, `AZURE_CLIENT_SECRET`
+- `DGW_OPENAI_ENDPOINT`, `DGW_OPENAI_API_VERSION`, `DGW_SUBSCRIPTION_KEY`
+- `DGW_SCOPE` (the legacy spelling `DGW_scope` also works)
+- `AGENT_MODEL`, `JUDGE_MODEL`, `DGW_MODEL_DEPLOYMENTS`
+
+Map each model ID to an explicit deployment in `DGW_MODEL_DEPLOYMENTS`.
+Optional `DGW_AGENT_DEPLOYMENT` and `DGW_JUDGE_DEPLOYMENT` override this map.
+The SDK obtains and refreshes access tokens.
+Credentials stay in SDK clients, outside the model configuration that LangChain serializes.
+The adapter ignores unrelated static Azure API keys and access tokens.
+
+Run the configuration check first:
+
+```shell
+uv run python scripts/check_model_gateway.py
+```
+
+Then run a small live check:
+
+```shell
+uv run python scripts/check_model_gateway.py --live
+```
+
+The live check consumes provider quota.
+It tests a synthetic tool round trip and a structured judge response.
+It sends no CDC records and creates no benchmark scores.
+GPT-5 deployments use `reasoning_effort=none` with temperature zero.
+The live check must pass before an experiment starts.
+Unsupported deployment capabilities remain errors.
+
+Separate judge and agent models are preferable.
+The experiment records `same_model=true` when both roles use the same deployment.
+Same-model judging can favor the agent's own response style.
+Do not publish credentials, tenant identities, private gateway URLs or raw authentication logs.
+
 The agent model must support ordinary Chat Completions tool calls and temperature
 0. The judge must support JSON-schema structured output or forced function calls,
 also at temperature 0. Use a context window sufficient for the returned tool
 records (32k tokens is a practical starting point for these cases). The harness
 rejects oversized judge inputs rather than silently truncating evidence.
-A real model run consumes your provider quota; no such calls have been made during
-implementation. Model selection and provider capability remain to be confirmed.
+A real model run consumes provider quota. The first organizational gateway run
+completed on 2026-11-23. See RESULTS_2026-11-23.md for scores and limitations.
 
 USAI_BASE_URL may be a complete base ending /api/v1, /v1 or /openai/v1; no second
 suffix is added. For a bare origin, USAI_API_PATH defaults to /api/v1. Do not append
@@ -180,5 +223,35 @@ real ChatOpenAI/Phoenix judge HTTP contracts under mocks; ClassificationEvaluato
 and Score integration; local Phoenix dataset upload/version readback and experiment
 storage for 15 verification tasks; and OTLP export/readback of 20 scripted spans.
 The temporary server was stopped. Storage experiments use a verification-only
-label and contain no model scores. Real agent/judge scores await configured model
-access. Exact test totals and commands are in docs/VERIFICATION.md at the repo root.
+label and contain no model scores. The later real-model run scored all 15 cases; see [the results](RESULTS_2026-11-23.md).
+Exact test totals and commands are in docs/VERIFICATION.md at the repo root.
+
+
+## Gateway throttling and evaluation recovery
+
+Digital Gateway judge requests have a six-second minimum interval by default.
+Set `JUDGE_MIN_INTERVAL_SECONDS` to increase it. The resume command defaults to eight seconds.
+Each judge requests at most 1,024 completion tokens.
+Only HTTP 429 errors receive bounded retry, with at most three attempts.
+Remaining provider errors stay execution errors and produce no score.
+
+To resume missing judge scores without new agent calls:
+
+```shell
+uv run python scripts/resume_phoenix_judges.py --experiment-id YOUR_EXPERIMENT_ID
+```
+
+The command checks for missing evaluations as well as explicit errors.
+Phoenix's stored experiment can omit failed annotations from its successful-results response.
+An empty error list alone does not prove completeness.
+
+Phoenix can place traces under an experiment-specific project name.
+Inspect the latest local experiment and check credentials with:
+
+```shell
+uv run python scripts/inspect_phoenix_traces.py
+```
+
+The check reads local spans and prints aggregate counts only.
+It stops when it finds matching credentials or a JWT pattern.
+It is a targeted check, not proof that arbitrary user content contains no sensitive data.

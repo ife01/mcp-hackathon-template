@@ -61,15 +61,28 @@ class Gateway:
     model: str
     api_key: str = field(repr=False)
     timeout: float = 90
+    provider: str = "openai"
+    deployment: str | None = None
 
     def public_config(self) -> dict:
         # URLs can identify private infrastructure; only the model is traced.
-        return {"model": self.model, "api_protocol": "openai_chat_completions"}
+        return {
+            "model": self.model,
+            "provider": self.provider,
+            "api_protocol": "openai_chat_completions",
+        }
 
 
 def gateway(role: str) -> Gateway:
     if role not in ("agent", "judge"):
         raise ValueError("Gateway role must be agent or judge")
+    provider = os.getenv("MODEL_PROVIDER", "openai").strip()
+    if provider == "digital_gateway":
+        from eval.phoenix.digital_gateway import configuration
+
+        return configuration(role)
+    if provider != "openai":
+        raise ValueError("MODEL_PROVIDER must be openai or digital_gateway")
     base = os.getenv("USAI_BASE_URL", "").strip()
     key = os.getenv("USAI_API_KEY", "").strip()
     model = os.getenv("AGENT_MODEL" if role == "agent" else "JUDGE_MODEL", "").strip()
@@ -96,7 +109,11 @@ def validate_models() -> dict:
     return {
         "agent": agent.public_config(),
         "judge": judge.public_config(),
-        "same_model": agent.model == judge.model and agent.base_url == judge.base_url,
+        "same_model": (
+            agent.provider == judge.provider
+            and agent.base_url == judge.base_url
+            and (agent.deployment or agent.model) == (judge.deployment or judge.model)
+        ),
     }
 
 

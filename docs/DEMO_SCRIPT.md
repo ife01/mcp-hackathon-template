@@ -166,7 +166,7 @@ Give me a flu forecast for Georgia next week.
 ## Beat 8 — Wrap-up (3:35–4:00)
 
 **Say:**
-> "To summarize: one MCP server, three CDC datasets, four tools. It runs locally over stdio or as a container over streamable HTTP. 360 automated tests, 25-case deterministic evaluation at 100%, two live wxO agent runs. The server is read-only, uses only public unauthenticated CDC endpoints, enforces an outbound domain allowlist, and builds SoQL from validated enums only — no raw user strings reach the query layer.
+> "To summarize: one MCP server, three CDC datasets, four tools. It runs locally over stdio or as a container over streamable HTTP. 369 automated tests, 25-case deterministic evaluation at 100%, two live wxO agent runs. The server is read-only, uses only public unauthenticated CDC endpoints, enforces an outbound domain allowlist, and builds SoQL from validated enums only — no raw user strings reach the query layer.
 
 > It's a prototype — not an official CDC product or a clinical system. It demonstrates a source-cited surveillance workflow; analyst time savings have not been measured."
 

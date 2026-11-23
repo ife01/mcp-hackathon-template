@@ -1,5 +1,24 @@
 # Verification record
 
+## Organizational gateway evaluation — 2026-11-23
+
+The full offline suite passes **369 tests** with **94% server line coverage**.
+Two upstream ldap3/pyasn1 deprecation warnings remain.
+New tests cover Azure authentication, credential-safe model serialization,
+structured judging, deployment validation, throttling retry and numeric grading.
+
+The live synthetic gateway check passed a tool round trip and structured judgment.
+A later Phoenix run completed 15 fresh frozen-data case sessions.
+Correctness, scope and public health each scored **15/15 pass**.
+All 120 metric records are present, including one not-applicable tool-coverage score.
+No agent errors, remaining judge errors or missing evaluations remain.
+
+The initial 17 rate-limited judgments and three numeric grading errors remain
+in the evidence. Recovery reused the same agent outputs.
+Phoenix returned 249 stored spans. A targeted credential check found no matches.
+The agent and judge used the same model; this is one repetition without a no-tool baseline.
+Read [the full report](../eval/phoenix/RESULTS_2026-11-23.md) for evidence and limits.
+
 ## Latest follow-up verification — 2026-11-22
 
 After reviewing Bob's updates, the full suite passes **360 tests** with **94%
