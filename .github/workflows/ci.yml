@@ -6,9 +6,13 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
 
@@ -21,7 +25,7 @@ jobs:
         run: uv python install 3.11
 
       - name: Install dependencies
-        run: uv sync --group dev
+        run: uv sync --frozen --group dev
 
       - name: Lint
         run: uv run ruff check .
@@ -31,3 +35,25 @@ jobs:
 
       - name: Run tests
         run: uv run pytest tests/ -v
+
+      - name: Validate complete Phoenix benchmark without credentials
+        run: |
+          uv run python eval/phoenix/create_dataset.py --dataset-name respiratory-eval-0 --dry-run
+          uv run python eval/phoenix/run_experiment.py --dry-run
+
+      - name: Verify frozen tool baseline
+        run: uv run python eval/run_eval.py --output .ci-artifacts/frozen-tool-evaluation
+
+      - name: Verify actual MCP and scripted agent integration
+        run: |
+          uv run python scripts/verify_transports.py
+          uv run python scripts/verify_phoenix_harness.py
+
+      - name: Preserve deterministic evaluation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frozen-tool-evaluation
+          path: .ci-artifacts/frozen-tool-evaluation/
+          if-no-files-found: ignore
+          retention-days: 14

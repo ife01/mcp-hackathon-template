@@ -1,4 +1,18 @@
-# Verification record — 2026-11-23 (updated)
+# Verification record
+
+## Latest follow-up verification — 2026-11-22
+
+After reviewing Bob's updates, the full suite passes **360 tests** with **94%
+server line coverage** and two upstream deprecation warnings. Frozen replay
+still passes **25 cases / 155 checks**. Both Phoenix dry-runs, actual stdio and
+HTTP ASGI transport checks, and the scripted agent integration pass. Git newline
+settings false/true/input preserve the original snapshot manifest identity.
+Ruff lint/format, lock consistency and whitespace checks pass.
+
+See [POST_BOB_REVIEW.md](POST_BOB_REVIEW.md) for fixes and evidence limitations.
+Historical sections below describe their original verification sessions; they
+do not establish completed Phoenix real-model scoring. The user has no model API
+access, and no new provider calls were made during this review.
 
 ## Automated tests
 
@@ -64,7 +78,8 @@ docker run --rm -p 127.0.0.1:8080:8080 respiratory-mcp
 curl http://127.0.0.1:8080/health          # → 200 OK {"status":"healthy","service":"respiratory-mcp-server"}
 ```
 
-`scripts/verify_transports.py` run against the live container confirmed:
+`scripts/verify_transports.py` separately checks the following; it does not
+connect to a running Docker endpoint:
 - stdio subprocess: initialize, list 4 tools / 3 resources / 2 prompts, call, read resource **PASS**
 - HTTP ASGI in-process: initialize, tools/list, tools/call, /health **PASS**
 
@@ -74,9 +89,10 @@ The cloud.gov manifest creates no public route.
 wxO local MCP toolkit `respiratory_mcp_local` re-registered (2026-11-23) against
 instance `api.ca-tor.watson-orchestrate.cloud.ibm.com` via `orchestrate toolkits import`
 with updated `toolkit.yaml` description. Live wxO import confirmed successful.
-Two manual wxO agent runs recorded in eval/RESULTS.md confirm tool selection,
-argument accuracy, and final-answer grounding. Local tests and frozen tool
-evaluation need no wxO credentials.
+Two manual wxO walkthroughs are recorded in eval/RESULTS.md. Follow-up audit
+found a material geography error in the originally passing answer and withdrew
+the aggregate pass claim. Local tests and frozen tool evaluation need no wxO
+credentials.
 
 ## Phoenix agent harness verification (2026-11-22)
 
@@ -100,8 +116,8 @@ Ruff lint/format, offline lock consistency and git diff whitespace checks pass.
 Additional integration verification passed:
 
 - agent.py --check-mcp: actual frozen stdio MCP tools and a tool response.
-- scripts/verify_phoenix_harness.py: actual LangChain graph, two independently
-  chosen scripted tool calls, per-case source outage, ClassificationEvaluator
+- scripts/verify_phoenix_harness.py: actual LangChain graph, two scripted tool
+  calls, per-case source outage, ClassificationEvaluator
   templating and Score contract. These are scripted verification, not scores.
 - scripts/verify_phoenix_storage.py against a temporary loopback Phoenix server:
   upload/readback/version validation of all 15 cases and experiment storage of

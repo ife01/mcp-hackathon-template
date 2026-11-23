@@ -2,6 +2,32 @@
 
 All deviations from the build plan are recorded here with a date and rationale.
 
+## 2026-11-22 — Follow-up evidence and portability audit
+
+Read Bob's local Build_Summary HTML and fetched main through 0beed5e. Historical
+entries below retain their reported date labels and reviewer conclusions; this
+entry supersedes their 16/16 and all-invariants-pass claims. D5 incorrectly treats
+Arkansas as missing from Region 4; it belongs to Region 6, and the actual frozen
+tool response reports 8 assessed / 0 unavailable. Shared-session answer reuse
+and missing raw traces prevent a validated replacement aggregate score.
+
+Corrected the README's local concordance explanation to exclude national
+positivity. Date cutoffs on live CDC queries do not select frozen data. Capture
+coverage of 29 NHSN weeks does not establish the source's earliest history.
+Corrected the demo and evaluation guidance to preserve these distinctions.
+
+Preserve exact snapshot_v2 bytes with .gitattributes rather than manually
+rewriting manifest newlines. The committed manifest already has CRLF and its
+existing identity remains unchanged. Reject incomplete or duplicate benchmark
+case inventories. Add credential-free benchmark, replay and agent/transport
+integration checks to CI. Geographic scope is explicit in the public health judge.
+
+The user has wxO service access but no model API access. Real Phoenix semantic
+scoring remains not run; a rigorous manual wxO procedure is documented instead.
+The local HTML embedded an exposed PAT; it was redacted without copying the
+credential into Git. No provider calls, new deployments or registry publication
+were performed. Details and verification are in POST_BOB_REVIEW.md.
+
 
 
 ## 2026-11-23 — Build 4.3/4.4: Second wxO live run — 16/16 pass after as_of fix

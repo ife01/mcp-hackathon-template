@@ -1,4 +1,4 @@
-# Evaluation results — 2026-11-23 (updated)
+# Evaluation results — evidence audit 2026-11-22
 
 ## Deterministic tool baseline
 
@@ -43,105 +43,65 @@ See ../docs/VERIFICATION.md for the full verification record.
 
 ---
 
-## wxO agent evaluation — first live run (2026-11-22)
+## wxO manual walkthroughs (reported by Bob)
 
-Manual walkthrough via watsonx Orchestrate (local MCP toolkit, stdio transport).
-Five benchmark prompts from docs/WXO_AGENT_SETUP.md §4; agent used **live CDC data**
-(no `as_of` parameter passed) so values reflect the most recent available week
-(2026-11-14), not the frozen reference cutoff (2026-10-31).
+Bob reports a first five-question walkthrough and a second shared-session
+walkthrough covering 16 case IDs. The second is summarized in
+[the retained transcript](transcripts/wxo/run2_2026-11-23.md). Its original
+2026-11-23 date label is retained as reported. These are human-written session
+summaries, not exported provider traces or independent Phoenix experiments.
 
-| # | Question | Reference answer (as_of 2026-10-31) | Agent answer | Verdict | Root cause |
-|---|---|---|---|---|---|
-| Q1 | GA flu admission rate, week ending 2026-10-31 | **1.76**/100k, Low, 2026-10-31 | 2.47/100k, Low, 2026-11-14 | ⚠️ Wrong date/value | No `as_of` passed |
-| Q2 | GA flu trend as of 2026-10-31 | **Increasing** | Increasing (live series) | ✅ Direction correct | Correct direction; extended to live data |
-| Q3 | National flu test positivity | **10.1%**, 2026-10-31 | 11.8%, 2026-11-14 | ⚠️ Wrong date/value | No `as_of` passed |
-| Q4 | Rising flu admissions as of 2026-10-31 | 44–46 rising states (frozen) | 44 rising, 2026-11-14 | ⚠️ Wrong reference date | No `as_of` passed |
-| Q5 | Forecast: GA flu next week? | Should refuse | Correctly refused | ✅ Correct abstention | Scope boundary respected |
+The first walkthrough reportedly omitted `as_of`, producing later observation
+weeks for several benchmark questions. Explicit cutoff instructions addressed
+that date mismatch in the second walkthrough. A cutoff still queries live CDC
+records: it does not establish use of snapshot_v2 or exclude later revisions.
 
-**Root cause:** agent not instructed to pass `as_of`. Fix: add `as_of` instruction to
-wxO agent instructions (now in docs/WXO_AGENT_SETUP.md §3 and system_prompt_v2.txt).
+| Evidence | What it supports | Limits |
+| --- | --- | --- |
+| Run 1: five reported questions | Initial integration and a date-preservation issue; forecast refusal reported | No raw trace, exact model/version or independently reproducible grading |
+| Run 2: 16 case IDs discussed | Reported valid tool selection, scoped positivity, historical abstention and matching headline values in several answers | Shared history; B1 reused A1 and B5 reused a proactive snapshot; original pass labels contain a material geography error |
+| Reported public health checklist | Useful review topics | Overlapping observations and an N/A forecast item do not establish 12 independent passing tests |
 
----
+### Material correction to the original run-2 score
 
-## wxO agent evaluation — second live run (2026-11-23)
+The D5 summary labels Arkansas as missing from an HHS Region 4 scan and grades
+that answer PASS. Arkansas belongs to Region 6, according to the
+[HHS regional directory](https://www.hhs.gov/about/agencies/iea/regional-offices/index.html).
+The committed frozen D5 tool response has 8 requested, 8 assessed and 0 unavailable
+jurisdictions, with an empty unavailable list. Its limit of 5 affects display,
+not missingness. The manual run reportedly displayed all 8.
 
-Manual walkthrough via watsonx Orchestrate. Session opened with:
-`"For all tool calls in this session, use as_of="2026-10-31" unless I specify otherwise."`
-All tool calls used the correct frozen cutoff throughout.
+The described D5 answer therefore fails the geographic-scope/missingness check,
+even though its rising total and lead state match the reference. The original
+16/16 and 100% invariant claims are withdrawn. We do not substitute 15/16 because
+the other answers have not been independently regraded from complete evidence.
+For example, the C5 summary says 31% where the reference is 31.86%; acceptable
+rounding and the full explanation need review.
 
-**16 of 25 cases.yaml cases explicitly exercised** (remaining 9 covered by deterministic
-tool baseline). Transcript: `eval/transcripts/wxo/run2_2026-11-23.md`.
+Not every case was an independent prompt, and not every raw tool payload/final
+answer is retained. The original transcript remains available with an audit note;
+its PASS annotations are historical reviewer judgments, not current validated
+scores. Tool-baseline coverage does not establish agent coverage for unasked cases.
 
-### Per-question scorecard
+## Phoenix agent evaluation
 
-| Case | Question (abbreviated) | Expected | Agent answer | Tool(s) called | Verdict |
-|---|---|---|---|---|---|
-| A1 | GA flu admission rate | 1.76/100k, Low, increasing | 1.76/100k, Low, increasing | `assess_trend` | ✅ |
-| A2 | CA flu admission rate | 3.01/100k | 3.01/100k, Moderate | `assess_trend` | ✅ |
-| A3 | OH flu admission rate | 1.51/100k | 1.51/100k, Low | `assess_trend` | ✅ |
-| A4 | TX flu admission rate | 2.72/100k | 2.72/100k, Low | `assess_trend` | ✅ |
-| A5 | National flu test positivity | 10.1% | 10.1% (from proactive snapshot) | `get_respiratory_snapshot` | ✅ |
-| B1 | GA flu trend | increasing | increasing +89% (covered in A1) | `assess_trend` | ✅ |
-| B2 | CA RSV trend | stable (small-number guard) | stable, 0.13/100k | `assess_trend` | ✅ |
-| B3 | OH COVID-19 trend | increasing | increasing, 0.87/100k, +14% | `assess_trend` | ✅ |
-| B4 | TX flu wastewater trend | increasing | increasing, 7.06 wval, +57% | `assess_trend` | ✅ |
-| B5 | USA flu test_positivity trend | increasing | increasing +65% (from snapshot) | `get_respiratory_snapshot` | ✅ |
-| C2 | CA flu wastewater vs 3 prior seasons | rank 1, 37.4%, peaks correct | rank 1, 37.42%, all peaks correct | `compare_to_prior_seasons` | ✅ |
-| C5 | USA flu test_positivity vs 3 prior seasons | rank 1, 31.9%, peaks correct | rank 1, 31.86%, all peaks correct | `compare_to_prior_seasons` | ✅ |
-| D1 | Full GA flu briefing | 1.76 incr; wastewater; positivity national-only; no NHSN rank | All correct; positivity scoped to USA; rank correctly withheld | snapshot + assess_trend | ✅ |
-| D5 | HHS R4 rising flu admissions (total + missing) | 8 rising, FL leads 5.53, AR missing | 8 rising, FL 5.53, AR noted missing | `find_jurisdictions_with_rising_activity` | ✅ |
-| E2 | Rank states by rising flu test positivity | unsupported (national only) | Correctly refused — "national-only signal" | None | ✅ |
-| E4 | GA flu admissions as of 2015-01-01 | invalid_input error | Tool returned error; agent explained correctly | `assess_trend` | ✅ |
+The 15-question frozen benchmark, stdio agent, three semantic judges, deterministic
+checks and trace/experiment storage are implemented. Credential-free integration
+verification used scripted responses and mocked HTTP. **No real-model Phoenix
+experiment has been run.** The user currently has wxO service access but no model
+API gateway; the current agent and judges require separate model access.
 
-**Result: 16/16 ✅ — 100% pass rate on explicitly tested cases.**
-
-### Public health invariant checks (run 2)
-
-| Check | Result |
-|---|---|
-| National positivity not attributed to any state | ✅ Agent consistently cited "national only" for NREVSS |
-| Wastewater categories labeled server-derived, not official | ✅ "server-derived, not official CDC classification" language present |
-| Numeric claims cite dataset ID + week-ending date | ✅ All answers included dataset ID and 2026-10-31 week-ending |
-| Forecast refused | N/A — not asked in this run; covered in run 1 |
-| Prior-season rank withheld when NHSN history insufficient | ✅ GA/OH: "no prior-season rank" correctly stated |
-| Trend labeled heuristic not official CDC | ✅ "4-week heuristic" and "server heuristic" labels present |
-| AR missing not equated to no activity | ✅ Agent noted "missing (not evidence of stability)" |
-
-### Comparison: run 1 vs run 2
-
-| Metric | Run 1 (no as_of) | Run 2 (as_of set) |
-|---|---|---|
-| as_of instruction passed | ❌ No | ✅ Yes |
-| Cases explicitly tested | 5 | 16 |
-| Pass rate | 2/5 (40%) | 16/16 (100%) |
-| Date/value mismatches | 3 | 0 |
-| Public health invariants | 5/5 ✅ | 7/7 ✅ |
-| Forecast correctly refused | ✅ | N/A |
-
-The single root-cause fix (instructing the agent to pass `as_of`) resolved all
-run-1 mismatches. Tool correctness was never in question — only the session
-framing was.
-
----
-
-## Combined evaluation summary
-
-| Layer | Cases | Pass rate | Method |
-|---|---|---|---|
-| Deterministic tool baseline | 25/25 (155 assertions) | 100% | Automated, frozen replay |
-| wxO agent — run 1 | 5 | 40% (2/5) | Manual; no as_of |
-| wxO agent — run 2 | 16 | 100% (16/16) | Manual; as_of set |
-| Public health invariants (combined) | 12 | 100% | Manual review |
+An honest next step using existing access is a fresh-conversation manual wxO
+assessment with retained evidence and the rubric in
+[WXO_AGENT_SETUP.md](../docs/WXO_AGENT_SETUP.md#evaluation-without-a-model-api).
+Such a review is useful but is not a Phoenix LLM-as-judge result.
 
 ## Limits
 
-These cases demonstrate the implemented descriptive rules, not the epidemiologic
-validity of their thresholds or predictive ability. NHSN returned only 29 weeks
-through this cutoff; historical abstention is correct for those cases. Wastewater
-population coverage is unknown, and site participation can affect medians. Human
-public health review of methods and representative outputs remains necessary
-before claiming operational usefulness. The wxO runs are manual walkthroughs,
-not automated batch evaluations. E1 (typo recovery), E3 (invalid enum), E5
-(all sources down), C1/C3/C4 (NHSN season history), and D2/D3/D4 (CA/OH/TX
-briefings) were not explicitly prompted in run 2; all pass in the deterministic
-tool baseline.
+The tool cases validate implemented descriptive rules, not epidemiologic validity,
+predictive ability or operational effectiveness. NHSN returned only 29 weeks
+through this capture's cutoff; that is insufficient evidence for some historical
+comparisons, not proof of the source's earliest available history. Wastewater
+population coverage is unknown and changing site participation can affect medians.
+Human public health review remains necessary. No analyst time-saving study has
+been performed. See [the post-Bob audit](../docs/POST_BOB_REVIEW.md).

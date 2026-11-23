@@ -74,10 +74,12 @@ def load_dataset(name: str, csv_path: Path | None = None) -> tuple[list[dict], d
             raise ValueError("CSV requires case_id, query, responses, reference")
         rows = list(reader)
     xml_path = MODULE / entry["xml_path"]
-    pairs = {
-        q.attrib["id"]: (q.findtext("question"), q.findtext("answer"))
-        for q in ET.parse(xml_path).getroot().findall("qa_pair")
-    }
+    pairs = {}
+    for question in ET.parse(xml_path).getroot().findall("qa_pair"):
+        case_id = question.attrib["id"]
+        if case_id in pairs:
+            raise ValueError(f"Duplicate XML evaluation case: {case_id}")
+        pairs[case_id] = (question.findtext("question"), question.findtext("answer"))
     seen = set()
     expected_hash = verify_snapshot()
     for row in rows:
@@ -98,6 +100,8 @@ def load_dataset(name: str, csv_path: Path | None = None) -> tuple[list[dict], d
             raise ValueError("Reference answer mismatch")
     if not rows:
         raise ValueError("Dataset is empty")
+    if seen != set(pairs):
+        raise ValueError("CSV must include every XML evaluation case exactly once")
     return rows, {
         "name": name,
         "rows": len(rows),

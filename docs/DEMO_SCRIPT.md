@@ -3,7 +3,9 @@
 **Venue:** GSA "Model Context Protocol Server and SI Agent Government Hackathon"
 **Platform:** IBM watsonx Orchestrate (local MCP toolkit, stdio transport)
 **Target duration:** ~4 minutes
-**as_of pin:** `2026-10-31` (frozen snapshot — ensures reproducible values)
+**Observation cutoff:** `2026-10-31`. The normal wxO toolkit uses live CDC data;
+values may change after revisions even with this cutoff. Frozen reference values
+below are illustrations, not guaranteed live responses.
 
 ---
 
@@ -20,7 +22,7 @@
 ## Beat 1 — Set the scene (0:00–0:20)
 
 **Say:**
-> "It's Friday afternoon. You're a state epidemiologist and you need to write this week's respiratory situation report. You open watsonx Orchestrate, which is connected to our MCP server pulling live public CDC data. Let's start by pinning to the week ending October 31st so our demo values are reproducible."
+> "It's Friday afternoon. You're a state epidemiologist preparing a respiratory situation report. This wxO agent calls our MCP server for public CDC data. We'll use an October 31 observation cutoff. Live revisions can still change the values; our separate frozen replay is the reproducible benchmark."
 
 **Type in wxO chat:**
 ```
@@ -44,10 +46,10 @@ Give me a national flu overview for the week ending October 31, 2026.
 **Point out in the response:**
 - Hospital admissions: 2.49/100k, CDC level **Low**, trend **Increasing**
 - Test positivity: **10.1%** nationally, also increasing
-- Wastewater: **stable** at national level — `early_warning` concordance pattern
+- Wastewater: report the returned value, trend and actual observation date; describe the returned concordance pattern rather than assuming one
 - Every number cites dataset ID (`vdzy-6i9v`, `seuz-s2cv`, `atcp-73re`) + week-ending date
 
-> "Notice the server flags an `early_warning` pattern — two signals rising, wastewater stable. It doesn't call that a forecast. It's a descriptive pattern, and the caveat is right there in the output."
+> "Concordance is a descriptive combination of available signals, with geography and dates checked. It is not a forecast. For state briefings, national positivity is excluded from local concordance."
 
 ---
 
@@ -70,7 +72,7 @@ Brief me on flu in Georgia through October 31, 2026. Include local signals, nati
 - Wastewater: **1.70 wval**, derived level Very Low, trend **Stable**
 - Test positivity: **10.1% — national only**, correctly scoped as USA context, not a GA estimate
 - Trend series shows: 0.73 → 0.70 → 0.94 → **1.76** — four consecutive weeks
-- No prior-season NHSN rank — correctly withheld because NHSN history only starts Nov 2024
+- No prior-season NHSN rank when the capture has insufficient comparison history; do not claim that the dataset itself starts at the reporting transition
 
 > "The agent correctly says positivity is national context, not a Georgia number. That's a critical distinction the server enforces — it never substitutes a national estimate for a state value."
 
@@ -95,7 +97,7 @@ Compare California flu wastewater activity to the three prior seasons through Oc
 - Prior peaks clearly shown: 2023-24: 15.96, 2024-25: 17.51, 2025-26: 11.09
 - Caveat: wastewater is server-derived, not CDC official; influenza A only
 
-> "Early in the season at 37% of peak — it's rising but not at peak levels yet. Rank 1 means highest of these three comparisons — not an all-time record. The denominator and the exclusions are always visible."
+> "This value is about 37% of the highest complete prior-season peak in the reference capture. That does not predict this season's eventual peak. Rank 1 means highest against three available prior-week values, not an all-time record."
 
 ---
 
@@ -114,10 +116,10 @@ Which HHS Region 4 states had rising flu admissions through October 31, 2026? Re
 **Point out in the response:**
 - **8/8 Region 4 states rising** — FL leads at 5.53/100k Moderate
 - Full table: FL → AL → MS → KY → TN → SC → NC → GA
-- AR noted as **missing** — the agent says "missing, not evidence of stability"
+- **No missing Region 4 states in the frozen reference**: 8 requested, 8 assessed, 0 unavailable. Arkansas is in Region 6 and must not be listed as missing from Region 4.
 - Total rising (8) distinguished from displayed count
 
-> "The server never equates a missing data point with no activity. That's a public health safety rule baked into the tool output."
+> "The tool reports assessment and missingness counts within the requested region. Here all eight Region 4 states were assessed. In other cases, missing data must not be treated as stable activity."
 
 ---
 
@@ -164,16 +166,17 @@ Give me a flu forecast for Georgia next week.
 ## Beat 8 — Wrap-up (3:35–4:00)
 
 **Say:**
-> "To summarize: one MCP server, three CDC datasets, four tools. It runs locally over stdio or as a container over streamable HTTP. 355 automated tests, 25-case deterministic evaluation at 100%, two live wxO agent runs. The server is read-only, uses only public unauthenticated CDC endpoints, enforces an outbound domain allowlist, and builds SoQL from validated enums only — no raw user strings reach the query layer.
+> "To summarize: one MCP server, three CDC datasets, four tools. It runs locally over stdio or as a container over streamable HTTP. 360 automated tests, 25-case deterministic evaluation at 100%, two live wxO agent runs. The server is read-only, uses only public unauthenticated CDC endpoints, enforces an outbound domain allowlist, and builds SoQL from validated enums only — no raw user strings reach the query layer.
 
-> It's a prototype — not an official CDC product, not a clinical system. But it demonstrates what a well-scoped, well-caveated MCP server can do for a public health analyst who needs to write a situation report in 20 minutes instead of two hours."
+> It's a prototype — not an official CDC product or a clinical system. It demonstrates a source-cited surveillance workflow; analyst time savings have not been measured."
 
 ---
 
 ## Fallback values (if live CDC data differs from frozen reference)
 
-If you run without `as_of="2026-10-31"` and live data differs, these are the
-frozen reference values to cite:
+Live data may differ even with `as_of="2026-10-31"`. These are frozen reference
+values only. Label them as recorded examples; never substitute them for the
+actual tool response during a live demonstration:
 
 | Jurisdiction | Signal | Value | Level | Trend |
 |---|---|---|---|---|

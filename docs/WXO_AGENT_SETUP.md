@@ -9,7 +9,8 @@ agent scoring require the sandbox instance/service URL, agent ID, authentication
 type (for example IBM IAM), and a suitably scoped API key. Store the key in the
 ignored root .env file or the service credential mechanism; do not paste it into
 a committed file, evaluation case, or transcript. .env.example lists placeholders.
-No live wxO session has been verified during this preparation.
+Bob's later manual wxO walkthroughs are summarized in eval/RESULTS.md. They are
+not a completed Phoenix experiment or a raw provider trace.
 
 ## Connect the sandbox server
 
@@ -24,8 +25,8 @@ Verify that tools/list exposes four tools and their actual parameter constraints
 The exact advertised schemas are exported to docs/schemas/mcp_tools.json.
 Check all three resources and both prompts if the client supports them. Then call
 one valid lookup, one invalid jurisdiction, and a multi-source briefing. Record
-cold/warm latencies and the server/model/agent versions. These checks remain
-pending until service access is configured.
+cold/warm latencies and the server/model/agent versions. Retain this evidence for
+each new evaluation run.
 
 ## Agent instructions
 
@@ -66,7 +67,11 @@ observation-specific date when signals have different endpoints.
 
 When running against the frozen evaluation benchmark (reference cutoff
 2026-10-31), pass as_of="2026-10-31" on every tool call. For normal live-data
-use, omit as_of to get the most recent available data.
+use, omit as_of to get the most recent available data. A cutoff alone does not
+switch live CDC access to the frozen snapshot or exclude later data revisions.
+
+Keep all scan results and missingness statements within the requested region.
+A jurisdiction outside the selected region is not missing data for that scan.
 
 Adapt terminology to the audience. This is a public-data sandbox prototype,
 not an official CDC communication or an operational clinical system.
@@ -101,6 +106,43 @@ All public health invariants passed: national positivity not attributed to
 Georgia; numeric claims cited dataset ID and week-ending date; trend labeled
 heuristic; hospital coverage disclosed.
 
-Root cause: the wxO agent instructions did not include the `as_of` rule.
-Fixed above. For live production use the agent behavior (most recent data) is
-correct; `as_of` is only needed for reproducible benchmark runs.
+The reported date mismatches motivated the `as_of` rule above. Preserve any
+explicit date in a user's question. For exact benchmark replay, the server must
+also use the frozen dataset; live records may have changed since capture.
+
+## Evaluation without a model API
+
+Use existing wxO sandbox access for a **manual assessment**. Phoenix's current
+agent and semantic judges cannot use a wxO service key as a model gateway key.
+No additional provider is required for this manual route.
+
+1. Start a fresh conversation for each question in eval/cases.yaml. Give the
+   agent only the natural-language question and date-preservation policy, not
+   reference calls, expected values or the scoring rubric. Do not preload a
+   national snapshot or reuse previous answers.
+2. Record agent ID/version, model ID if visible, toolkit/server commit, transport,
+   timestamp/timezone and whether the data source is live or frozen. A dated
+   live query must be labeled live, even when values match snapshot_v2.
+3. Save exact prompts, actual tool names/arguments, complete tool responses and
+   final answers using an export if available. Redact credentials before saving.
+   A reconstructed prose summary is weaker evidence and must be labeled as such.
+4. Review answer correctness, tool choice, arguments, source/date/unit/geography
+   fidelity, missingness, historical denominators and scope refusal separately.
+   Compare live answers with their actual tool payloads; use frozen references
+   for exact-value scoring only when the server actually replayed that snapshot.
+5. Mark untested cases **not run**, insufficient evidence **unverified**, and
+   provider/tool failures **execution error**. A matching headline value cannot
+   excuse a material misleading explanation. Do not count one answer reused in
+   another case as an independent successful trial.
+6. Have a second reviewer inspect public health claims when available. Report the
+   number attempted, with retained evidence, fully scored, passed, failed and
+   unverified. For repetitions, use fresh sessions and report variability.
+
+Critical checks: national positivity cannot support local concordance; derived
+wastewater aggregates are not official state levels; outages are not stability;
+rank/peak denominators need eligible history; observation dates are not publication
+vintages. Missingness applies only to requested jurisdictions. The frozen Region 4
+scan has eight assessed and zero unavailable states; Arkansas is in Region 6.
+
+The earlier 16/16 walkthrough claim is superseded by the audit in eval/RESULTS.md.
+Do not relabel a manual assessment as an automated Phoenix or independent batch run.

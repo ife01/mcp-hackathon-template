@@ -22,8 +22,9 @@ Agent →  [calls get_respiratory_snapshot(jurisdiction="GA", pathogens=["influe
          Wastewater (NWSS atcp-73re):            1.70 wval   │ Derived level: Very Low  │ Trend: Stable
          Test positivity (NREVSS seuz-s2cv):    10.1%        │ National only — not a GA estimate
 
-         Concordance: early_warning (hospital + positivity rising; wastewater stable)
-         No prior-season NHSN rank available (history begins Nov 2024)
+         Concordance: early_warning (local hospital admissions rising; local wastewater stable)
+         National positivity is excluded from Georgia concordance
+         No prior-season NHSN rank available (insufficient history in this capture)
          Caveats: 2-week reporting lag; wastewater is server-derived, not CDC official; heuristic trend, not forecast
 ```
 
@@ -40,7 +41,7 @@ Agent →  [calls get_respiratory_snapshot(jurisdiction="GA", pathogens=["influe
 | `compare_to_prior_seasons` | How does this week compare to the same point in prior seasons? | Putting current activity in historical context | Equivalent-week rank, % of prior-season peaks, prior-season peaks table |
 | `find_jurisdictions_with_rising_activity` | Which states are rising right now? | Regional or national hotspot scan | Ranked list of jurisdictions with rising trend, missingness counts, total before limit |
 
-All tools accept `as_of: date | None` to restrict analysis to a frozen week-ending date — enabling reproducible demos and deterministic evaluation against the snapshot.
+All tools accept an optional `as_of` date to restrict observation weeks. Live CDC responses can still be revised. Repeatable evaluation requires the frozen replay server, not just a date cutoff.
 
 ### Prompts
 
@@ -86,7 +87,7 @@ flowchart TD
     Client -->|HTTPS, read-only| CDC["Public CDC datasets\ndata.cdc.gov"]
 ```
 
-**Layering rule:** `analytics/` has zero network I/O. `sources/` is the only layer that calls `clients/`. Tools stay under ~60 lines each by delegating to both.
+**Layering rule:** `analytics/` has zero network I/O. Source adapters use `clients/` for CDC access; tools orchestrate source retrieval and analysis.
 
 ---
 
@@ -98,7 +99,7 @@ flowchart TD
 | CDC Wastewater Viral Activity Level (NWSS) | WVAL site-level + derived category | Site → server-aggregated to state/national | Weekly | ~1–2 weeks | `atcp-73re` |
 | Percent of Tests Positive for Viral Respiratory Pathogens (NREVSS) | Test positivity % | **National only** | Weekly | ~1 week | `seuz-s2cv` |
 
-All data are retrieved unauthenticated from public `data.cdc.gov` endpoints at query time and cached for one hour. No data are stored server-side between requests.
+The production server retrieves unauthenticated public `data.cdc.gov` data at query time and caches responses in memory for one hour, including between requests. The cache is not persisted to disk. The evaluation harness instead replays committed frozen data.
 
 ---
 
@@ -110,7 +111,7 @@ All data are retrieved unauthenticated from public `data.cdc.gov` endpoints at q
 
 3. **Trend thresholds are heuristics, not validated public health alerts.** The 10% / 0.1 per 100k / 1 pp / 15% thresholds are prototype choices. Sparse counts, missing weeks, stale data, and the small-number guard can all prevent classification. `early_warning` is a descriptive pattern, not a predictive lead time.
 
-4. **NHSN history is limited.** The November 2024 NHSN reporting transition means the evaluation snapshot contains only 29 weeks of data. Historical comparisons are withheld when the evidence base is insufficient. Rank 1 means highest among the available comparisons, not an all-time record.
+4. **NHSN history in this capture is limited.** The endpoint returned only 29 weeks through the cutoff despite requesting earlier data. This does not establish the source's earliest possible history. The November 2024 reporting transition is a separate comparability caveat. Historical comparisons are withheld when evidence is insufficient. Rank 1 means highest among the available comparisons, not an all-time record.
 
 5. **`as_of` is not an as-published vintage.** The parameter filters week-ending dates on data retrieved now. It does not reconstruct what was available on that date. Later revisions may be present. Frozen, hash-verified snapshots are the only mechanism that supports fully repeatable replay.
 
@@ -128,10 +129,10 @@ Trends, concordance patterns, season ranks, and site aggregates are descriptive 
 |---|---|---|---|
 | Deterministic tool baseline | 25 / 25 (155 assertions) | **100%** | Automated; frozen snapshot_v2 replay; hash-verified |
 | wxO agent — run 1 (no `as_of`) | 5 | 40% (2/5) | Manual; live CDC data; `as_of` not passed |
-| wxO agent — run 2 (`as_of` set) | 16 | **100%** (16/16) | Manual; frozen cutoff; session instruction used |
-| Public health invariants (combined) | 12 | **100%** | Manual review across both wxO runs |
+| wxO agent — run 2 (`as_of` set) | 16 case IDs discussed | Not independently scored | Shared-session manual walkthrough; audit found an incorrect missing-state claim |
+| Phoenix agent + semantic judges | 15-question benchmark prepared | Not run | Model API access unavailable; harness verified with scripted responses |
 
-The single root cause of all run-1 failures was a missing session instruction, not a tool bug. Run 2 resolved all mismatches with the same tool code.
+Explicit date instructions addressed the reported run-1 date mismatches. The run-2 transcript is a human-written summary, reuses some earlier answers, and has no raw provider trace or model-version record. Its original 16/16 claim is not a validated batch score. See [the follow-up audit](docs/POST_BOB_REVIEW.md).
 
 Full details: [`eval/RESULTS.md`](eval/RESULTS.md) · [`docs/VERIFICATION.md`](docs/VERIFICATION.md) · [`eval/README.md`](eval/README.md)
 
@@ -189,7 +190,7 @@ docker run --rm -p 127.0.0.1:8080:8080 respiratory-mcp
 
 The container installs locked runtime dependencies from `uv.lock` and starts on port 8080. Verify with MCP Inspector (`npx @modelcontextprotocol/inspector`) against `http://localhost:8080/mcp`, or via curl handshake (see [`docs/VERIFICATION.md`](docs/VERIFICATION.md)).
 
-> **Status:** Docker build verified with locked dependencies. Full image run pending host-level Docker access. See verification record for exact state.
+> **Reported status:** Bob recorded a successful RHEL image build and health check. The transport verification script separately checks a subprocess and in-process HTTP; it does not test a running Docker endpoint. See the verification record.
 
 ---
 
@@ -203,11 +204,15 @@ cp .env.example .env          # fill in WXO_INSTANCE_URL and TOOLKIT_NAME
 bash register-toolkit.sh      # builds _stage/ and imports the toolkit
 ```
 
-Then create a wxO agent using the system prompt in [`eval/phoenix/prompts/system_prompt_v2.txt`](eval/phoenix/prompts/system_prompt_v2.txt) and add the `respiratory_mcp_local` toolkit. For reproducible evaluation against frozen data, start each session with:
+Then create a wxO agent using the instructions in [`docs/WXO_AGENT_SETUP.md`](docs/WXO_AGENT_SETUP.md) and add the `respiratory_mcp_local` toolkit. For a live-data walkthrough with the benchmark's observation cutoff, start each session with:
 
 ```
 Use as_of="2026-10-31" for all tool calls unless I specify otherwise.
 ```
+
+This instruction does not switch the toolkit to frozen data. For exact replay,
+use the frozen server described in [the evaluation guide](eval/phoenix/README.md).
+Without model API access, use the [manual wxO review procedure](docs/WXO_AGENT_SETUP.md#evaluation-without-a-model-api).
 
 Full setup, prerequisites, and known caveats: [`docs/WXO_AGENT_SETUP.md`](docs/WXO_AGENT_SETUP.md)
 

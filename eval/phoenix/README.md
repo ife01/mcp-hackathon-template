@@ -104,6 +104,9 @@ LangSmith pytest plugins, block unmocked HTTP, and keep temporary data in .pytes
 
 The dataset builder uses only the fixed snapshot; it does not download live data.
 Changing the snapshot or references requires rebuilding and reviewing XML/CSV.
+Validation requires the complete XML case inventory; a custom CSV cannot silently
+drop difficult questions. Git attributes preserve snapshot bytes across Windows
+and Linux. Do not rewrite the manifest's newlines to repair a hash mismatch.
 The older 25-case ../run_eval.py tool suite is preserved, not passed off as an
 agent evaluation.
 

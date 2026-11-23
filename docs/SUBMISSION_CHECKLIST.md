@@ -4,6 +4,11 @@ GSA "Model Context Protocol Server and SI Agent Government Hackathon"
 Repository: https://github.com/ife01/mcp-hackathon-template
 Tag: v1.0-hackathon
 
+> Follow-up audit: the tag records Bob's earlier submission candidate. It does
+> not automatically include later fixes. The original wxO 16/16 claim is
+> withdrawn after a material geography error was found. Phoenix real-model
+> scoring has not run; model access is unavailable. See POST_BOB_REVIEW.md.
+
 ---
 
 ## Required items
@@ -67,7 +72,7 @@ Tag: v1.0-hackathon
 | `curl http://127.0.0.1:8080/health` | ✅ `200 OK {"status":"healthy","service":"respiratory-mcp-server"}` |
 | `scripts/verify_transports.py` | ✅ stdio PASS, HTTP ASGI PASS |
 | wxO toolkit `respiratory_mcp_local` | ✅ Re-registered 2026-11-23, ca-tor instance |
-| wxO agent run 2 (16 cases, as_of set) | ✅ 16/16 pass |
+| wxO agent run 2 (16 case IDs discussed) | Manual evidence retained; aggregate score withdrawn after audit |
 
 ---
 

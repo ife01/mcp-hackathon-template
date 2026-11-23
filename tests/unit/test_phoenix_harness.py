@@ -1,7 +1,10 @@
 """Credential-free evaluation contract and public health grading regressions."""
 
+import csv
 import hashlib
 import json
+import subprocess
+import xml.etree.ElementTree as ET
 from types import SimpleNamespace
 
 import pytest
@@ -133,6 +136,53 @@ def test_tampered_snapshot_fails(tmp_path):
     data.write_bytes(b"tampered")
     with pytest.raises(ValueError, match="integrity"):
         verify_snapshot(tmp_path)
+
+
+def test_incomplete_benchmark_cannot_be_uploaded_as_full_dataset(tmp_path):
+    rows, _ = load_dataset("respiratory-eval-0")
+    path = tmp_path / "incomplete.csv"
+    with path.open("w", encoding="utf-8", newline="") as file:
+        writer = csv.DictWriter(file, fieldnames=list(rows[0]))
+        writer.writeheader()
+        writer.writerows(rows[:-1])
+    with pytest.raises(ValueError, match="every XML evaluation case"):
+        load_dataset("respiratory-eval-0", csv_path=path)
+
+
+def test_duplicate_xml_cases_rejected(tmp_path, monkeypatch):
+    from eval.phoenix import data
+
+    entries = data.registry()
+    entry = entries["respiratory-eval-0"]
+    tree = ET.parse(data.MODULE / entry["xml_path"])
+    tree.getroot().append(tree.getroot().find("qa_pair"))
+    path = tmp_path / "duplicates.xml"
+    tree.write(path, encoding="utf-8")
+    entry["xml_path"] = str(path)
+    monkeypatch.setattr(data, "registry", lambda: entries)
+    with pytest.raises(ValueError, match="Duplicate XML evaluation case"):
+        data.load_dataset("respiratory-eval-0")
+
+
+@pytest.mark.parametrize("autocrlf", ["false", "true", "input"])
+def test_frozen_manifest_survives_git_line_ending_settings(autocrlf):
+    name = "eval/snapshot_v2/capture_manifest.json"
+    # Exercise Git's actual clean filter, not a simulated newline replacement.
+    result = subprocess.check_output(
+        [
+            "git",
+            "-c",
+            f"core.autocrlf={autocrlf}",
+            "hash-object",
+            f"--path={name}",
+            name,
+        ],
+        cwd=ROOT,
+        text=True,
+    ).strip()
+    raw = (ROOT / name).read_bytes()
+    expected = hashlib.sha1(f"blob {len(raw)}\0".encode() + raw).hexdigest()
+    assert result == expected
 
 
 def test_remote_dataset_drift_rejected():

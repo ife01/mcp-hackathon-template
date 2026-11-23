@@ -4,6 +4,8 @@ venv/
 
 # Environment variables (keep .env.example, never commit .env)
 .env
+.env.*
+!.env.example
 deploy/**/.env
 deploy/**/eval.env
 
@@ -53,3 +55,4 @@ pytest-cache-files-*/
 .phoenix/
 .pytest_tmp/
 eval/phoenix/runs/
+.ci-artifacts/

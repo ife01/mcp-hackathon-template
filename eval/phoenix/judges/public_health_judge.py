@@ -23,7 +23,9 @@ seasons can supply peak percentages; do not claim an all-time record.
 Trends and early_warning are descriptive heuristics, not validated forecasts.
 as_of is not an as-published vintage. Distinguish total rising states, assessed
 jurisdictions, and displayed results. Appropriate non-numeric scope refusals can
-pass without a tool call. Do not fail for harmless formatting or omitted caveats
+pass without a tool call. A scan's missingness applies only to its requested
+geographic scope; a jurisdiction outside that scope is not missing data.
+Do not fail for harmless formatting or omitted caveats
 that are immaterial to the actual question; do fail for any material misleading
 claim or omitted limitation flagged in the independent reference.
 Return pass only if all applicable rules hold; otherwise fail and identify the
